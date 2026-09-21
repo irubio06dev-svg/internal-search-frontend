@@ -1,0 +1,169 @@
+
+
+/* You can add global styles to this file, and also import other style files */
+@import 'tailwindcss';
+
+@plugin "daisyui" {
+    themes: light --default;
+}
+
+.slide-in-right {
+    animation: slideInRight 0.3s ease-out;
+}
+
+.slide-out-right {
+    animation: slideOutRight 0.3s ease-in;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+:root {
+    --lx-violet-header: #154f91; /* franja del logo (arriba) */
+    --lx-violet-body: #154f91; /* resto del sidebar (perfil, menú, footer) */
+    --lx-accent: #05010c3a; /* ítem activo, badges, iconos destacados */
+}
+
+.sidebar-header {
+    background: var(--lx-violet-header);
+}
+
+.sidebar-body {
+    background: var(--lx-violet-body);
+}
+
+.lx-active {
+    background: var(--lx-accent);
+    box-shadow: 0 4px 14px rgba(62, 27, 122, 0.45);
+}
+
+.lx-item {
+    transition:
+        background 0.15s ease,
+        padding-left 0.15s ease;
+}
+
+.lx-item:not(.lx-active):hover {
+    background: rgba(255, 255, 255, 0.06);
+    padding-left: 1.15rem;
+}
+
+.lx-divider-label {
+    letter-spacing: 0.12em;
+}
+
+.lx-status-dot {
+    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.25);
+}
+
+/* ESTILOS ALERT  */
+
+.swal-popup-custom {
+    border-radius: 1rem !important;
+    background: #e9e4fa !important;
+    padding: 1.5rem !important;
+    box-shadow: 0 20px 40px -12px rgba(124, 58, 237, 0.25) !important;
+}
+
+.swal-title-custom {
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    color: #1f2937 !important;
+}
+
+.swal-text-custom {
+    font-size: 1.125rem !important;
+    color: #6b7280 !important;
+    font-weight: 500 !important;
+}
+
+.swal-icon-custom {
+    border-color: #911b34 !important;
+}
+
+.swal-popup-custom .swal2-actions {
+    gap: 0.75rem !important;
+}
+
+.swal-confirm-btn {
+    background: linear-gradient(135deg, #ad2638, #ad2638) !important;
+    color: white !important;
+    padding: 0.6rem 1.5rem !important;
+    border-radius: 0.6rem !important;
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+    box-shadow: 0 4px 12px rgba(221, 11, 46, 0.35) !important;
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease !important;
+}
+
+.swal-confirm-btn:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(255, 37, 74, 0.45) !important;
+}
+
+.swal-cancel-btn {
+    background: #f3f4f6 !important;
+    color: #374151 !important;
+    padding: 0.6rem 1.5rem !important;
+    border-radius: 0.6rem !important;
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+    transition: background 0.15s ease !important;
+}
+
+.swal-cancel-btn:hover {
+    background: #e5e7eb !important;
+}
+
+.swal-fade-in {
+    animation: swalFadeIn 0.25s ease-out !important;
+}
+
+.swal-fade-out {
+    animation: swalFadeOut 0.2s ease-in !important;
+}
+
+@keyframes swalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes swalFadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+}

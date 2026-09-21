@@ -1,0 +1,46 @@
+@for (slide of slides; track slide.title; let index = $index) {
+    <article
+        class="showcase-slide"
+        [class.is-active]="activeSlide() === index"
+        [style.background-image]="
+            'linear-gradient(180deg, rgba(8, 26, 45, .08), rgba(8, 26, 45, .88)), url(' +
+            slide.image +
+            ')'
+        "
+    >
+        <div class="showcase-copy">
+            <span class="showcase-eyebrow">{{ slide.eyebrow }}</span>
+            <h1>{{ slide.title }}</h1>
+            <p>{{ slide.description }}</p>
+        </div>
+    </article>
+}
+
+<div class="showcase-controls">
+    <button
+        class="icon-button"
+        type="button"
+        aria-label="Diapositiva anterior"
+        (click)="previousSlide()"
+    >
+        &#8592;
+    </button>
+    <div class="slide-dots" aria-label="Seleccionar diapositiva">
+        @for (slide of slides; track slide.title; let index = $index) {
+            <button
+                type="button"
+                [class.is-active]="activeSlide() === index"
+                [attr.aria-label]="'Ir a la diapositiva ' + (index + 1)"
+                (click)="goToSlide(index)"
+            ></button>
+        }
+    </div>
+    <button
+        class="icon-button"
+        type="button"
+        aria-label="Siguiente diapositiva"
+        (click)="nextSlide()"
+    >
+        &#8594;
+    </button>
+</div>

@@ -1,0 +1,71 @@
+<main class="login-shell">
+    <section class="login-showcase" aria-label="Portal de Informa Perú">
+        <app-carrusel />  
+    </section>
+
+    <section class="login-panel card rounded-none border-0 bg-base-100 ">
+        <div class="login-content">
+            <div class="login-brand-row">
+                <app-login-icon />
+            </div>
+            <div class="login-heading flex justify-center flex-col text-center mb-5">
+                <span class="panel-kicker">Portal interno</span>
+                <h3>Inicia sesión</h3>
+                <div>Accede al portal interno de Informa Perú.</div>
+            </div>
+
+            <form class="login-form" (ngSubmit)="onSubmit()" [formGroup]="loginForm">
+                <div class="field-group form-control">
+                    <label class="label" for="username"><span>Usuario</span></label>
+                    <input
+                        id="username"
+                        class="input input-bordered w-full"
+                        type="text"
+                        placeholder="Escribe tu usuario"
+                        autocomplete="username"
+                        formControlName="username"
+                    />
+                </div>
+                <div class="field-group form-control">
+                    <label class="label" for="password"><span>Contraseña</span></label>
+                    <input
+                        id="password"
+                        class="input input-bordered w-full"
+                        type="password"
+                        placeholder="Escribe tu contraseña"
+                        autocomplete="current-password"
+                        formControlName="password"
+                    />
+                </div>
+                <button
+                    class="submit-button btn btn-primary"
+                    type="submit"
+                    [disabled]="isLoading()"
+                >
+                    @if (isLoading()) {
+                        <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
+                        Validando acceso...
+                    } @else {
+                        Entrar al Portal
+                    }
+                </button>
+            </form>
+            <div class="login-security">
+                <span aria-hidden="true">&#9679;</span> Acceso protegido para personal autorizado
+            </div>
+        </div>
+    </section>
+</main>
+@if (hasError()) {
+    <div
+        role="alert"
+        class="alert fixed bottom-5 right-5 w-100"
+        [class.alert-warning]="repeatMethodUtils.alertType() === 'warning'"
+        [class.alert-error]="repeatMethodUtils.alertType() === 'danger'"
+        animate.enter="slide-in-right"
+        animate.leave="slide-out-right">
+
+        <app-icons [name]="repeatMethodUtils.alertType()" [klass]="'h-6 w-6 shrink-0'" [strokeWidth]="2" />
+        <span class="text-[15px]">{{ repeatMethodUtils.errorMessage() || errorMessage() }}</span>
+    </div>
+}

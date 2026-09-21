@@ -1,0 +1,43 @@
+<div class="flex items-center gap-5 px-5 py-8 border border-white/10 sidebar-body">
+    <div class="avatar placeholder">
+        <div class="bg-white/15 text-white rounded-full w-14 flex items-center justify-center">
+            <app-icons name="user" [klass]="'w-9 h-9'" [strokeWidth]="2" />
+        </div>
+    </div>
+    <div class="min-w-0">
+        @switch (user()?.cod_role) {
+            @case (1) {
+                <p class="font-semibold text-[15px] truncate">
+                    Adm. {{ user()?.name }} {{ user()?.first_name }}
+                </p>
+            }
+            @case (2) {
+                <p class="font-semibold text-[15px] truncate">
+                    Dr. {{ user()?.name }} {{ user()?.first_name }}
+                </p>
+            }
+            @case (3) {
+                <p class="font-semibold text-[15px] truncate">
+                   Inv. {{ user()?.name }} {{ user()?.first_name }}
+                </p>
+            }
+            @default {
+                <p class="font-semibold text-[15px] truncate">
+                    {{ user()?.name }} {{ user()?.first_name }}
+                </p>
+            }
+        }
+
+        @if (user()?.state == 'ACT') {
+            <p class="text-[13px] text-emerald-300 flex items-center gap-3 mt-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 lx-status-dot"> </span>
+                En línea
+            </p>
+        } @else {
+            <p class="text-[13px] text-red-500 flex items-center gap-3 mt-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-red-500 lx-status-dot"> </span>
+                Desconectado
+            </p>
+        }
+    </div>
+</div>
