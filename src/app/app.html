@@ -1,3 +1,9 @@
-
-
 <router-outlet />
+
+@if (loadingService.isLoading()) {
+	<!-- <div class="global-loader" role="status" aria-live="polite" aria-label="Cargando">
+		<span class="loading loading-spinner loading-lg text-primary"></span>
+	</div> -->
+
+	<app-global-loader [selectLoader]="'loader-login'" />
+}

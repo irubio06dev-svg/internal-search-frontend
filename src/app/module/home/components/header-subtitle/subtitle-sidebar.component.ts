@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, type OnInit } from '@angular/core';
-import { UserResponse } from '../../../auth/interfaces/auth-response.interface';
 import { IconsComponent } from '../../../../shared/icons/icons.component';
+import { UsuarioResponse } from '../../../auth/interfaces/auth-response.interface';
 
 @Component({
     selector: 'app-subtitle-sidebar',
@@ -10,5 +10,5 @@ import { IconsComponent } from '../../../../shared/icons/icons.component';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SubtitleSidebarComponent {
-    public user = input<UserResponse | null>();
+    public user = input<UsuarioResponse | null>();
 }

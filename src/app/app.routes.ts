@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
-import { LoginPageComponent } from './module/auth/pages/login-page/login-page.component';
 import { HomeGuard } from './core/guards/Home.guard';
+import { NotAuthenticatedGuardGuard } from './core/guards/not-authenticated.guard';
+import { LoginPageComponent } from './module/auth/pages/login-page/login-page.component';
 
 export const routes: Routes = [
     {
@@ -10,16 +11,16 @@ export const routes: Routes = [
     {
         path: 'auth',
         loadChildren: () => import('./module/auth/auth.routes'),
-        // canMatch: [
-        //     NotAuthenticatedGuardGuard
-        // ]
+        canMatch: [
+            NotAuthenticatedGuardGuard
+        ]
     },
     {
         path: 'system',
-        loadChildren: () => import('./module/home/home.routes')
-        // canMatch: [
-        //     HomeGuard
-        // ],
+        loadChildren: () => import('./module/home/home.routes'),
+        canMatch: [
+            HomeGuard
+        ],
 
     },
 
@@ -27,6 +28,5 @@ export const routes: Routes = [
         path: '**',
         redirectTo: 'auth/login',
     }
-
-
 ];
+

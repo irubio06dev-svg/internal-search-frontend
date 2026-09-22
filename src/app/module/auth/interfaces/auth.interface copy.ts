@@ -1,6 +1,6 @@
 export interface User {
-    username: string;
-    password: string;
+    UsuarioLogin: string;
+    Clave: string;
 }
 
 export const CARRUSEL_SLIDES = [

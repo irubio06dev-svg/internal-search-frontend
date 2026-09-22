@@ -22,12 +22,12 @@
                 <app-icons name="user" klass="h-5 w-5" [strokeWidth]="1.8" />
             </div>
             <div class="user-details">
-                <span class="user-name" [title]="authService.user()?.name || authService.user()?.username || 'Sin sesión'">
+                <!-- <span class="user-name" [title]="authService.user()?.name || authService.user()?.username || 'Sin sesión'">
                     {{ authService.user()?.name || authService.user()?.username || 'Sin sesión' }}
                 </span>
                 <span class="user-role" [title]="authService.user()?.name_role || 'Sin rol asignado'">
                     {{ authService.user()?.name_role || 'Sin rol asignado' }}
-                </span>
+                </span> -->
             </div>
             <svg class="user-chevron" [class.is-open]="userMenuOpen()" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="m6 9 6 6 6-6" />
@@ -37,9 +37,9 @@
             <h2 id="user-information-title">Mi cuenta</h2>
             @if (authService.user(); as user) {
                 <dl>
-                    <div><dt>Nombre</dt><dd>{{ user.name || 'No disponible' }}</dd></div>
+                    <!-- <div><dt>Nombre</dt><dd>{{ user.name || 'No disponible' }}</dd></div>
                     <div><dt>Usuario</dt><dd>{{ user.username || 'No disponible' }}</dd></div>
-                    <div><dt>Rol</dt><dd>{{ user.name_role || 'Sin rol asignado' }}</dd></div>
+                    <div><dt>Rol</dt><dd>{{ user.name_role || 'Sin rol asignado' }}</dd></div> -->
                 </dl>
             } @else {
                 <p>No hay una sesi&#243;n activa.</p>

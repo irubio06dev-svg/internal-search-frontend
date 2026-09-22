@@ -3,12 +3,12 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../interfaces/auth.interface copy';
-import { authResponse } from '../../interfaces/auth-response.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { IconsComponent } from '../../../../shared/icons/icons.component';
 import { RepeatedMethodUtils } from '../../../../shared/utils/repeated-method.utils';
 import { LoginIconComponent } from '../../components/login-icon/login-icon.component';
 import { CarruselComponent } from '../../components/carrusel/carrusel.component';
+import { AuthResponse } from '../../interfaces/auth-response.interface';
 
 @Component({
     selector: 'app-login-page',
@@ -30,8 +30,8 @@ export class LoginPageComponent {
 
 
     loginForm = this.fb.group({
-        username: [''],
-        password: [''],
+        UsuarioLogin: [''],
+        Clave: [''],
     });
 
 
@@ -50,22 +50,26 @@ export class LoginPageComponent {
 
 
 
+        this.hasError.set(false);
         this.isLoading.set(true);
 
         const user: User = {
-            username: this.loginForm.value.username!,
-            password: this.loginForm.value.password!,
+            UsuarioLogin: this.loginForm.value.UsuarioLogin!,
+            Clave: this.loginForm.value.Clave!,
         };
 
         this.authService.login(user).subscribe({
-            next: (response: authResponse) => {
+            next: (response: AuthResponse) => {
                 this.isLoading.set(false);
                 
-                if (response.success === 1) {
-                    this.router.navigateByUrl('/system');
+                if (response.estado === 1) {
+                    this.router.navigateByUrl('/system/dashboard');
                     return;
                 }
 
+                this.errorMessage.set('El servidor no confirmó el inicio de sesión.');
+                this.alertType.set('warning');
+                this.hasError.set(true);
             },
             error: (err: HttpErrorResponse) => {
                 this.isLoading.set(false);

@@ -1,8 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
-import { authResponse, UserResponse } from '../interfaces/auth-response.interface';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { AuthResponse, UsuarioResponse } from '../interfaces/auth-response.interface';
 import { environment } from '../../../../environments/environment.development';
 import { User } from '../interfaces/auth.interface copy';
 
@@ -14,16 +13,11 @@ type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 })
 export class AuthService {
     private _authStatus = signal<AuthStatus>('checking');
-    private _user = signal<UserResponse | null>(null);
+    private _user = signal<UsuarioResponse | null>(null);
     private _token = signal<string | null>(typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null);
 
     private http = inject(HttpClient);
     private env = environment.baseUrl;
-
-    checkStatusResource = rxResource({
-        defaultValue: false,
-        stream: () => this.checkStatus(),
-    });
 
     authStatus = computed<AuthStatus>(() => {
         if (this._authStatus() === 'checking') return 'checking';
@@ -36,13 +30,13 @@ export class AuthService {
         return 'not-authenticated';
     });
 
-    user = computed<UserResponse | null>(() => this._user());
+    user = computed<UsuarioResponse | null>(() => this._user());
     token = computed<string | null>(() => this._token());
 
-    public login(user: User): Observable<authResponse> {
-        return this.http.post<authResponse>(`${this.env}system/auth/login`, user).pipe(
+    public login(user: User): Observable<AuthResponse> {
+        return this.http.post<AuthResponse>(`${this.env}system/auth/login`, user).pipe(
             tap((resp) => {
-                if (resp.success === 1) {
+                if (resp.estado === 1) {
                     this.handleAuthSuccess(resp);
                     return;
                 }
@@ -64,12 +58,16 @@ export class AuthService {
             return of(false);
         }
 
-        return this.http.get<authResponse>(`${this.env}system/auth/check-status`, {
+        return this.http.get<AuthResponse>(`${this.env}system/auth/check-status`, {
             // headers: {
             //     'Authorization': `Bearer ${token}`
             // }
         }).pipe(
-            map((resp) => resp.success === 1 && this.handleAuthSuccess(resp)),
+            map((resp) => {
+                if (resp.estado === 1) return this.handleAuthSuccess(resp);
+                this.logout();
+                return false;
+            }),
             catchError((err) => this.handleAuthError(err))
         );
     }
@@ -88,14 +86,14 @@ export class AuthService {
 
     }
 
-    private handleAuthSuccess({ data }: authResponse) {
-        this._user.set(data.user);
+    private handleAuthSuccess({ ...data }: AuthResponse) {
+        this._user.set(data.usuario);
         this._authStatus.set('authenticated');
         this._token.set(data.token);
 
         if (typeof localStorage !== 'undefined') {
             localStorage.setItem('token', data.token);
-            localStorage.setItem('cod_role', data.user.cod_role.toString());
+            localStorage.setItem('cod_role', data.usuario.id.toString());
 
         }
         return true;

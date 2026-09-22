@@ -79,7 +79,7 @@ export class HomeComponent implements OnInit {
 
     public getRoutes() {
         const user = this.authService.user();
-        const codRole = user?.cod_role;
+        const codRole = user?.id;
 
         if (!codRole) {
             return;

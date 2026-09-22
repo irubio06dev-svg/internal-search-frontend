@@ -16,25 +16,25 @@
 
             <form class="login-form" (ngSubmit)="onSubmit()" [formGroup]="loginForm">
                 <div class="field-group form-control">
-                    <label class="label" for="username"><span>Usuario</span></label>
+                    <label class="label" for="UsuarioLogin"><span>Usuario</span></label>
                     <input
-                        id="username"
+                        id="UsuarioLogin"
                         class="input input-bordered w-full"
                         type="text"
                         placeholder="Escribe tu usuario"
                         autocomplete="username"
-                        formControlName="username"
+                        formControlName="UsuarioLogin"
                     />
                 </div>
                 <div class="field-group form-control">
-                    <label class="label" for="password"><span>Contraseña</span></label>
+                    <label class="label" for="Clave"><span>Contraseña</span></label>
                     <input
-                        id="password"
+                        id="Clave"
                         class="input input-bordered w-full"
-                        type="password"
+                        type="Clave"
                         placeholder="Escribe tu contraseña"
                         autocomplete="current-password"
-                        formControlName="password"
+                        formControlName="Clave"
                     />
                 </div>
                 <button

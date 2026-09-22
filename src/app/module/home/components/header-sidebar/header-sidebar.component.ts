@@ -1,5 +1,4 @@
 import { Component, input } from '@angular/core';
-import { UserResponse } from '../../../auth/interfaces/auth-response.interface';
 
 @Component({
     selector: 'app-header-sidebar',
@@ -8,5 +7,5 @@ import { UserResponse } from '../../../auth/interfaces/auth-response.interface';
     styleUrl: './header-sidebar.component.css',
 })
 export class HeaderSidebarComponent {
-
+    
 }
