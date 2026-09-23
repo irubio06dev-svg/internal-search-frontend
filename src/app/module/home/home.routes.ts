@@ -1,6 +1,7 @@
 import { Routes } from "@angular/router";
 import { HomeComponent } from "./pages/home.component";
-import { DasboardComponent } from "../dasboard/dasboard.component";
+import { HistoricComponent } from "../historic/historic.component";
+import { ConsultasComponent } from "../consultas/pages/consultas.component";
 
 
 
@@ -10,9 +11,29 @@ export const homeRoutes: Routes = [
         component: HomeComponent,
         children: [
             {
-                path: 'dashboard',
-                component: DasboardComponent,
+                path: 'consultas',
+                component: ConsultasComponent,
             },
+
+            {
+                path: 'roles',
+                component: HistoricComponent,
+            },
+            {
+                path: 'reclamos',
+                component: HistoricComponent,
+
+            },
+            {
+                path: 'reportes',
+                component: HistoricComponent,
+
+            },
+            // {
+            //     path: 'dasboard',
+            //     redirectTo: 'dashboard',
+            //     pathMatch: 'full',
+            // },
 
             // {
             //     path: 'prediction',
@@ -28,13 +49,10 @@ export const homeRoutes: Routes = [
             //         { path: 'result', component: PatientComponent }
             //     ]
             // },
-            // {
-            //     path: 'history',
-            //     component: HistoricComponent,
-            // },
+
             {
                 path: '',
-                redirectTo: 'dashboard',
+                redirectTo: 'consultas',
                 pathMatch: 'full',
             }
         ]

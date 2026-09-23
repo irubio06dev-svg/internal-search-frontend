@@ -3,8 +3,9 @@ import { IconsComponent } from '../../../../shared/icons/icons.component';
 import { UsuarioResponse } from '../../../auth/interfaces/auth-response.interface';
 
 @Component({
+    // IconsComponent
     selector: 'app-subtitle-sidebar',
-    imports: [IconsComponent],
+    imports: [],
     templateUrl: './subtitle-sidebar.component.html',
     styleUrls: ['./subtitle-sidebar.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,

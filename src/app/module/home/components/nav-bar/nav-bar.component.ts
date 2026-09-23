@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, ViewChild, inject, signal } from '@angular/core';
+import { Component, computed, ElementRef, HostListener, ViewChild, inject, signal } from '@angular/core';
 import { AuthService } from '../../../auth/services/auth.service';
 import { IconsComponent } from '../../../../shared/icons/icons.component';
 
@@ -11,6 +11,9 @@ import { IconsComponent } from '../../../../shared/icons/icons.component';
 export class NavBarComponent {
     readonly authService = inject(AuthService);
     readonly userMenuOpen = signal(false);
+    readonly displayRoles = computed(() =>
+        this.authService.user()?.roles?.map(role => role.rol).filter(Boolean).join(', ') || 'Sin rol asignado'
+    );
     @ViewChild('userMenu') private userMenu?: ElementRef<HTMLElement>;
 
     @HostListener('document:click', ['$event'])

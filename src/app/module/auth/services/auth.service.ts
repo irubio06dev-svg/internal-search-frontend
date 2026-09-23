@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { AuthResponse, UsuarioResponse } from '../interfaces/auth-response.interface';
 import { environment } from '../../../../environments/environment.development';
-import { User } from '../interfaces/auth.interface copy';
+import { User } from '../interfaces/auth.interface';
 
 
 type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';

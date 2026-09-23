@@ -16,7 +16,7 @@ export class RepeatedMethodUtils {
         // if (backendResponse?.message && !Number.isNaN(backendSuccess)) {
         //     this.errorMessage.set(backendResponse.message);
         //     this.alertType.set(backendSuccess === 0 || backendSuccess === 2 ? 'warning' : 'danger');
-
+        
         //     setTimeout(() => {
         //         this.hasError.set(false);
         //     }, 3000);

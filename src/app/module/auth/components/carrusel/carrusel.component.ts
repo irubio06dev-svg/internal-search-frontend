@@ -1,5 +1,5 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, inject, signal, type OnInit } from '@angular/core';
-import { CARRUSEL_SLIDES } from '../../interfaces/auth.interface copy';
+import { CARRUSEL_SLIDES } from '../../interfaces/auth.interface';
 
 @Component({
     selector: 'app-carrusel',

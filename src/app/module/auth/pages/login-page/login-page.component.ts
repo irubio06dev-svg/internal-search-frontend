@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { User } from '../../interfaces/auth.interface copy';
+import { User } from '../../interfaces/auth.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { IconsComponent } from '../../../../shared/icons/icons.component';
 import { RepeatedMethodUtils } from '../../../../shared/utils/repeated-method.utils';
@@ -63,7 +63,7 @@ export class LoginPageComponent {
                 this.isLoading.set(false);
                 
                 if (response.estado === 1) {
-                    this.router.navigateByUrl('/system/dashboard');
+                    this.router.navigateByUrl('/system');
                     return;
                 }
 

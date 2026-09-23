@@ -18,15 +18,15 @@
         <label for="lx-drawer" aria-label="cerrar menú" class="drawer-overlay"></label>
         <aside class="w-72 min-h-full sidebar-gradient text-white flex flex-col">
 
-            <!-- <app-header-sidebar  /> -->
+            <app-header-sidebar  />
 
-            <!-- <app-subtitle-sidebar [user]="authService.user()"/> -->
+            <app-subtitle-sidebar [user]="authService.user()"/>
 
             <nav class="flex-1 overflow-y-auto px-3 py-4 sidebar-body">
                 <p class="lx-divider-label text-[11px] font-bold text-violet-200 px-3 mb-6">MENÚ PRINCIPAL</p>
 
                 <ul class="menu p-4 gap-0 text-sm w-full mx-auto flex flex-col flex-nowrap max-h-112.5 overflow-y-auto">
-                    @for (item of items(); track item.cod_route) {
+                    @for (item of items(); track item.codMenu) {
                         <app-sidebarmenu [items]="item" [level]="0" />
                     }
                 </ul>
