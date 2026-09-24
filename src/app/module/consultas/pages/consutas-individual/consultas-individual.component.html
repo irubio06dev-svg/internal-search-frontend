@@ -1,0 +1,151 @@
+﻿<section class=" mx-auto max-w-275 sm:w-[90%] text-base-content" aria-labelledby="consult-title">
+    <header class=" flex flex-wrap items-start justify-between gap-4 border-b border-base-300">
+        <div>
+            <h1 id="consult-title" class="text-2xl font-bold">Consulta individual</h1>
+            <p class="mt-2 text-sm text-slate-600">Busca un documento y explora su información por categoría.</p>
+        </div>
+    </header>
+
+    <form [formGroup]="form" class="grid grid-cols-1 items-end gap-4 py-7 sm:grid-cols-2 lg:grid-cols-5"
+        (ngSubmit)="buscar()">
+        <fieldset class="fieldset col-span-full w-full">
+            <legend class="fieldset-legend">Tipo de documento</legend>
+            <div class="flex flex-wrap gap-x-6 gap-y-2">
+                <label class="flex min-h-11 cursor-pointer items-center gap-2 text-sm">
+                    <input class="radio radio-sm text-[#154f91]" type="radio" formControlName="tipoDocumento"
+                        value="DNI" (change)="onTipoDocumentoChange()" /> DNI
+                </label>
+                <label class="flex min-h-11 cursor-pointer items-center gap-2 text-sm">
+                    <input class="radio radio-sm text-[#154f91]" type="radio" formControlName="tipoDocumento"
+                        value="RUC" (change)="onTipoDocumentoChange()" /> RUC
+                </label>
+                <label class="flex min-h-11 cursor-pointer items-center gap-2 text-sm">
+                    <input class="radio radio-sm text-[#154f91]" type="radio" formControlName="tipoDocumento" value="CE"
+                        (change)="onTipoDocumentoChange()" /> Carnet de extranjería
+                </label>
+                <label class="flex min-h-11 cursor-pointer items-center gap-2 text-sm">
+                    <input class="radio radio-sm text-[#154f91]" type="radio" formControlName="tipoDocumento"
+                        value="PASAPORTE" (change)="onTipoDocumentoChange()" /> Pasaporte
+                </label>
+            </div>
+        </fieldset>
+
+
+        <div class="min-w-0 w-full">
+            <label class="mb-2 block text-sm font-semibold" for="apePat"> Número Documento</label>
+
+            <input id="document" class="custom-input" formControlName="documento" type="text" autocomplete="off"
+                [maxlength]="maxLengthDocumento" placeholder="Ingresa el número de documento" />
+        </div>
+
+        <div class="min-w-0 w-full">
+            <label class="mb-2 block text-sm font-semibold" for="apePat">{{ labelApePat }}</label>
+
+            <input class="custom-input" id="apePat" formControlName="apePat" type="text"
+                [placeholder]="'Ingresa ' + labelApePat.toLowerCase()" />
+        </div>
+
+        <!-- Solo visibles para DNI / CE / PASAPORTE, no para RUC -->
+        @if(!esRuc) {
+
+        <div class="min-w-0 w-full">
+            <label class="mb-2 block text-sm font-semibold" for="apeMat">Apellido materno</label>
+            <input class="custom-input" id="apeMat" formControlName="apeMat" type="text"
+                placeholder="Ingresa el apellido materno" />
+        </div>
+        }
+
+        @if(!esRuc) {
+
+        <div class="min-w-0 w-full">
+            <label class="mb-2 block text-sm font-semibold" for="prenombres">Prenombres</label>
+            <input class="custom-input" id="prenombres" formControlName="prenombres" type="text"
+                placeholder="Ingresa los nombres" />
+        </div>
+        }
+
+        @if(!esRuc) {
+
+        <div class="min-w-0 w-full">
+            <label class="mb-2 block text-sm font-semibold" for="telefono">Teléfono</label>
+            <input class="custom-input" id="telefono" formControlName="telefono" type="tel"
+                placeholder="Ej. 962366890" />
+        </div>
+
+        }
+
+        <div class="col-span-full flex w-full flex-wrap gap-3">
+            <button type="submit" [disabled]="consultasService.isLoading()"
+                class="btn btn-sm w-full border-0 bg-[#154f91] text-white shadow-none hover:bg-[#103e73] sm:w-auto">Consultar</button>
+            <button type="button" [disabled]="consultasService.isLoading()" (click)="limpiar()"
+                class="btn btn-sm btn-outline w-full sm:w-auto">Limpiar</button>
+        </div>
+    </form>
+
+    @if (consultasService.isLoading()) { <p role="status">Consultando...</p> }
+    @if (consultasService.error()) { <p role="alert" class="text-error">{{ consultasService.error() }}</p> }
+
+    @if (arrarDatos(); as datos) {
+    <div class="card rounded-xl border border-base-300 bg-base-100">
+
+        <div class="flex flex-wrap items-center justify-between gap-3 p-5 sm:p-6">
+            <div>
+                <h2 class="text-lg font-semibold">Resultado de la consulta</h2>
+                <p class="mt-1 text-sm text-slate-600">Información de la última consulta</p>
+            </div>
+    
+        </div>
+        <nav class="flex flex-wrap gap-2 border-y border-base-300 bg-base-200 mt-5 px-4"
+            aria-label="Categorías de la consulta">
+            @for (tab of tabs; track tab.id) {
+            <button type="button"
+                class="relative shrink-0 px-3.5 py-3 text-sm font-medium text-slate-500 transition-colors hover:text-slate-800"
+                [class.text-\[\#154f91\]]="activeTab === tab.id" (click)="selectTab(tab.id)">
+                {{ tab.label }}
+                @if (activeTab === tab.id) {
+                <span class="absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-[#154f91]"></span>
+                }
+            </button>
+            }
+        </nav>
+        <section class="card-body p-5 sm:p-6 text-center">
+
+            @if (activeTab === 'reniec') {
+            <!-- <p>La respuesta actual no incluye información de RENIEC.</p> -->
+
+            <app-reniec />
+
+            }
+
+            @if (activeTab === 'alertas') {
+            <app-alertas />
+            }
+
+            @if (activeTab === 'correos') {
+            <app-correos />
+            }
+            @if (activeTab === 'historial-crediticio') {
+            <app-historial-crediticio [calificaciones]="datos.calificaciones" [deudas]="datos.deudas"
+                [lineasCredito]="datos.lineasCredito" />
+            }
+
+            @if (activeTab === 'sueldos') {
+            <app-sueldos />
+            }
+
+            @if (activeTab === 'sunarp') {
+            <app-sunarp />
+            }
+            @if (activeTab === 'sunedu') {
+            <app-sunedu />
+            }
+
+            @if (activeTab === 'telefono') {
+            <app-telefono [moviles]="datos.moviles" />
+            }
+
+
+        </section>
+    </div>
+    }
+</section>

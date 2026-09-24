@@ -1,7 +1,5 @@
 import { Routes } from "@angular/router";
 import { HomeComponent } from "./pages/home.component";
-import { HistoricComponent } from "../historic/historic.component";
-import { ConsultasComponent } from "../consultas/pages/consultas.component";
 
 
 
@@ -12,23 +10,9 @@ export const homeRoutes: Routes = [
         children: [
             {
                 path: 'consultas',
-                component: ConsultasComponent,
+                loadChildren: () => import('../consultas/consultas.routes'),
             },
 
-            {
-                path: 'roles',
-                component: HistoricComponent,
-            },
-            {
-                path: 'reclamos',
-                component: HistoricComponent,
-
-            },
-            {
-                path: 'reportes',
-                component: HistoricComponent,
-
-            },
             // {
             //     path: 'dasboard',
             //     redirectTo: 'dashboard',

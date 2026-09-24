@@ -1,0 +1,207 @@
+﻿<button type="button" class="btn btn-sm bg-[#154f91] text-white" (click)="open()">
+    Ver historial crediticio
+</button>
+<dialog #report class="modal" aria-labelledby="credit-title">
+    <div class="modal-box flex max-h-[85dvh] w-[calc(100%-2rem)] max-w-3xl flex-col overflow-hidden rounded-xl p-0">
+        <div class="flex shrink-0 items-center justify-between gap-4 border-b-2 border-base-300 px-5 py-3">
+            <h1 id="credit-title" class="font-bold text-xl">
+                Historial crediticio
+            </h1>
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost" aria-label="Cerrar historial" autofocus>
+                    ✕
+                </button>
+            </form>
+        </div>
+        <div class="min-h-0 overflow-y-auto px-4 py-4 sm:px-5 mb-2">
+            <div class="grid grid-cols-3 gap-2 bg-slate-100 mb-4">
+                <div class="text-center  p-2">
+                    <dt class="text-xs text-slate-600"><b>Documento</b></dt>
+                    <dd class="mt-1 font-medium break-words">{{ identity().documento }}</dd>
+                </div>
+                <div class="text-center  p-2">
+                    <dt class="text-xs text-slate-600"><b>Nombre / Razón social</b></dt>
+                    <dd class="mt-1 font-medium break-words">{{ identity().nombre }}</dd>
+                </div>
+                <div class="text-center  p-2">
+                    <dt class="text-xs text-slate-600"><b>Consulta</b></dt>
+                    <dd class="mt-1 font-medium">{{ openedAt() | date: 'dd/MM/yyyy, HH:mm' }}</dd>
+                </div>
+            </div>
+
+            <div>
+
+                @if (periods().length > 1) {
+                <label class="mb-4 flex items-center gap-3 text-sm"> <b class="font-medium">Periodo</b>
+                    <select class="select select-sm w-50" [value]="period()"
+                        (change)="selectedPeriod.set($any($event.target).value)">
+                        @for (value of periods(); track value) {
+                        <option [value]="value">{{ value || 'Sin periodo' }}</option>
+                        }
+                    </select>
+                </label>
+                }
+            </div>
+
+
+            <section class="mb-4 overflow-hidden rounded-lg border border-base-300">
+                <h3 class="bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700">
+                    Calificación crediticia
+                </h3>
+                @for (rating of ratings(); track $index) {
+                <div class="grid grid-cols-3 divide-x divide-base-300 border-t border-base-300 sm:grid-cols-6">
+                    @for (category of categories; track category.key) {
+                    <div class="border-t-5 px-3 py-2" [style.border-top-color]="category.color">
+                        <p class="text-xs text-slate-600">{{ category.label }}</p>
+                        <p class="text-base font-semibold" [style.color]="category.color">
+                            {{
+                            rating[category.key] == null
+                            ? '—'
+                            : (rating[category.key] | number: '1.0-2') + '%'
+                            }}
+                        </p>
+                    </div>
+                    }
+                    <div class="border-t-5 border-blue-500 px-3 py-2">
+                        <p class="text-xs text-slate-600">Reportan</p>
+                        <p class="text-base font-semibold text-blue-600">
+                            {{ rating.reportan ?? '—' }}
+                        </p>
+                    </div>
+                </div>
+                } @empty {
+                <p class="p-4 text-sm text-slate-600">
+                    <b>No hay calificaciones para este periodo.</b>
+
+                </p>
+                }
+            </section>
+            <section class="mb-4 overflow-hidden rounded-lg border border-base-300">
+                <h3 class="bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700">
+                    Detalle de deuda
+                </h3>
+            <div class="overflow-x-auto">
+                <table class="table table-sm text-[11px] [&_th]:text-center [&_th]:font-medium [&_td]:py-1 [&_td]:text-center [&_th:first-child]:!text-left [&_td:first-child]:!text-left">
+                    <thead>
+                        <tr>
+                            <th class="w-48 text-right">Entidad</th>
+                            <th>Tipo de deuda</th>
+                            <th class="w-20">Calificación</th>
+                            <th class="w-16">Días</th>
+                            <th class="w-28">Capital</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @for (debt of debts(); track $index) {
+                            <tr>
+                                <td class="font-medium">{{ debt.entidad ?? '—' }}</td>
+                                <td>{{ debt.tipoDeuda ?? '—' }}</td>
+                                <td>{{ debt.calificacion ?? '—' }}</td>
+                                <td>{{ debt.dias ?? '—' }}</td>
+                                <td class="whitespace-nowrap">
+                                    {{
+                                        debt.saldo == null
+                                            ? '—'
+                                            : (debt.saldo | number: '1.2-2')
+                                    }}
+                                </td>
+                            </tr>
+                        } @empty {
+                            <tr>
+                                <td colspan="5" class="py-4 text-center text-slate-500">
+                                    No hay deudas para este periodo.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                    @if (debts().length) {
+                        <tfoot>
+                            <tr class="bg-base-100 text-base-content">
+                                <td colspan="4" class="text-center text-[12px] ">TOTAL</td>
+                                <td class="text-center text-[11px] text-[12px]">{{ total() | number: '1.2-2' }}</td>
+                            </tr>
+                        </tfoot>
+                    }
+                </table>
+            </div>
+            </section>
+            <section class="overflow-hidden rounded-lg border border-base-300">
+                <h3 class="bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-100">
+                    Líneas de crédito
+                </h3>
+                <div class="overflow-x-auto">
+                <table class="table table-sm text-[11px] [&_th]:text-center [&_th]:font-medium [&_td]:py-1 [&_td]:text-center [&_th:first-child]:!text-left [&_td:first-child]:!text-left">
+                        <thead>
+                            <tr>
+                                <th class="w-48">Entidad reportante</th>
+                                <th>Tipo de línea</th>
+                                <th>% Utilizado</th>
+                                <th class="w-28 text-center">% No utilizado</th>
+                                <th class="w-32 text-right">Línea de crédito</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (line of credits(); track $index) {
+                            @let used = usedPercent(line);
+                            @let unused = unusedPercent(line);
+                            <tr class="hover:bg-slate-50">
+                                <td class="font-medium">{{ line.entidad ?? '—' }}</td>
+                                <td class="text-slate-600">{{ line.tipo ?? '—' }}</td>
+                                <td>
+                                    @if (used == null) {
+                                    <span class="text-slate-400">—</span>
+                                    } @else {
+                                    <div class="flex items-center gap-2">
+                                        <div class="h-1.5 w-20 shrink-0 overflow-hidden rounded-full bg-slate-200"
+                                            role="progressbar" aria-label="Porcentaje utilizado" aria-valuemin="0"
+                                            aria-valuemax="100" [attr.aria-valuenow]="used">
+                                            <div class="h-full rounded-full bg-[#154f91]"
+                                                [style.width.%]="used > 100 ? 100 : used"></div>
+                                        </div>
+                                        <span class="font-medium tabular-nums">
+                                            {{ used | number: '1.0-2' }}%
+                                        </span>
+                                    </div>
+                                    }
+                                </td>
+                                <td class="text-center text-slate-500 tabular-nums">
+                                    {{ unused == null ? '—' : (unused | number: '1.0-2') + '%' }}
+                                </td>
+                                <td class="text-right font-medium whitespace-nowrap tabular-nums">
+                                    {{
+                                    line.lineaCreditoMonto == null
+                                    ? '—'
+                                    : (line.lineaCreditoMonto | number: '1.2-2')
+                                    }}
+                                </td>
+                            </tr>
+                            } @empty {
+                            <tr>
+                                <td colspan="5" class="py-6 text-center text-slate-500">
+                                    No se registran líneas de crédito para el periodo consultado.
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+        <footer
+            class="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-base-200 bg-slate-50 px-5 py-3">
+            <p class="text-xs text-slate-600">
+                Periodo del reporte: {{ period() || 'No disponible' }}
+            </p>
+            <form method="dialog">
+                <button class="btn btn-sm border-0 bg-[#154f91] px-6 text-white shadow-none hover:bg-[#103e73]">
+                    Cerrar
+                </button>
+            </form>
+        </footer>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button aria-label="Cerrar historial">Cerrar</button>
+    </form>
+</dialog>

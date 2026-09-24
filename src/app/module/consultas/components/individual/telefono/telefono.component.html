@@ -1,0 +1,163 @@
+<button type="button" class="btn btn-sm bg-[#154f91] text-white" (click)="open()">
+    Ver teléfonos
+</button>
+
+<dialog #phones class="modal" aria-labelledby="phones-title">
+    <div
+        class="modal-box flex max-h-[85dvh] w-[calc(100%-2rem)] max-w-3xl flex-col overflow-hidden rounded-xl p-0"
+    >
+        <!-- Encabezado -->
+        <div
+            class="flex shrink-0 items-center justify-between gap-4 border-b-2 border-base-300 px-5 py-3"
+        >
+            <h1 id="phones-title" class="text-xl font-bold">Teléfonos</h1>
+            <form method="dialog">
+                <button
+                    class="btn btn-sm btn-circle btn-ghost"
+                    aria-label="Cerrar teléfonos"
+                    autofocus
+                >
+                    ✕
+                </button>
+            </form>
+        </div>
+
+        <div class="mb-2 min-h-0 overflow-y-auto px-4 py-4 sm:px-5">
+            <!-- Identidad -->
+            <dl class="mb-4 grid grid-cols-3 gap-2 bg-slate-100">
+                <div class="p-2 text-center">
+                    <dt class="text-xs text-slate-600"><b>Documento</b></dt>
+                    <dd class="mt-1 font-medium break-words">{{ identity().documento }}</dd>
+                </div>
+                <div class="p-2 text-center">
+                    <dt class="text-xs text-slate-600"><b>Nombre / Razón social</b></dt>
+                    <dd class="mt-1 font-medium break-words">{{ identity().nombre }}</dd>
+                </div>
+                <div class="p-2 text-center">
+                    <dt class="text-xs text-slate-600"><b>Consulta</b></dt>
+                    <dd class="mt-1 font-medium">{{ openedAt() | date: 'dd/MM/yyyy, HH:mm' }}</dd>
+                </div>
+            </dl>
+
+            <section class="overflow-hidden rounded-lg border border-base-300">
+                <div class="flex items-center justify-between gap-3 bg-slate-100 px-3 py-2">
+                    <h3 class="text-sm font-semibold text-slate-700">Teléfonos registrados</h3>
+                    @if (moviles().length) {
+                        <span class="text-xs text-slate-500">
+                            {{ moviles().length }}
+                            {{ moviles().length === 1 ? 'registro' : 'registros' }}
+                        </span>
+                    }
+                </div>
+
+                <!-- Móvil: tarjetas -->
+                <div class="divide-y divide-base-300 md:hidden">
+                    @for (item of moviles(); track $index) {
+                        <article class="min-w-0 p-3 text-xs">
+                            <div class="mb-2 flex items-center justify-between gap-2">
+                                <span class="text-slate-500">Teléfono</span>
+                                <span
+                                    class="font-semibold break-all text-[#154f91] tabular-nums"
+                                    >{{ item.telefono ?? '—' }}</span
+                                >
+                            </div>
+                            <dl class="grid grid-cols-2 gap-x-3 gap-y-2">
+                                <div class="min-w-0">
+                                    <dt class="text-slate-500">Periodo</dt>
+                                    <dd class="font-medium break-words">
+                                        {{ item.periodo ?? '—' }}
+                                    </dd>
+                                </div>
+                                <div class="min-w-0">
+                                    <dt class="text-slate-500">Fecha de alta</dt>
+                                    <dd class="font-medium break-words">
+                                        {{ item.fechaAlta ?? '—' }}
+                                    </dd>
+                                </div>
+                                <div class="min-w-0">
+                                    <dt class="text-slate-500">Plan</dt>
+                                    <dd class="font-medium break-words">
+                                        {{ item.planMovil ?? '—' }}
+                                    </dd>
+                                </div>
+                                <div class="min-w-0">
+                                    <dt class="text-slate-500">Modalidad</dt>
+                                    <dd class="font-medium break-words">
+                                        {{ item.modalidad ?? '—' }}
+                                    </dd>
+                                </div>
+                                <div class="col-span-2 min-w-0">
+                                    <dt class="text-slate-500">Operadora</dt>
+                                    <dd class="font-medium break-words">
+                                        {{ item.empresaOperadora ?? '—' }}
+                                    </dd>
+                                </div>
+                            </dl>
+                        </article>
+                    } @empty {
+                        <p class="py-6 text-center text-xs text-slate-500">
+                            No hay teléfonos registrados.
+                        </p>
+                    }
+                </div>
+
+                <!-- Tablet y escritorio: tabla -->
+                <div class="hidden overflow-x-auto md:block">
+                    <table
+                        class="table table-sm text-[11px] [&_td]:py-1 [&_td]:text-center [&_th]:text-center [&_th]:font-medium"
+                    >
+                        <thead>
+                            <tr>
+                                <th class="w-20">Periodo</th>
+                                <th class="w-32">Teléfono</th>
+                                <th class="w-28">Fecha de alta</th>
+                                <th>Plan</th>
+                                <th class="w-28">Modalidad</th>
+                                <th class="w-32">Operadora</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (item of moviles(); track $index) {
+                                <tr class="hover:bg-slate-50">
+                                    <td class="tabular-nums">{{ item.periodo ?? '—' }}</td>
+                                    <td class="font-semibold text-[#154f91] tabular-nums">
+                                        {{ item.telefono ?? '—' }}
+                                    </td>
+                                    <td class="whitespace-nowrap tabular-nums">
+                                        {{ item.fechaAlta ?? '—' }}
+                                    </td>
+                                    <td>{{ item.planMovil ?? '—' }}</td>
+                                    <td>{{ item.modalidad ?? '—' }}</td>
+                                    <td>{{ item.empresaOperadora ?? '—' }}</td>
+                                </tr>
+                            } @empty {
+                                <tr>
+                                    <td colspan="6" class="py-6 text-center text-slate-500">
+                                        No hay teléfonos registrados.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <!-- Pie -->
+        <footer
+            class="flex shrink-0 flex-wrap items-center justify-end gap-3 border-t border-base-200 bg-slate-50 px-5 py-3"
+        >
+            <form method="dialog">
+                <button
+                    class="btn btn-sm border-0 bg-[#154f91] px-6 text-white shadow-none hover:bg-[#103e73]"
+                >
+                    Cerrar
+                </button>
+            </form>
+        </footer>
+    </div>
+
+    <form method="dialog" class="modal-backdrop">
+        <button aria-label="Cerrar teléfonos">Cerrar</button>
+    </form>
+</dialog>

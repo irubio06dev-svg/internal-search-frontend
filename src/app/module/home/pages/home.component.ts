@@ -83,7 +83,15 @@ export class HomeComponent implements OnInit {
                     const ruta = (path.startsWith('/') ? path : `${parentPath}/${path}`)
                         .split('/').filter(Boolean).join('/');
 
-                    return { ...node, ruta, children: prepareMenu(node.children ?? [], ruta) };
+                    let children = prepareMenu(node.children ?? [], ruta);
+                    // Si el backend solo entrega Consultas, agregar sus dos pantallas al menú.
+                    if ((ruta === 'consultas' || ruta === 'system/consultas') && !node.children?.length) {
+                        children = [
+                            { ...node, codMenu: -1, codMenuPadre: node.codMenu, nomMenu: 'Individual', ruta: `${ruta}/individual`, orden: 1, children: [] },
+                            { ...node, codMenu: -2, codMenuPadre: node.codMenu, nomMenu: 'Masiva', ruta: `${ruta}/masiva`, orden: 2, children: [] },
+                        ];
+                    }
+                    return { ...node, ruta, children };
                 });
 
         return prepareMenu(tree);

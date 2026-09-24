@@ -1,15 +1,13 @@
 @if (items().children && items().children!.length > 0) {
     <li class="rounded-lg font-bold">
         <details class="group">
-            <summary class="flex items-center gap-2 cursor-pointer list-none pr-0 [&::-webkit-details-marker]:hidden"
+            <summary class="flex items-center gap-2 cursor-pointer list-none pr-3 after:ml-auto after:shrink-0 [&::-webkit-details-marker]:hidden"
                 [class.text-sm]="level() >= 1" [class.text-xs]="level() >= 2" [class.font-semibold]="level() >= 1"
                 [class.font-normal]="level() >= 2">
                 @if (items().icono && level() === 0) {
                 <app-icons [name]="items().icono" [klass]="'h-4.5 w-4.5'" [strokeWidth]="2" />
                 }
                 {{ items().nomMenu }}
-                <app-icons name="chevron-down"
-                    klass="h-4 w-4 ml-auto shrink-0 transition-transform duration-200 group-open:rotate-180" />
             </summary>
 
             <ul class="border-l border-violet-400/20" [style.padding-left.px]="12">
@@ -20,11 +18,10 @@
         </details>
     </li>
 } @else {
-    <li routerLinkActive="lx-active text-white" [routerLinkActiveOptions]="{ exact: false }"
+    <li routerLinkActive="lx-active text-white" [routerLink]="routeSegments()" [routerLinkActiveOptions]="{ exact: false }"
         class="rounded-lg py-1 text-violet-100 w-full" [class.text-sm]="level() >= 1" [class.text-xs]="level() >= 2"
         [class.font-bold]="level() === 0" [class.font-semibold]="level() === 1" [class.font-normal]="level() >= 2">
-        <a [routerLink]="routeSegments()" ariaCurrentWhenActive="page" routerLinkActive="text-white"
-            class="flex items-center gap-2 w-full"> @if (items().icono &&
+        <a class="flex items-center gap-2 w-full"> @if (items().icono &&
             level() === 0) {
             <app-icons [name]="items().icono" [klass]="'h-4.5 w-4.5'" [strokeWidth]="2" />
             }

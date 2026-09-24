@@ -1,4 +1,6 @@
 export const ICONS: Record<string, string> = {
+    search: 'M21 21l-5.2-5.2M18 10.5a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z',
+    'chevron-down': 'M6 9l6 6 6-6',
     bell: 'M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9',
 
     user: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',

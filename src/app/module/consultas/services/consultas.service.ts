@@ -4,7 +4,9 @@ import { catchError, defer, finalize, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment.development';
 import { BuscadorEntrada, BuscadorResponse } from '../interfaces/consultas.interface';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+    providedIn: 'root' 
+})
 export class ConsultasService {
     private readonly http = inject(HttpClient);
     private readonly baseUrl = environment.baseUrl.replace(/\/$/, '');
