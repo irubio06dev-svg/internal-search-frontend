@@ -9,7 +9,12 @@ export const homeRoutes: Routes = [
         component: HomeComponent,
         children: [
             {
-                path: 'consultas',
+                path: 'personas',
+                loadChildren: () => import('../consultas/consultas.routes'),
+            },
+
+            {
+                path: 'empresa',
                 loadChildren: () => import('../consultas/consultas.routes'),
             },
 

@@ -37,22 +37,35 @@ export class HomeComponent implements OnInit {
     }
 
 
-    public getRoutes() {
+    public getRoutes(): void {
         const user = this.authService.user();
+
+        console.log('USUARIO:', user);
+        console.log('ID USUARIO:', user?.id);
+        console.log('ROLES:', user?.roles);
+
         const codRole = user?.id;
 
         if (!codRole) {
+            console.warn('No existe codRole');
             return;
         }
 
         this.homeService.getRoutes(codRole).subscribe({
             next: (resp) => {
+
+                console.log('RESPUESTA BACKEND:', resp);
+
                 const tree = this.buildRouteTree(resp);
+
+                console.log('ÁRBOL FINAL:', tree);
+
                 this.items.set(tree);
             },
+
             error: (err) => {
-                console.error('Error al obtener las rutas', err);
-            },
+                console.error('ERROR RUTAS:', err);
+            }
         });
     }
 
@@ -60,45 +73,76 @@ export class HomeComponent implements OnInit {
         const map = new Map<number, ResponseRoute>();
         const tree: ResponseRoute[] = [];
 
-        routes.forEach(route => {
-            map.set(route.codMenu, { ...route, children: [] });
-        });
+        // 1. Crear todos los nodos
+        const collect = (nodes: ResponseRoute[], parentId: number | null = null): void => {
+            nodes.forEach(route => {
+                map.set(route.codMenu, {
+                    ...route,
+                    codMenuPadre: route.codMenuPadre ?? parentId,
+                    children: []
+                });
+                if (route.children?.length) collect(route.children, route.codMenu);
+            });
+        };
+        collect(routes);
 
+        // 2. Relacionar hijos con sus padres
         map.forEach(node => {
-            const parent = node.codMenuPadre === null ? undefined : map.get(node.codMenuPadre);
+
+            const parent =
+                node.codMenuPadre === null
+                    ? undefined
+                    : map.get(node.codMenuPadre);
+
             if (parent) {
                 parent.children!.push(node);
             } else {
                 tree.push(node);
             }
+
         });
 
-        // Resolver las rutas después de construir el árbol permite recibir hijos antes que padres.
-        const prepareMenu = (nodes: ResponseRoute[], parentPath = ''): ResponseRoute[] =>
-            nodes
+        // 3. Preparar menú y rutas
+        const prepareMenu = (
+            nodes: ResponseRoute[],
+            parentPath = ''
+        ): ResponseRoute[] => {
+
+            return nodes
                 .filter(node => node.puedeVer === 1)
                 .sort((a, b) => a.orden - b.orden)
                 .map(node => {
-                    const path = node.ruta.trim();
-                    const ruta = (path.startsWith('/') ? path : `${parentPath}/${path}`)
-                        .split('/').filter(Boolean).join('/');
 
-                    let children = prepareMenu(node.children ?? [], ruta);
-                    // Si el backend solo entrega Consultas, agregar sus dos pantallas al menú.
-                    if ((ruta === 'consultas' || ruta === 'system/consultas') && !node.children?.length) {
-                        children = [
-                            { ...node, codMenu: -1, codMenuPadre: node.codMenu, nomMenu: 'Individual', ruta: `${ruta}/individual`, orden: 1, children: [] },
-                            { ...node, codMenu: -2, codMenuPadre: node.codMenu, nomMenu: 'Masiva', ruta: `${ruta}/masiva`, orden: 2, children: [] },
-                        ];
-                    }
-                    return { ...node, ruta, children };
+                    const path = node.ruta.trim();
+
+                    const ruta = (
+                        path.startsWith('/') || path.startsWith('system/') || path === parentPath || (parentPath && path.startsWith(`${parentPath}/`))
+                            ? path
+                            : `${parentPath}/${path}`
+                    )
+                        .split('/')
+                        .filter(Boolean)
+                        .join('/');
+
+                    // Aquí se construyen automáticamente
+                    // las subrutas que vienen de BD
+                    const children = prepareMenu(
+                        node.children ?? [],
+                        ruta
+                    );
+
+                    return {
+                        ...node,
+                        ruta,
+                        children
+                    };
                 });
+        };
 
         return prepareMenu(tree);
+
     }
-
 }
-
 
 
 

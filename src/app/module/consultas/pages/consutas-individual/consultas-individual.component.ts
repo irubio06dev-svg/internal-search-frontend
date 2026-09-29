@@ -1,152 +1,86 @@
 ﻿import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ConsultasService } from '../../services/consultas.service';
 import { BuscadorEntrada, BuscadorResponse } from '../../interfaces/consultas.interface';
-import { CommonModule } from '@angular/common';
-import { SueldosComponent } from '../../components/individual/sueldos/sueldos.component';
-import { SunarpComponent } from '../../components/individual/sunarp/sunarp.component';
-import { AlertasComponent } from '../../components/individual/alertas/alertas.component';
-import { CorreosComponent } from '../../components/individual/correos/correos.component';
-import { HistorialCrediticioComponent } from '../../components/individual/historial-crediticio/historial-crediticio.component';
-import { SuneduComponent } from '../../components/individual/sunedu/sunedu.component';
-import { TelefonoComponent } from '../../components/individual/telefono/telefono.component';
-import { ReniecComponent } from '../../components/individual/reniec/reniec.component';
+import { CommonModule, DecimalPipe } from '@angular/common';
+
+import { documentoValidator, getDocumentoErrorMessage, LONGITUDES_POR_TIPO } from '../../../../shared/utils/validators';
+import Swal from 'sweetalert2';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+
+
+type Grupo = 'documento' | 'telefono' | 'nombres' | null;
 
 @Component({
     selector: 'app-consultas-individual',
-    imports: [ReactiveFormsModule,
+    imports: [RouterLink, RouterLinkActive, RouterOutlet,
 
-        AlertasComponent,
-        CorreosComponent,
-        HistorialCrediticioComponent,
-        SueldosComponent,
-        SunarpComponent,
-        SuneduComponent,
-        TelefonoComponent,
-        ReniecComponent,
     ],
     templateUrl: './consultas-individual.component.html',
     styleUrl: './consultas-individual.component.css',
 })
-export class ConsultasIndividualComponent implements OnInit {
-    ngOnInit(): void {
-        this.form.get('documento')?.valueChanges.subscribe(valor => {
-            this.onDocumentoChange(valor);
-        });
-
-    }
+export class ConsultasIndividualComponent {
 
 
 
-    private fb = inject(FormBuilder);
-    public consultasService = inject(ConsultasService);
-    resultado?: BuscadorResponse;
-    activeTab = 'reniec';
+    private readonly fb = inject(FormBuilder);
+    private readonly consultaService = inject(ConsultasService);
 
-    protected readonly tabs = [
-        { id: 'reniec', label: 'Reniec' },
-        { id: 'telefono', label: 'Teléfono' },
-        { id: 'historial-crediticio', label: 'Historial crediticio' },
-        { id: 'sueldos', label: 'Sueldos' },
-        { id: 'correos', label: 'Correos' },
-        { id: 'sunarp', label: 'Sunarp' },
-        { id: 'sunat', label: 'Sunat' },
-        { id: 'sunedu', label: 'Sunedu' },
-        { id: 'alertas', label: 'Alertas' },
-    ] as const;
+    resultado = signal<BuscadorResponse | null>(null);
 
-    public arrarDatos = signal<BuscadorResponse | null>(null);
+    error: string | null = null;
+    isLoading = false;
 
-    form: FormGroup = this.fb.group({
-        tipoDocumento: ['DNI', Validators.required],
-        documento: [''],
-        apePat: [''],      // en RUC actúa como "Razón Social"
-        apeMat: [''],
-        prenombres: [''],
-        telefono: ['']
+    formulario: FormGroup = this.fb.group({
+        documento: ['DNI', Validators.required],
+        tipoDocumento: [''],
     });
 
+    public buscar(): void {
 
-
-    get tipoDocumento(): string {
-        return this.form.get('tipoDocumento')?.value;
-    }
-
-    get esDni(): boolean {
-        return this.tipoDocumento === 'DNI';
-    }
-
-    get esRuc(): boolean {
-        return this.tipoDocumento === 'RUC';
-    }
-
-    get labelApePat(): string {
-        return this.esRuc ? 'Razón social' : 'Apellido paterno';
-    }
-
-    get maxLengthDocumento(): number {
-        switch (this.tipoDocumento) {
-            case 'DNI': return 8;
-            case 'RUC': return 11;
-            default: return 12; // CE / PASAPORTE
+        if (this.formulario.invalid) {
+            this.formulario.markAllAsTouched();
+            return;
         }
-    }
-    onDocumentoChange(valor: string): void {
-        const camposDatos = ['apePat', 'apeMat', 'prenombres', 'telefono'];
 
-        if (valor && valor.trim().length > 0) {
-            // Empezó a escribir -> bloquear los demás
-            camposDatos.forEach(campo => this.form.get(campo)?.disable());
-        } else {
-            // Borró todo el campo -> desbloquear de nuevo
-            camposDatos.forEach(campo => this.form.get(campo)?.enable());
-        }
-    }
+        this.isLoading = true;
+        this.error = null;
+        this.resultado.set(null);
 
-    buscar(): void {
-        const valores = this.form.value;
+        this.consultaService.consultar(this.formulario.getRawValue()).subscribe({
 
-        const request: BuscadorEntrada = {
-            tipoDocumento: valores.tipoDocumento,
-            documento: valores.documento || null,
-            apePat: valores.apePat || null,
-            apeMat: this.esRuc ? null : (valores.apeMat || null),
-            prenombres: this.esRuc ? null : (valores.prenombres || null),
-            telefono: this.esRuc ? null : (valores.telefono || null)
-        };
-
-        this.consultasService.consultar(request).subscribe({
             next: (response: BuscadorResponse) => {
-                this.arrarDatos.set(response)
+                console.log(response);
+                this.resultado.set(response);
+                this.isLoading = false;
             },
-            error: (err) => console.error('Error en búsqueda:', err)
+
+            error: (error) => {
+                console.error('Error al realizar la consulta:', error);
+
+                this.error =
+                    error?.error?.message ??
+                    'Ocurrió un error al realizar la consulta.';
+
+                this.isLoading = false;
+            },
+
+            complete: () => {
+                this.isLoading = false;
+            }
+
         });
     }
 
-
-    selectTab(tab: string): void {
-        this.activeTab = tab;
-    }
-
-    limpiar(): void {
-        this.form.reset({ tipoDocumento: 'DNI' });
-        this.resultado = undefined;
-    }
-
-    onTipoDocumentoChange(): void {
-        const camposDatos = ['apePat', 'apeMat', 'prenombres', 'telefono'];
-
-        // Limpiar valores previos
-        this.form.patchValue({
-            documento: '',
-            apePat: '',
-            apeMat: '',
-            prenombres: '',
-            telefono: ''
+    public limpiar(): void {
+        this.formulario.reset({
+            tipoDocumento: 'DNI',
+            documento: ''
         });
 
-        // Bloquear todos los campos de datos, dejar solo "documento" habilitado
-        camposDatos.forEach(campo => this.form.get(campo)?.disable());
-        this.form.get('documento')?.enable();
+        this.resultado.set(null);
+        this.error = null;
     }
+
 }   

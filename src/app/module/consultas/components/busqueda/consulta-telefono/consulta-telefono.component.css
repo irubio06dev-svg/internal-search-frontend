@@ -1,0 +1,4 @@
+.summary { display:flex; align-items:center; flex-wrap:wrap; gap:.75rem; padding:1.5rem 1.5rem 0; font-size:.8125rem; color:#53657b; }
+.person-details + .person-details { border-top:1px solid #e2e8f0; }
+.pagination { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:1rem; padding:1rem; font-size:.875rem; }
+@media (max-width:639px) { .summary { padding:1rem 1rem 0; } }

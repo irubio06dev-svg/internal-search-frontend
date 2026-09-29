@@ -1,6 +1,6 @@
 @if (items().children && items().children!.length > 0) {
     <li class="rounded-lg font-bold">
-        <details class="group">
+        <details class="group" [open]="isActive()">
             <summary class="flex items-center gap-2 cursor-pointer list-none pr-3 after:ml-auto after:shrink-0 [&::-webkit-details-marker]:hidden"
                 [class.text-sm]="level() >= 1" [class.text-xs]="level() >= 2" [class.font-semibold]="level() >= 1"
                 [class.font-normal]="level() >= 2">
@@ -18,11 +18,13 @@
         </details>
     </li>
 } @else {
-    <li routerLinkActive="lx-active text-white" [routerLink]="routeSegments()" [routerLinkActiveOptions]="{ exact: false }"
-        class="rounded-lg py-1 text-violet-100 w-full" [class.text-sm]="level() >= 1" [class.text-xs]="level() >= 2"
+    <li class="rounded-lg py-1 w-full"
+        [class.text-sm]="level() >= 1" [class.text-xs]="level() >= 2"
         [class.font-bold]="level() === 0" [class.font-semibold]="level() === 1" [class.font-normal]="level() >= 2">
-        <a class="flex items-center gap-2 w-full"> @if (items().icono &&
-            level() === 0) {
+        <a class="flex items-center gap-2 w-full text-violet-100"
+           [routerLink]="routeSegments()"
+           routerLinkActive="lx-active text-white">
+            @if (items().icono && level() === 0) {
             <app-icons [name]="items().icono" [klass]="'h-4.5 w-4.5'" [strokeWidth]="2" />
             }
             {{ items().nomMenu }}

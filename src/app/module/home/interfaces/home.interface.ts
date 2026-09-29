@@ -9,5 +9,5 @@ export interface ResponseRoute {
     puedeCrear: number;
     puedeEditar: number;
     puedeEliminar: number;
-    children?: ResponseRoute[];
+    children: ResponseRoute[];
 }
