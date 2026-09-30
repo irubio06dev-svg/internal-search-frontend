@@ -2,30 +2,29 @@
 @if (loadingService.isLoading()) {
     <app-global-loader [selectLoader]="'loader-login'"/>
 }
-<div class="drawer lg:drawer-open bg-[#f6f5fb]">
-    <input id="lx-drawer" type="checkbox" class="drawer-toggle" />
+<div class="drawer lg:drawer-open bg-white">
+    <input id="lx-drawer" type="checkbox" class="drawer-toggle" checked />
 
     <!-- MAIN CONTENT -->
-    <div class="drawer-content flex flex-col min-h-screen bg-[#f6f5fb]">
+    <div class="drawer-content flex flex-col min-h-screen">
         <app-nav-bar />
 
-        <main class="flex-1 overflow-y-auto px-3 py-4 bg-[#f6f5fb]">
+        <main class="flex-1 overflow-y-auto px-3 py-4">
             <router-outlet />
         </main>
     </div>
     <!-- SIDEBAR -->
     <div class="drawer-side z-40">
         <label for="lx-drawer" aria-label="cerrar menú" class="drawer-overlay"></label>
-        <aside class="w-72 min-h-full sidebar-gradient text-white flex flex-col">
+        <aside class="app-sidebar flex min-h-screen flex-col bg-[#0b2545] text-white">
 
             <app-header-sidebar  />
 
-            <app-subtitle-sidebar [user]="authService.user()"/>
 
-            <nav class="flex-1 overflow-y-auto px-3 py-4 sidebar-body">
-                <p class="lx-divider-label text-[11px] font-bold text-violet-200 px-3 mb-6">MENÚ PRINCIPAL</p>
+            <nav class="sidebar-navigation flex-1 min-h-0">
+                <p class="sidebar-label">CONSULTAS</p>
 
-                <ul class="menu p-4 gap-0 text-sm w-full mx-auto flex flex-col flex-nowrap max-h-112.5 overflow-y-auto">
+                <ul class="sidebar-menu">
                     @for (item of items(); track item.codMenu) {
                         <app-sidebarmenu [items]="item" [level]="0" />
                     }

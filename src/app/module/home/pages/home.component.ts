@@ -16,7 +16,7 @@ import { SubtitleSidebarComponent } from '../components/header-subtitle/subtitle
     imports: [
         SidebarmenuComponent,
         HeaderSidebarComponent,
-        SubtitleSidebarComponent,
+        // SubtitleSidebarComponent,
         NavBarComponent,
         RouterOutlet,
         GlobalLoaderComponent,
@@ -39,11 +39,6 @@ export class HomeComponent implements OnInit {
 
     public getRoutes(): void {
         const user = this.authService.user();
-
-        console.log('USUARIO:', user);
-        console.log('ID USUARIO:', user?.id);
-        console.log('ROLES:', user?.roles);
-
         const codRole = user?.id;
 
         if (!codRole) {
@@ -54,12 +49,7 @@ export class HomeComponent implements OnInit {
         this.homeService.getRoutes(codRole).subscribe({
             next: (resp) => {
 
-                console.log('RESPUESTA BACKEND:', resp);
-
                 const tree = this.buildRouteTree(resp);
-
-                console.log('ÁRBOL FINAL:', tree);
-
                 this.items.set(tree);
             },
 

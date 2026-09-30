@@ -1,33 +1,33 @@
 @if (items().children && items().children!.length > 0) {
-    <li class="rounded-lg font-bold">
-        <details class="group" [open]="isActive()">
-            <summary class="flex items-center gap-2 cursor-pointer list-none pr-3 after:ml-auto after:shrink-0 [&::-webkit-details-marker]:hidden"
-                [class.text-sm]="level() >= 1" [class.text-xs]="level() >= 2" [class.font-semibold]="level() >= 1"
-                [class.font-normal]="level() >= 2">
-                @if (items().icono && level() === 0) {
-                <app-icons [name]="items().icono" [klass]="'h-4.5 w-4.5'" [strokeWidth]="2" />
+    <li class="menu-node">
+        <details [open]="isActive()">
+            <summary class="menu-entry" [class.active-group]="isActive()">
+                @if (level() === 0) {
+                    <span class="menu-icon" aria-hidden="true">
+                        @if (items().icono) { <app-icons [name]="items().icono" klass="h-4 w-4" [strokeWidth]="1.8" /> }
+                        @else { <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="5" width="14" height="14" rx="3" /></svg> }
+                    </span>
                 }
-                {{ items().nomMenu }}
+                <span class="entry-label">{{ items().nomMenu }}</span>
+                <svg class="chevron" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m9 5 7 7-7 7" /></svg>
             </summary>
-
-            <ul class="border-l border-violet-400/20" [style.padding-left.px]="12">
+            <ul class="submenu">
                 @for (child of items().children; track child.codMenu) {
-                <app-sidebarmenu [items]="child" [level]="level() + 1" />
+                    <app-sidebarmenu [items]="child" [level]="level() + 1" />
                 }
             </ul>
         </details>
     </li>
 } @else {
-    <li class="rounded-lg py-1 w-full"
-        [class.text-sm]="level() >= 1" [class.text-xs]="level() >= 2"
-        [class.font-bold]="level() === 0" [class.font-semibold]="level() === 1" [class.font-normal]="level() >= 2">
-        <a class="flex items-center gap-2 w-full text-violet-100"
-           [routerLink]="routeSegments()"
-           routerLinkActive="lx-active text-white">
-            @if (items().icono && level() === 0) {
-            <app-icons [name]="items().icono" [klass]="'h-4.5 w-4.5'" [strokeWidth]="2" />
+    <li class="menu-node">
+        <a class="menu-entry" [class.child-entry]="level() > 0" [routerLink]="routeSegments()" routerLinkActive="selected" ariaCurrentWhenActive="page">
+            @if (level() === 0) {
+                <span class="menu-icon" aria-hidden="true">
+                    @if (items().icono) { <app-icons [name]="items().icono" klass="h-4 w-4" [strokeWidth]="1.8" /> }
+                    @else { <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="5" width="14" height="14" rx="3" /></svg> }
+                </span>
             }
-            {{ items().nomMenu }}
+            <span class="entry-label">{{ items().nomMenu }}</span>
         </a>
     </li>
 }

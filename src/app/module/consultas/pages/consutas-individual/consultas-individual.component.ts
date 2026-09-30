@@ -14,7 +14,7 @@ type Grupo = 'documento' | 'telefono' | 'nombres' | null;
 
 @Component({
     selector: 'app-consultas-individual',
-    imports: [RouterLink, RouterLinkActive, RouterOutlet,
+    imports: [RouterLink, RouterLinkActive, RouterOutlet
 
     ],
     templateUrl: './consultas-individual.component.html',

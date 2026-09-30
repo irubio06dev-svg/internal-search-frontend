@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, filter, map, timeout } from 'rxjs';
 import { environment } from '../../../../environments/environment'; // ajusta la ruta
 import { ProgresoSubida } from '../interfaces/consultas-masivas';
+import { HistorialDescarga, RecepcionHistorial } from '../interfaces/historial.interface';
 
 @Injectable({ providedIn: 'root' })
 export class ConsultasMasivasService {
@@ -92,4 +93,30 @@ export class ConsultasMasivasService {
             reader.readAsText(blob);
         });
     }
+
+
+    obtenerHistorial(codUsuario: number): Observable<HistorialDescarga[]> {
+
+        return this.http.get<HistorialDescarga[]>(
+            `${this.baseUrl}/api/historial/usuario/${codUsuario}`
+        );
+    }
+
+    enviarHistorial(archivoExcel: Blob, nombreArchivo: string, secciones: readonly string[], totalDnis: number): Observable<RecepcionHistorial> {
+        const datos = new FormData();
+        datos.append('archivoExcel', archivoExcel, nombreArchivo);
+        secciones.forEach(seccion => datos.append('secciones', seccion));
+        datos.append('totalDnis', String(totalDnis));
+        return this.http.post<RecepcionHistorial>(`${this.baseUrl}/api/historial/masivo/historial`, datos)
+            .pipe(timeout(60_000));
+    }
+
+
+    descargarHistorial(codHistorial: number): Observable<Blob> {
+        return this.http.get(
+            `${this.baseUrl}/api/historial/${codHistorial}/descargar`,
+            { responseType: 'blob' }
+        );
+    }
+
 }

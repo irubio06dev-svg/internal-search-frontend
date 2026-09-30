@@ -40,9 +40,9 @@
 }
 
 :root {
-    --lx-violet-header: #154f91; /* franja del logo (arriba) */
-    --lx-violet-body: #154f91; /* resto del sidebar (perfil, menú, footer) */
-    --lx-accent: #05010c3a; /* ítem activo, badges, iconos destacados */
+    --lx-violet-header: #0b2545; /* franja del logo (arriba) */
+    --lx-violet-body: #0b2545; /* resto del sidebar (perfil, menú, footer) */
+    --lx-accent: #103e73; /* ítem activo, badges, iconos destacados */
 }
 
 .sidebar-header {
@@ -55,7 +55,7 @@
 
 .lx-active {
     background: var(--lx-accent);
-    box-shadow: 0 4px 14px rgba(62, 27, 122, 0.45);
+    box-shadow: none;
 }
 
 .lx-item {
@@ -479,4 +479,23 @@
   .login-brand-row {
     margin-bottom: 2.5rem;
   }
+}
+
+/* Confirmacion de cierre de sesion: tema corporativo */
+.swal-popup-custom.swal-corporate {
+    background: #fff !important;
+    border-radius: 12px !important;
+    padding: 1.75rem !important;
+    box-shadow: none !important;
+}
+.swal-corporate .swal-title-custom { color: #193957 !important; font-size: 1.5rem !important; }
+.swal-corporate .swal-text-custom { color: #53657b !important; font-size: 1rem !important; }
+.swal-corporate .swal-icon-custom { color: #154f91 !important; border-color: #154f91 !important; background: #eaf1fa; }
+.swal-corporate .swal-confirm-btn { background: #154f91 !important; box-shadow: none !important; }
+.swal-corporate .swal-confirm-btn:hover { background: #103e73 !important; transform: none !important; box-shadow: none !important; }
+.swal-corporate .swal-cancel-btn { background: #eaf1fa !important; color: #154f91 !important; }
+.swal-corporate .swal-cancel-btn:hover { background: #dce8f6 !important; }
+.swal-corporate button:focus-visible { outline: 2px solid #154f91; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+    .swal-corporate, .swal-corporate button { animation: none !important; transition: none !important; }
 }

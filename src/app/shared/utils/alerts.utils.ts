@@ -1,12 +1,12 @@
 import Swal from 'sweetalert2';
 
 export class AlertUtils {
-    static confirm(title: string, text: string, confirm: string, cancel: string): Promise<boolean> {
+    static confirm(title: string, text: string, confirm: string, cancel: string, theme: 'default' | 'corporate' = 'default'): Promise<boolean> {
         return Swal.fire({
             title,
             text,
             icon: 'question',
-            iconColor: '#911b34',
+            iconColor: theme === 'corporate' ? '#154f91' : '#911b34',
             showCancelButton: true,
             confirmButtonText: confirm,
             cancelButtonText: cancel,
@@ -14,7 +14,7 @@ export class AlertUtils {
             buttonsStyling: false,
             focusCancel: true,
             customClass: {
-                popup: 'swal-popup-custom',
+                popup: theme === 'corporate' ? 'swal-popup-custom swal-corporate' : 'swal-popup-custom',
                 title: 'swal-title-custom',
                 htmlContainer: 'swal-text-custom',
                 confirmButton: 'swal-confirm-btn',

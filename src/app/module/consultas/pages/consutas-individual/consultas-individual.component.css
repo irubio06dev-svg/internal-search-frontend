@@ -1,66 +1,182 @@
+/* ==========================================================
+   Consulta individual – alineado a sidebar / navbar
+   ========================================================== */
+
 :host {
+    --navy: var(--app-navy, #0c2646);          /* azul del sidebar */
+    --navy-soft: var(--app-navy-soft, #e8eef8); /* item activo del sidebar */
+    --icon-bg: #12213725;   /* fondo plomo claro */
+    --icon-fg: #122137;   /* ícono plomo */
+    --border: #e3e8f0;
+    --text: #0f172a;
+    --text-muted: #64748b;
+
     display: block;
 }
 
-.consulta-content {
-    padding: 1.5rem 1rem;
-    color: #193957;
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding: 5px 40px;
 }
 
+/* ---------- Encabezado de página ---------- */
+.page-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.page-icon {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    background: var(--icon-bg);
+    color: var(--icon-fg);
+    border: 1px solid #dbe5f7;
+}
+
+.page-breadcrumb {
+    margin: 0 0 6px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.page-title {
+    margin: 0;
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--navy);
+}
+
+.page-subtitle {
+    margin: 10px 0 0;
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+/* ---------- Tarjeta ---------- */
+.card {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    overflow: hidden;
+}
+
+.card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 15px 32px 20px;
+}
+
+.card-icon {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: var(--icon-bg);
+    color: var(--icon-fg);
+}
+
+.card-title {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.card-subtitle {
+    margin: 8px 0 0;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+/* ---------- Tabs ---------- */
 .consultas-tabs {
     display: flex;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem 0;
-    border-bottom: 1px solid #cddbea;
-    background: #f6f5fb;
-    overflow-x: auto;
+    gap: 6px;
+    padding: 0 32px;
+    border-bottom: 2px solid var(--border);
 }
 
 .consulta-tab {
+    position: relative;
     display: inline-flex;
-    flex: 0 0 auto;
     align-items: center;
-    justify-content: center;
-    gap: 0.625rem;
-    min-height: 48px;
-    padding: 0.75rem 1.25rem;
-    border-bottom: 3px solid transparent;
-    border-radius: 8px 8px 0 0;
-    color: #53657b;
-    font-size: 0.875rem;
-    font-weight: 600;
+    gap: 8px;
+    padding: 7px 18px 5px;
+    margin-bottom: -1px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-muted);
     text-decoration: none;
-    white-space: nowrap;
-    transition: color 150ms ease-out, background-color 150ms ease-out;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.consulta-tab svg {
-    width: 1.125rem;
-    height: 1.125rem;
-    flex: none;
-}
-
-.consulta-tab:hover {
-    color: #154f91;
-    background: #eaf1fa;
+.consulta-tab:hover:not(.is-active) {
+    color: var(--navy);
+    background: #f5f7fb;
 }
 
 .consulta-tab.is-active {
-    border-bottom-color: #154f91;
-    color: #154f91;
-    background: #e2eaf5;
+    color: var(--navy);
+    font-weight: 600;
+    background: var(--navy-soft);
+    border-bottom-color: var(--navy);
+}
+
+/* Foco: outline 2px azul del sidebar */
+.consulta-tab:focus {
+    outline: none;
 }
 
 .consulta-tab:focus-visible {
-    outline: 2px solid #154f91;
-    outline-offset: -4px;
+    outline: 2px solid var(--navy);
+    outline-offset: -2px;
 }
 
-@media (max-width: 639px) {
-    .consultas-tabs { gap: 0.25rem; padding: 0.5rem 0.75rem 0; }
-    .consulta-tab { flex: 1 0 auto; gap: 0.375rem; padding: 0.75rem; font-size: 0.8125rem; }
+/* ---------- Contenido ---------- */
+.consulta-content {
+    padding: 28px 32px 32px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .consulta-tab { transition: none; }
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+    .page {
+        padding: 20px 16px;
+    }
+
+    .page-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .page-title {
+        font-size: 1.45rem;
+    }
+
+    .card-header,
+    .consulta-content {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .consultas-tabs {
+        padding: 0 16px;
+    }
+
+    .consulta-tab {
+        flex: 1;
+        justify-content: center;
+    }
 }

@@ -9,6 +9,7 @@ import { IconsComponent } from '../../../../shared/icons/icons.component';
     selector: 'app-logout',
     imports: [IconsComponent],
     templateUrl: './logout.component.html',
+    styleUrl: './logout.component.css',
 })
 export class LogoutComponent {
     public authService = inject(AuthService);
@@ -22,7 +23,8 @@ export class LogoutComponent {
             '¿Cerrar sesión?',
             '¿Está seguro de que desea cerrar sesión?',
             'Sí, cerrar sesión',
-            'Cancelar'
+            'Cancelar',
+            'corporate'
         );
 
         if (!confirmed) {

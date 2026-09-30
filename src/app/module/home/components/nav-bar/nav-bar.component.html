@@ -1,50 +1,86 @@
 <!-- TOP NAVBAR -->
-<div class="navbar px-4 sm:px-6 gap-2 bg-[#f6f5fb]">
-    <div class="flex-none lg:hidden">
-        <label for="lx-drawer" aria-label="abrir menú" class="btn btn-square btn-ghost">
-            <app-icons name="hamburges" [klass]="'h-6 w-6'" [strokeWidth]="2" />
-        </label>
+<div class="navbar px-4 sm:px-6 h-16 bg-white border-b border-slate-200/80 shadow-2xs flex items-center justify-between gap-4">
+    
+    <!-- LADO IZQUIERDO: Menú Mobile & Breadcrumbs -->
+    <div class="flex items-center gap-3 min-w-0">
+        <div class="flex-none lg:hidden">
+            <label for="lx-drawer" aria-label="abrir menú" class="btn btn-square btn-ghost text-slate-600 hover:bg-slate-100 rounded-lg">
+                <app-icons name="hamburges" [klass]="'h-5 w-5'" [strokeWidth]="2" />
+            </label>
+        </div>
+
+        <!-- Breadcrumb con Pill en Azul Marino Rebajado / Bajito -->
+        <nav aria-label="Breadcrumb" class="hidden sm:flex items-center gap-2 text-sm">
+            <div class="flex items-center gap-1.5 text-slate-400 font-medium hover:text-slate-600 transition-colors">
+                <span>Consultas</span>
+            </div>
+            
+            <span class="text-slate-300">/</span>
+
+            <!-- Pill activa usando el azul del sidebar con opacidad muy suave (8%) -->
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0b2545]/10 text-[#0b2545] font-semibold text-xs border border-[#0b2545]/20">
+                <span class="h-1.5 w-1.5 rounded-full bg-[#0b2545]"></span>
+                Consulta Masiva
+            </span>
+        </nav>
     </div>
-    <div class="flex-1 min-w-0">
-        <img src="/images/image.png" alt="Informa Perú" class="block h-12 w-auto max-w-full object-contain" />
-    </div>
-    <div class="flex-none flex items-center gap-1 sm:gap-2">
-        <!-- <button type="button" class="btn btn-ghost btn-circle" aria-label="Notificaciones">
-            <div class="indicator">
-                <app-icons name="bell" [klass]="'h-5 w-5 text-gray-500'" [strokeWidth]="1.8" />
-                <span class="badge badge-xs border-none indicator-item"></span>
-            </div>
-        </button> -->
-        <div class="user-menu" #userMenu>
-        <button class="user-card" type="button" (click)="userMenuOpen.set(!userMenuOpen())"
-            [attr.aria-expanded]="userMenuOpen()" aria-controls="user-information" aria-label="Ver datos del usuario">
-            <div class="user-avatar" aria-hidden="true">
-                <app-icons name="user" klass="h-5 w-5" [strokeWidth]="1.8" />
-            </div>
-            <div class="user-details">
-                <span class="user-name" [title]="authService.user()?.nombreCompleto || authService.user()?.usuario || 'Sin sesión'">
-                    {{ authService.user()?.nombreCompleto || authService.user()?.usuario || 'Sin sesión' }}
-                </span>
-                <span class="user-role" [title]="displayRoles() || 'Sin rol asignado'">
-                    {{ displayRoles() || 'Sin rol asignado' }}
-                </span>
-            </div>
-            <svg class="user-chevron" [class.is-open]="userMenuOpen()" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="m6 9 6 6 6-6" />
-            </svg>
-        </button>
-        <section id="user-information" class="user-dropdown" [hidden]="!userMenuOpen()" aria-labelledby="user-information-title">
-            <h2 id="user-information-title">Mi cuenta</h2>
-            @if (authService.user(); as user) {
-                <dl>
-                    <div><dt>Nombre</dt><dd>{{ user.nombreCompleto || 'No disponible' }}</dd></div>
-                    <div><dt>Usuario</dt><dd>{{ user.usuario || 'No disponible' }}</dd></div>
-                    <div><dt>Rol</dt><dd>{{ displayRoles() || 'Sin rol asignado' }}</dd></div>
-                </dl>
-            } @else {
-                <p>No hay una sesi&#243;n activa.</p>
-            }
-        </section>
+
+
+    <!-- LADO DERECHO: Estado y Perfil de Usuario -->
+    <div class="flex-none flex items-center gap-3">
+        <!-- Status Badge -->
+        <div class="hidden xl:flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-xs font-medium">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+            En línea
+        </div>
+
+        <div class="h-4 w-px bg-slate-200 hidden xl:block"></div>
+
+        <!-- Menú de Usuario con Hover & Focus en Azul Marino Rebajado -->
+        <div class="user-menu relative" #userMenu>
+            <button class="flex items-center gap-2.5 p-1.5 pl-2 pr-3 rounded-xl bg-slate-50 hover:bg-[#0b2545]/8 focus:bg-[#0b2545]/10 border border-slate-200/80 hover:border-[#0b2545]/30 focus:ring-2 focus:ring-[#0b2545]/15 transition-all cursor-pointer group" 
+                    type="button" 
+                    (click)="userMenuOpen.set(!userMenuOpen())"
+                    [attr.aria-expanded]="userMenuOpen()" 
+                    aria-controls="user-information" 
+                    aria-label="Ver datos del usuario">
+                
+                <!-- Avatar en fondo azul del sidebar bajito, se vuelve azul sólido al hover -->
+                <div class="h-8 w-8 rounded-lg bg-[#0b2545]/10 text-[#0b2545] flex items-center justify-center font-medium shadow-2xs group-hover:bg-[#0b2545] group-hover:text-white transition-colors">
+                    <app-icons name="user" klass="h-4 w-4" [strokeWidth]="2" />
+                </div>
+
+                <div class="text-left hidden sm:block leading-tight">
+                    <span class="block text-xs font-semibold text-slate-800 truncate max-w-[140px]" [title]="authService.user()?.nombreCompleto || authService.user()?.usuario || 'Sin sesión'">
+                        {{ authService.user()?.nombreCompleto || authService.user()?.usuario || 'Sin sesión' }}
+                    </span>
+                    <span class="block text-[11px] text-slate-400 font-medium truncate max-w-[140px]" [title]="displayRoles() || 'Sin rol asignado'">
+                        {{ displayRoles() || 'Sin rol asignado' }}
+                    </span>
+                </div>
+
+                <svg class="h-3.5 w-3.5 text-slate-400 transition-transform duration-200 group-hover:text-[#0b2545]" [class.rotate-180]="userMenuOpen()" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m6 9 6 6 6-6" />
+                </svg>
+            </button>
+
+            <!-- Dropdown Menú -->
+            <section id="user-information" class="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-slate-100 p-4 z-50 transition-all" [hidden]="!userMenuOpen()" aria-labelledby="user-information-title">
+                <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+                    <h2 id="user-information-title" class="text-xs font-bold uppercase tracking-wider text-slate-400">Mi Cuenta</h2>
+                    <span class="px-2 py-0.5 text-[10px] font-semibold bg-[#0b2545]/10 text-[#0b2545] border border-[#0b2545]/20 rounded">Activo</span>
+                </div>
+
+                @if (authService.user(); as user) {
+                    <dl class="space-y-2 text-xs">
+                        <div class="flex justify-between items-center"><dt class="text-slate-400">Nombre</dt><dd class="font-medium text-slate-700 truncate max-w-[150px]">{{ user.nombreCompleto || 'No disponible' }}</dd></div>
+                        <div class="flex justify-between items-center"><dt class="text-slate-400">Usuario</dt><dd class="font-medium text-slate-700">{{ user.usuario || 'No disponible' }}</dd></div>
+                        <div class="flex justify-between items-center"><dt class="text-slate-400">Rol asignado</dt><dd class="font-semibold text-[#0b2545] bg-[#0b2545]/10 px-2 py-0.5 rounded border border-[#0b2545]/20">{{ displayRoles() || 'Sin rol' }}</dd></div>
+                    </dl>
+                } @else {
+                    <p class="text-xs text-slate-500">No hay una sesión activa.</p>
+                }
+            </section>
         </div>
     </div>
 </div>
