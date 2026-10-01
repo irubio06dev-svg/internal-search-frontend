@@ -10,8 +10,8 @@ import { GlobalLoaderComponent } from './shared/global-loader/global-loader.comp
   styleUrl: './app.css'
 })
 export class App {
+  protected readonly loadingService = inject(LoadingService);
   protected readonly title = signal('internal-search');
 
-  protected readonly loadingService = inject(LoadingService);
   protected readonly router = inject(Router);
 }

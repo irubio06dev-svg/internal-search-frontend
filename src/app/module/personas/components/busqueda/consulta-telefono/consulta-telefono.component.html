@@ -3,7 +3,19 @@
         <label for="telefono">N&#250;mero de celular</label>
         <div class="search-controls">
             <div class="search-input"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 5h4m-3 14h2"/></svg>
-            <input id="telefono" type="tel" inputmode="numeric" formControlName="telefono" placeholder="Ingresa 9 d&#237;gitos" [readOnly]="cargando()" [attr.aria-invalid]="telefono.touched && telefono.invalid" aria-describedby="telefono-ayuda" /></div>
+            <input
+            id="telefono"
+            type="text"
+            maxlength="9"
+            inputmode="numeric"
+            formControlName="telefono"
+            placeholder="Ingresa 9 dígitos"
+            (input)="limitarTelefono($event)"
+            [readOnly]="cargando()"
+            [attr.aria-invalid]="telefono.touched && telefono.invalid"
+            aria-describedby="telefono-ayuda"
+            />
+        </div>
             <button type="submit" [disabled]="cargando()"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg>{{ cargando() ? 'Buscando...' : 'Buscar' }}</button>
             <button class="clear-button" type="button" (click)="limpiar()" [disabled]="cargando()">Limpiar</button>
         </div>
@@ -11,7 +23,12 @@
     </form>
     <section class="result-card" aria-label="Resultados" [attr.aria-busy]="cargando()">
         <div role="status">
-            @if (cargando()) { <div class="loading-state"><p>Consultando informaci&#243;n...</p><div class="skeleton skeleton-name" aria-hidden="true"></div><div class="skeleton" aria-hidden="true"></div></div> }
+            @if (cargando()) {
+                <div class="loading-state">
+                    <p>Consultando tel&#233;fonos y documentos asociados...</p>
+                    <span class="inline-spinner" aria-hidden="true"></span>
+                </div>
+            }
             @else if (error()) { <div class="empty-state"><h3>No pudimos completar la b&#250;squeda</h3><p>{{ error() }}</p></div> }
             @else if (resultado(); as datos) {
                 <div class="summary">

@@ -1,0 +1,56 @@
+<section class="inicio" aria-labelledby="inicio-titulo">
+    <header class="welcome">
+        <p class="welcome-label">Portal interno · Informa Perú</p>
+        <h1 id="inicio-titulo">Bienvenido{{ auth.user()?.nombreCompleto ? ', ' + auth.user()?.nombreCompleto : '' }}</h1>
+        <p>Consulta información y encuentra tus últimos resultados en un solo lugar.</p>
+    </header>
+
+    <div class="access-grid">
+        <a class="access" routerLink="/system/personas/individual/dni">
+            <span class="access-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg></span>
+            <h2>Consulta individual</h2>
+            <p>Busca por DNI o teléfono y revisa la información disponible de una persona.</p>
+            <span class="access-action">Buscar una persona <span aria-hidden="true">→</span></span>
+        </a>
+        <a class="access" routerLink="/system/personas/masivas">
+            <span class="access-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 3H5v18h14V8zM14 3v5h5M8 12h8M8 16h8"/></svg></span>
+            <h2>Consulta masiva</h2>
+            <p>Sube un archivo TXT o CSV con DNIs y descarga los resultados en Excel.</p>
+            <span class="access-action">Procesar un archivo <span aria-hidden="true">→</span></span>
+        </a>
+    </div>
+
+    <section class="recent" aria-labelledby="recent-title">
+        <header class="recent-header">
+            <div><h2 id="recent-title">Últimas descargas</h2><p>Tus cinco archivos más recientes.</p></div>
+            <a routerLink="/system/personas/masivas">Ver historial <span aria-hidden="true">→</span></a>
+        </header>
+        @if (cargando()) {
+            <div class="state" role="status"><span class="spinner" aria-hidden="true"></span><p>Cargando tus descargas...</p></div>
+        } @else if (error()) {
+            <div class="state"><p role="alert">{{ error() }}</p><button type="button" (click)="cargar()">Reintentar</button></div>
+        } @else if (historial().length) {
+            <div class="table-scroll" tabindex="0" role="region" aria-label="Descargas recientes">
+                <!-- <table>
+                    <thead><tr><th scope="col">Archivo</th><th scope="col">Fecha</th><th scope="col">DNIs</th><th scope="col">Acción</th></tr></thead>
+                    <tbody>
+                        @for (item of historial(); track item.id) {
+                            <tr>
+                                <td class="filename">{{ item.archivo }}</td>
+                                <td class="date">{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                                <td>{{ item.totalDnis }}</td>
+                                <td><button type="button" [disabled]="descargando() !== null" [attr.aria-label]="'Descargar ' + item.archivo" [attr.aria-busy]="descargando() === item.id" (click)="descargar(item)">
+                                    @if (descargando() === item.id) { <span class="spinner small" aria-hidden="true"></span> }
+                                    {{ descargando() === item.id ? 'Descargando...' : 'Descargar' }}
+                                </button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table> -->
+            </div>
+        } @else {
+            <div class="state"><h3>Aún no tienes descargas</h3><p>Al procesar tu primera consulta masiva, encontrarás aquí el archivo generado.</p><a routerLink="/system/personas/masivas">Crear consulta masiva →</a></div>
+        }
+        @if (errorDescarga()) { <p class="download-error" role="alert">{{ errorDescarga() }}</p> }
+    </section>
+</section>

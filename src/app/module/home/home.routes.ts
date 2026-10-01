@@ -10,12 +10,12 @@ export const homeRoutes: Routes = [
         children: [
             {
                 path: 'personas',
-                loadChildren: () => import('../consultas/consultas.routes'),
+                loadChildren: () => import('../personas/consultas.routes'),
             },
 
             {
-                path: 'empresa',
-                loadChildren: () => import('../consultas/consultas.routes'),
+                path: 'empresas',
+                loadChildren: () => import('../empresa/empresa.routes'),
             },
 
             // {
@@ -41,7 +41,7 @@ export const homeRoutes: Routes = [
 
             {
                 path: '',
-                redirectTo: 'consultas',
+                loadComponent: () => import('./pages/inicio/inicio.component').then(m => m.InicioComponent),
                 pathMatch: 'full',
             }
         ]

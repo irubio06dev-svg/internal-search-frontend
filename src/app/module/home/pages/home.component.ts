@@ -6,8 +6,6 @@ import { HomeService } from '../service/home.service';
 import { ResponseRoute } from '../interfaces/home.interface';
 import { LogoutComponent } from '../components/logout/logout.component';
 import { SidebarmenuComponent } from '../../../shared/sidebarmenu/sidebarmenu.component';
-import { GlobalLoaderComponent } from '../../../shared/global-loader/global-loader.component';
-import { LoadingService } from '../../../core/services/loading.service';
 import { HeaderSidebarComponent } from '../components/header-sidebar/header-sidebar.component';
 import { SubtitleSidebarComponent } from '../components/header-subtitle/subtitle-sidebar.component';
 
@@ -19,7 +17,6 @@ import { SubtitleSidebarComponent } from '../components/header-subtitle/subtitle
         // SubtitleSidebarComponent,
         NavBarComponent,
         RouterOutlet,
-        GlobalLoaderComponent,
         LogoutComponent
     ],
     templateUrl: './home.component.html',
@@ -28,7 +25,6 @@ import { SubtitleSidebarComponent } from '../components/header-subtitle/subtitle
 export class HomeComponent implements OnInit {
     public authService = inject(AuthService);
     private homeService = inject(HomeService);
-    public loadingService = inject(LoadingService);
     public items = signal<ResponseRoute[]>([]);
 
     ngOnInit(): void {

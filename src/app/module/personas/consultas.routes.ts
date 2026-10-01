@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { ConsultasIndividualComponent } from './pages/consutas-individual/consultas-individual.component';
-import { ConsultasMasivasComponent } from './pages/consultas-masivas/consultas-masivas.component';
+import { ConsultasIndividualComponent } from './pages/individual/consultas-individual.component';
+import { ConsultasMasivasComponent } from './pages/masivas/consultas-masivas.component';
 
 export const consultasRoutes: Routes = [
     {

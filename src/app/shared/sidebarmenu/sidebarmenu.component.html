@@ -1,13 +1,8 @@
 @if (items().children && items().children!.length > 0) {
     <li class="menu-node">
-        <details [open]="isActive()">
+        <details open>
             <summary class="menu-entry" [class.active-group]="isActive()">
-                @if (level() === 0) {
-                    <span class="menu-icon" aria-hidden="true">
-                        @if (items().icono) { <app-icons [name]="items().icono" klass="h-4 w-4" [strokeWidth]="1.8" /> }
-                        @else { <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="5" width="14" height="14" rx="3" /></svg> }
-                    </span>
-                }
+                <span class="menu-icon" aria-hidden="true"><app-icons [name]="menuIcon()" klass="h-4 w-4" [strokeWidth]="1.8" /></span>
                 <span class="entry-label">{{ items().nomMenu }}</span>
                 <svg class="chevron" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m9 5 7 7-7 7" /></svg>
             </summary>
@@ -21,12 +16,7 @@
 } @else {
     <li class="menu-node">
         <a class="menu-entry" [class.child-entry]="level() > 0" [routerLink]="routeSegments()" routerLinkActive="selected" ariaCurrentWhenActive="page">
-            @if (level() === 0) {
-                <span class="menu-icon" aria-hidden="true">
-                    @if (items().icono) { <app-icons [name]="items().icono" klass="h-4 w-4" [strokeWidth]="1.8" /> }
-                    @else { <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="5" width="14" height="14" rx="3" /></svg> }
-                </span>
-            }
+            <span class="menu-icon" aria-hidden="true"><app-icons [name]="menuIcon()" klass="h-4 w-4" [strokeWidth]="1.8" /></span>
             <span class="entry-label">{{ items().nomMenu }}</span>
         </a>
     </li>

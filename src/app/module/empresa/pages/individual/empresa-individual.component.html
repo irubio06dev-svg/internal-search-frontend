@@ -1,0 +1,59 @@
+﻿<section class="page">
+
+    <!-- Encabezado (mismo estilo que Consulta masiva) -->
+    <header class="page-header">
+        <div class="page-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m20 20-3.5-3.5" />
+            </svg>
+        </div>
+        <div>
+            <p>Empresa / Empresa individual</p>
+            <h1 class="page-title">Consulta individual</h1>
+            <p>Busca la información de una empresa por su RUC o razón social.</p>
+        </div>
+    </header>
+
+    <!-- Tarjeta principal -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 6h16M7 12h10M10 18h4" />
+                </svg>
+            </div>
+            <div>
+                <h2 class="card-title">Buscar por</h2>
+                <p class="card-subtitle">Elige el tipo de búsqueda que deseas realizar.</p>
+            </div>
+        </div>
+
+        <nav class="consultas-tabs" aria-label="Buscar por">
+            <a class="consulta-tab" routerLink="ruc" routerLinkActive="is-active" ariaCurrentWhenActive="page">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="14" rx="2" />
+                    <circle cx="9" cy="11" r="2" />
+                    <path d="M6.5 16c.6-1.2 1.5-2 2.5-2s1.9.8 2.5 2M14 10h4M14 14h3" />
+                </svg>
+                RUC
+            </a>
+            <!-- <a class="consulta-tab" routerLink="apellidos-nombres" routerLinkActive="is-active" ariaCurrentWhenActive="page">Apellidos y nombres</a> -->
+            <a class="consulta-tab" routerLink="razon-social" routerLinkActive="is-active" ariaCurrentWhenActive="page">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 21h18M3 7v14M21 7v14M6 11h2M6 15h2M10 11h2M10 15h2M14 11h2M14 15h2M7 3h10v4H7z" />
+                </svg>
+                Razón social
+            </a>
+        </nav>
+
+        <div class="consulta-content">
+            <router-outlet />
+        </div>
+    </div>
+
+</section>

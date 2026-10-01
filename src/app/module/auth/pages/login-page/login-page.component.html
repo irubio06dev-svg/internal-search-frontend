@@ -13,29 +13,35 @@
                 <h3>Inicia sesión</h3>
                 <div>Accede al portal interno de Informa Perú.</div>
             </div>
-
+            
             <form class="login-form" (ngSubmit)="onSubmit()" [formGroup]="loginForm">
                 <div class="field-group form-control">
                     <label class="label" for="UsuarioLogin"><span>Usuario</span></label>
+                    <div class="login-input">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg>
                     <input
                         id="UsuarioLogin"
-                        class="input input-bordered w-full"
+                        class="w-full"
                         type="text"
                         placeholder="Escribe tu usuario"
                         autocomplete="username"
                         formControlName="UsuarioLogin"
                     />
+                    </div>
                 </div>
                 <div class="field-group form-control">
                     <label class="label" for="Clave"><span>Contraseña</span></label>
+                    <div class="login-input">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4m-4 5v2"/></svg>
                     <input
                         id="Clave"
-                        class="input input-bordered w-full"
+                        class="w-full"
                         type="password"
                         placeholder="Escribe tu contraseña"
                         autocomplete="current-password"
                         formControlName="Clave"
                     />
+                    </div>
                 </div>
                 <button
                     class="submit-button btn btn-primary"

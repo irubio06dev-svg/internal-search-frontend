@@ -1,0 +1,66 @@
+
+<section class="dni-search" aria-label="Consulta por razón social">
+    <form class="search-form" [formGroup]="formulario" (ngSubmit)="buscar()" novalidate>
+        <label for="razon-busqueda">Razón social</label>
+        <div class="search-controls">
+            <div class="search-input">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 21V3h12v18M16 9h4v12M2 21h20M8 7h4M8 11h4M8 15h4"/></svg>
+                <input id="razon-busqueda" type="text" autocomplete="off" formControlName="razonSocial" placeholder="Escribe al menos 3 caracteres" [readOnly]="cargando()" [attr.aria-invalid]="nombreBusqueda.touched && nombreBusqueda.invalid" aria-describedby="razon-ayuda" />
+            </div>
+            <button type="submit" [disabled]="cargando()">{{ cargando() ? 'Buscando...' : 'Buscar' }}</button>
+            <button type="button" class="clear-button" (click)="limpiar()" [disabled]="cargando()">Limpiar</button>
+        </div>
+        <p id="razon-ayuda" class="field-hint" [class.field-error]="nombreBusqueda.touched && nombreBusqueda.invalid">Ingresa al menos 3 caracteres de la razón social.</p>
+    </form>
+    @if (!cargando() && !error() && empresas().length > 1) {
+        <div class="empresa-selector">
+            <span id="empresas-label" class="selector-label">Empresas encontradas ({{ empresas().length }})</span>
+            <details class="empresa-dropdown" #selectorEmpresas (keydown.escape)="cerrarSelector()">
+                <summary aria-labelledby="empresas-label empresa-elegida">
+                    <svg class="selector-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 21V3h12v18M16 9h4v12M2 21h20M8 7h4M8 11h4M8 15h4"/></svg>
+                    <span id="empresa-elegida" class="selected-name">{{ razonSocial() }} <span class="selected-document">{{ empresaSeleccionada() }}</span></span>
+                    <svg class="selector-chevron" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+                </summary>
+                <div class="empresa-options" role="group" aria-labelledby="empresas-label">
+                    <p class="options-heading">Selecciona una empresa</p>
+                    @for (empresa of empresas(); track empresa.documento) {
+                        <button type="button" class="empresa-option" [class.is-selected]="empresaSeleccionada() === empresa.documento" [attr.aria-pressed]="empresaSeleccionada() === empresa.documento" (click)="seleccionarEmpresa(empresa.documento); cerrarSelector()">
+                            <span class="option-text"><strong>{{ empresa.nombre }}</strong><span>{{ empresa.documento || 'Sin documento informado' }}</span></span>
+                            @if (empresaSeleccionada() === empresa.documento) {
+                                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>
+                            }
+                        </button>
+                    }
+                </div>
+            </details>
+        </div>
+    }
+    <section class="result-card" aria-label="Resultados de la empresa" [attr.aria-busy]="cargando()">
+        @if (cargando()) {
+            <div class="loading-state" role="status"><span class="inline-spinner" aria-hidden="true"></span><p>Consultando información de la empresa...</p></div>
+        } @else if (error()) {
+            <div class="empty-state" role="alert"><h3>No pudimos completar la búsqueda</h3><p class="field-error">{{ error() }}</p></div>
+        } @else if (resultado() && tieneDatos()) {
+            <dl class="identity-grid">
+                <div><dt>Razón social</dt><dd class="person-name">{{ razonSocial() }}</dd></div>
+                <div><dt>RUC</dt><dd>{{ documentoConsultado() }}</dd></div>
+            </dl>
+            @if (secciones().length) {
+                <div class="result-tabs" role="tablist" aria-label="Información de la empresa">
+                    @for (seccion of secciones(); track seccion.id; let i = $index) {
+                        <button type="button" class="result-tab" role="tab" [id]="'razon-tab-' + i" [attr.aria-controls]="'razon-panel-' + i" [attr.aria-selected]="activa() === seccion.id" [tabIndex]="activa() === seccion.id ? 0 : -1" (click)="activa.set(seccion.id)" (keydown)="navegar($event, i)">{{ seccion.titulo }} <span class="tab-count">{{ seccion.registros.length }}</span></button>
+                    }
+                </div>
+                @for (seccion of secciones(); track seccion.id; let i = $index) {
+                    <section role="tabpanel" [id]="'razon-panel-' + i" [attr.aria-labelledby]="'razon-tab-' + i" [hidden]="activa() !== seccion.id" tabindex="0">
+                        @for (registro of seccion.registros; track $index) {
+                            <dl class="phone-grid">@for (campo of campos(registro); track campo.clave) { <div><dt>{{ titulo(campo.clave) }}</dt><dd>{{ texto(campo.valor, campo.clave) }}</dd></div> }</dl>
+                        } @empty { <p class="no-phones">No hay registros en esta sección.</p> }
+                    </section>
+                }
+            }
+        } @else {
+            <div class="empty-state"><h3>{{ consultado() ? 'No se encontraron registros' : 'Consulta una empresa' }}</h3><p>{{ consultado() ? 'No hay información disponible para esta búsqueda.' : 'Ingresa una razón social para buscar empresas.' }}</p></div>
+        }
+    </section>
+</section>

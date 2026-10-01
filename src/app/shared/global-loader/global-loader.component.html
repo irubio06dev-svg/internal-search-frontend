@@ -1,9 +1,10 @@
 @switch (selectLoader()) {
     @case ('loader-login') {
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div
-                class="w-16 h-16 border-7 border-t-transparent border-white rounded-full animate-spin"
-            ></div>
+        <div class="global-loader" role="status" aria-live="polite">
+            <div class="loader-content">
+                <span class="loader-spinner" aria-hidden="true"></span>
+                <span>Iniciando sesi&#243;n...</span>
+            </div>
         </div>
     }
 }

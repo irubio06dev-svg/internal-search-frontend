@@ -5,6 +5,7 @@ import { finalize } from 'rxjs';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { ConsultasService } from '../../../services/consultas.service';
 import { BuscadorResponse } from '../../../interfaces/consultas.interface';
+import { ActivatedRoute } from '@angular/router';
 
 type Seccion = 'moviles' | 'sueldos' | 'deudas' | 'lineasCredito' | 'calificaciones';
 
@@ -18,12 +19,16 @@ type Seccion = 'moviles' | 'sueldos' | 'deudas' | 'lineasCredito' | 'calificacio
 export class ConsultaDniComponent {
     private readonly servicio = inject(ConsultasService);
     private readonly destroyRef = inject(DestroyRef);
+    readonly esEmpresa = inject(ActivatedRoute).snapshot.data['tipoDocumento'] === 'RUC';
+    readonly tipoDocumento = this.esEmpresa ? 'RUC' : 'DNI';
+    readonly longitudDocumento = this.esEmpresa ? 11 : 8;
 
 
-    readonly dni = new FormControl('', 
-            { nonNullable: true, validators: 
-                [Validators.required, Validators.pattern(/^\d{8}$/)] 
-    });
+    readonly dni = new FormControl('',
+        {
+            nonNullable: true, validators:
+                [Validators.required, Validators.pattern(new RegExp(`^[0-9]{${this.longitudDocumento}}$`))]
+        });
     readonly formulario = new FormGroup({ dni: this.dni });
     readonly resultado = signal<BuscadorResponse | null>(null);
     readonly cargando = signal(false);
@@ -54,6 +59,11 @@ export class ConsultaDniComponent {
     }
     readonly nombre = computed(() => {
         const datos = this.resultado();
+        if (this.esEmpresa) {
+            return datos?.deudas?.find(d => d.razonSocial)?.razonSocial
+                || datos?.lineasCredito?.find(d => d.razonSocial)?.razonSocial
+                || 'No disponible';
+        }
         const persona = datos?.calificaciones?.find(p => p.apePat || p.apeMat || p.priNombre || p.segNombre);
         if (persona) return [persona.apePat, persona.apeMat, persona.priNombre, persona.segNombre].filter(Boolean).join(' ');
         const movil = datos?.moviles?.find(p => p.apePat || p.apeMat || p.prenombres);
@@ -74,7 +84,7 @@ export class ConsultaDniComponent {
         this.documentoConsultado.set(this.dni.value);
         this.cargando.set(true);
 
-        this.servicio.consultar({ tipoDocumento: 'DNI', documento: this.dni.value })
+        this.servicio.consultar({ tipoDocumento: this.tipoDocumento, documento: this.dni.value })
             .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.cargando.set(false)))
             .subscribe({
                 next: resultado => {
@@ -91,5 +101,16 @@ export class ConsultaDniComponent {
         this.resultado.set(null);
         this.error.set('');
         this.documentoConsultado.set('');
+    }
+
+    soloNumeros(event: Event): void {
+        const input = event.target as HTMLInputElement;
+
+        const valorLimpio = input.value
+            .replace(/\D/g, '')
+            .slice(0, this.longitudDocumento);
+
+        input.value = valorLimpio;
+        this.dni.setValue(valorLimpio);
     }
 }

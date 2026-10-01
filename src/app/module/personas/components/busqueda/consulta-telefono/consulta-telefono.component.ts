@@ -16,7 +16,13 @@ import { BuscadorTelefonoResponse, Movil } from '../../../interfaces/consultas.i
 export class ConsultaTelefonoComponent {
     private readonly servicio = inject(ConsultasService);
     private readonly destroyRef = inject(DestroyRef);
-    readonly telefono = new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.pattern(/^9[0-9]{8}$/)] });
+    readonly telefono = new FormControl('', {
+        nonNullable: true,
+        validators: [
+            Validators.required,
+            Validators.pattern(/^9[0-9]{8}$/)
+        ]
+    });
     readonly formulario = new FormGroup({ telefono: this.telefono });
     readonly resultado = signal<BuscadorTelefonoResponse | null>(null);
     readonly cargando = signal(false);
@@ -28,7 +34,8 @@ export class ConsultaTelefonoComponent {
             const documento = this.texto(registro.documento);
             grupos.set(documento, [...(grupos.get(documento) ?? []), registro]);
         }
-        return Array.from(grupos, ([documento, registros]) => ({ documento, registros,
+        return Array.from(grupos, ([documento, registros]) => ({
+            documento, registros,
             nombre: registros.map(r => [r.apePat, r.apeMat, r.prenombres]
                 .map(v => this.texto(v, '')).filter(Boolean).join(' ')).find(Boolean) || 'Nombre no disponible',
         }));
@@ -42,17 +49,29 @@ export class ConsultaTelefonoComponent {
     }
 
     buscar(): void {
+
         if (this.cargando()) return;
-        this.telefono.setValue(this.telefono.value.trim());
+
         this.formulario.markAllAsTouched();
+
         if (this.formulario.invalid) return;
+
         this.resultado.set(null);
         this.error.set('');
         this.pagina.set(1);
         this.cargando.set(true);
+
         this.servicio.consultarTelefono(this.telefono.value)
-            .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.cargando.set(false)))
-            .subscribe({ next: datos => this.resultado.set(datos), error: () => this.error.set('No se pudo realizar la consulta. Intenta nuevamente.') });
+            .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                finalize(() => this.cargando.set(false))
+            )
+            .subscribe({
+                next: datos => this.resultado.set(datos),
+                error: () => this.error.set(
+                    'No se pudo realizar la consulta. Intenta nuevamente.'
+                )
+            });
     }
 
     limpiar(): void {
@@ -61,5 +80,13 @@ export class ConsultaTelefonoComponent {
         this.resultado.set(null);
         this.error.set('');
         this.pagina.set(1);
+    }
+
+    limitarTelefono(event: Event): void {
+        const input = event.target as HTMLInputElement;
+
+        const digitos = input.value.replace(/[^0-9]/g, '').slice(0, 9);
+        input.value = digitos;
+        this.telefono.setValue(digitos);
     }
 }

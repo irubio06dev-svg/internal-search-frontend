@@ -1,8 +1,8 @@
 :host {
     display: block;
     min-height: 100vh;
-    color: #383674;
-    font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+    color: var(--brand-blue);
+    font-family: var(--font-brand);
 }
 
 .showcase-slide {
@@ -32,7 +32,7 @@
 
 .showcase-eyebrow,
 .panel-kicker {
-    color: #665b97;
+    color: #ffffff;
     font-size: 0.77rem;
     font-weight: bold;
     letter-spacing: 0.16em;
@@ -52,7 +52,7 @@
 .showcase-copy p {
     max-width: 470px;
     margin: 0;
-    color: #ebe9ff;
+    color: #ffffff;
     font-size: 1.05rem;
     line-height: 1.6;
 }
@@ -75,14 +75,14 @@
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 50%;
     color: #fff;
-    background: rgba(56, 54, 116, 0.55);
+    background: var(--navy-hover);
     cursor: pointer;
     font-size: 1.15rem;
 }
 
 .icon-button:hover {
-    background: #c5b8ff;
-    color: #383674;
+    background: var(--blue-10);
+    color: var(--brand-blue);
 }
 
 .slide-dots {
@@ -101,7 +101,7 @@
 }
 
 .slide-dots button.is-active {
-    background: #c5b8ff;
+    background: var(--brand-red);
 }
 
 @media (max-width: 800px) {

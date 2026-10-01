@@ -1,52 +1,50 @@
-:host {
-    display: block;
+.sidebar-header {
+    background: transparent;
+    font-family: var(--font-brand);
 }
 
-.sidebar-brand {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 28px 20px;
-    background: #0b2545;
-    border-bottom: 1px solid rgb(255 255 255 / 16%);
+/* Fondo del sidebar: azul de marca */
+.app-sidebar,
+.drawer-side .menu {
+    background: var(--navy);
+    color: #ffffff;
+    font-family: var(--font-brand);
 }
 
-.brand-logo {
-    display: grid;
-    place-items: center;
-    flex: 0 0 64px;
-    width: 64px;
-    height: 64px;
-    padding: 4px;
-    box-sizing: border-box;
-    border-radius: 12px;
-    background: #fff;
-}
-
-.brand-logo img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-.brand-copy {
-    min-width: 0;
-}
-
-.brand-title {
-    margin: 0;
-    color: #fff;
-    font-size: 17px;
-    font-weight: 700;
-    line-height: 1.35;
-    text-wrap: balance;
-}
-
-.brand-subtitle {
-    margin: 6px 0 0;
-    color: #dbeafe;
-    font-size: 12px;
+/* Items del menú */
+.app-sidebar a,
+.drawer-side .menu a {
+    color: var(--blue-25);
     font-weight: 400;
-    line-height: 1.5;
+    border-radius: 8px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.app-sidebar a:hover,
+.drawer-side .menu a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+/* Item activo */
+.app-sidebar a.is-active,
+.app-sidebar a[aria-current="page"],
+.drawer-side .menu a.is-active,
+.drawer-side .menu a[aria-current="page"] {
+    background: #ffffff;
+    color: var(--navy);
+    font-weight: 700;
+}
+
+.app-sidebar a:focus-visible,
+.drawer-side .menu a:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app-sidebar a,
+    .drawer-side .menu a {
+        transition: none;
+    }
 }

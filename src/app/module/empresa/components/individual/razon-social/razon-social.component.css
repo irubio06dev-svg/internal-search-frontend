@@ -1,0 +1,24 @@
+.empresa-selector { display: grid; gap: 8px; }
+.selector-label { font-size: .85rem; font-weight: 700; color: var(--text); }
+.empresa-dropdown { position: relative; min-width: 0; }
+.empresa-dropdown summary { display: flex; align-items: center; gap: 10px; min-height: 38px; padding: 8px 12px; border: 1px solid var(--border-strong); border-radius: 8px; color: var(--text); background: var(--surface); font-size: .9rem; list-style: none; cursor: pointer; }
+.empresa-dropdown summary::-webkit-details-marker { display: none; }
+.empresa-dropdown summary:hover { border-color: var(--blue-50); }
+.empresa-dropdown summary:focus-visible, .empresa-dropdown[open] summary { outline: 2px solid var(--navy); outline-offset: 0; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(27,69,137,.12); }
+.selector-icon { width: 17px; height: 17px; flex: none; color: var(--text-soft); }
+.empresa-dropdown[open] .selector-icon { color: var(--navy); }
+.selected-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.selected-document { margin-left: 10px; color: var(--text-muted); font-size: .8rem; }
+.selector-chevron { width: 16px; height: 16px; flex: none; color: var(--navy); }
+.empresa-dropdown[open] .selector-chevron { transform: rotate(180deg); }
+.empresa-options { position: absolute; top: calc(100% + 8px); left: 0; right: 0; z-index: 20; max-height: min(320px, 50dvh); overflow-y: auto; padding: 6px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); }
+.options-heading { margin: 0; padding: 10px; color: var(--text-muted); font-size: .75rem; border-bottom: 1px solid var(--border); }
+.empresa-option { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 10px; margin-top: 3px; border: 0; border-radius: 6px; background: var(--surface); color: var(--text); text-align: left; cursor: pointer; }
+.option-text { display: grid; gap: 4px; min-width: 0; overflow-wrap: anywhere; }
+.option-text strong { font-size: .85rem; font-weight: 600; }
+.option-text > span { color: var(--text-muted); font-size: .75rem; font-variant-numeric: tabular-nums; }
+.empresa-option:hover { background: var(--surface-muted); }
+.empresa-option.is-selected { background: var(--blue-10); color: var(--navy); }
+.empresa-option:focus-visible { outline: 2px solid var(--navy); outline-offset: -2px; }
+.empresa-option svg { width: 18px; height: 18px; flex: none; }
+@media (max-width: 720px) { .empresa-dropdown summary { min-height: 44px; font-size: 1rem; } .selected-document { display: block; margin-left: 0; } }

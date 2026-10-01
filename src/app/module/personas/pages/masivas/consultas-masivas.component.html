@@ -451,10 +451,7 @@
 
             @if (cargandoHistorial()) {
 
-            <div role="status" class="flex items-center justify-center gap-2 px-6 py-[42px] text-xs text-[var(--text-muted)]">
-                <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
-                Cargando historial...
-            </div>
+            <div class="history-loading" role="status"><span class="inline-spinner" aria-hidden="true"></span><p>Cargando historial de descargas...</p></div>
 
             } @else if (errorHistorial()) {
 
@@ -518,6 +515,7 @@
                             <td>
                                 <button type="button" class="btn btn-outline btn-xs"
                                     [disabled]="descargandoId() !== null"
+                                    [attr.aria-busy]="descargandoId() === item.id"
                                     [attr.aria-label]="'Descargar ' + item.archivo" (click)="volverADescargar(item)">
                                     @if (descargandoId() === item.id) {
                                     <span class="loading loading-spinner loading-xs" aria-hidden="true"></span>
@@ -528,7 +526,7 @@
                                         <path d="M4 17v3h16v-3" />
                                     </svg>
                                     }
-                                    Descargar
+                                    {{ descargandoId() === item.id ? 'Descargando...' : 'Descargar' }}
                                 </button>
                             </td>
                         </tr>

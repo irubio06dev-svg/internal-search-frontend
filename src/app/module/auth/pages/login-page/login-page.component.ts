@@ -9,6 +9,7 @@ import { RepeatedMethodUtils } from '../../../../shared/utils/repeated-method.ut
 import { LoginIconComponent } from '../../components/login-icon/login-icon.component';
 import { CarruselComponent } from '../../components/carrusel/carrusel.component';
 import { AuthResponse } from '../../interfaces/auth-response.interface';
+import { LoadingService } from '../../../../core/services/loading.service';
 
 @Component({
     selector: 'app-login-page',
@@ -21,7 +22,8 @@ export class LoginPageComponent {
     hasError = signal<boolean>(false);
     submitted = signal<boolean>(false);
     errorMessage = signal<string>('Por favor revise sus credenciales.');
-    isLoading = signal<boolean>(false);
+    private readonly loadingService = inject(LoadingService);
+    readonly isLoading = this.loadingService.loginInProgress;
     private authService = inject(AuthService);
     public router = inject(Router);
     public readonly alertType = signal<'warning' | 'danger'>('danger');
@@ -60,13 +62,17 @@ export class LoginPageComponent {
 
         this.authService.login(user).subscribe({
             next: (response: AuthResponse) => {
-                this.isLoading.set(false);
-                
                 if (response.estado === 1) {
-                    this.router.navigateByUrl('/system');
+                    this.router.navigateByUrl('/system')
+                        .catch(() => {
+                            this.errorMessage.set('No se pudo abrir el portal. Intenta nuevamente.');
+                            this.hasError.set(true);
+                        })
+                        .finally(() => this.isLoading.set(false));
                     return;
                 }
 
+                this.isLoading.set(false);
                 this.errorMessage.set('El servidor no confirmó el inicio de sesión.');
                 this.alertType.set('warning');
                 this.hasError.set(true);

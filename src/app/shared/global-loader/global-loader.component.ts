@@ -5,6 +5,7 @@ import { Component, input } from '@angular/core';
     imports: [],
 	
     templateUrl: './global-loader.component.html',
+    styleUrl: './global-loader.component.css',
 })
 export class GlobalLoaderComponent {
 
@@ -12,4 +13,3 @@ export class GlobalLoaderComponent {
 	
 
 }
-

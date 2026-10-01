@@ -4,6 +4,7 @@ import { Injectable, computed, signal } from '@angular/core';
     providedIn: 'root',
 })
 export class LoadingService {
+    readonly loginInProgress = signal(false);
     private readonly pendingRequests = signal(0);
     readonly isLoading = computed(() => this.pendingRequests() > 0);
 

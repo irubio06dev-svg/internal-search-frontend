@@ -7,6 +7,60 @@
     themes: light --default;
 }
 
+
+:root {
+    /* Marca */
+    --brand-blue: #1B4589;
+    --brand-red: #ED1C24;
+    --brand-white: #FFFFFF;
+
+    /* Apoyo */
+    --blue-75: #5474A7;
+    --blue-50: #8DA2C4;
+    --blue-25: #C6D0E2;
+    --blue-10: #E8ECF3;
+    --ink: #231F20;
+
+    /* Tokens que usan los componentes */
+    --navy: var(--brand-blue);
+    --navy-hover: #153670;            /* azul de marca ~20% más oscuro */
+    --navy-soft: var(--blue-10);
+    --accent: var(--brand-blue);
+    --accent-soft: var(--blue-10);
+    --surface: var(--brand-white);
+    --surface-muted: #F6F8FB;         /* derivado: azul 10% más suave */
+    --border: var(--blue-10);
+    --border-strong: var(--blue-25);
+    --text: var(--ink);
+    --text-muted: #5C5759;            /* derivado del negro de texto */
+    --text-soft: var(--blue-50);
+    --danger: var(--brand-red);
+    --danger-text: #C4121A;           /* rojo más oscuro para texto pequeño (contraste) */
+    --danger-soft: #FDECEC;
+
+    --font-brand: 'Leelawadee UI', Arial, sans-serif;
+}
+
+html,
+body {
+    font-family: var(--font-brand);
+    color: var(--text);
+}
+
+/* Los botones e inputs no heredan la fuente por defecto */
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+/* Bold para títulos y llamadas a la acción, Regular para el resto */
+h1, h2, h3, .btn {
+    font-weight: 700;
+}
+
+
 .slide-in-right {
     animation: slideInRight 0.3s ease-out;
 }
