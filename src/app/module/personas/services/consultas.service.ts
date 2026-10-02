@@ -1,8 +1,8 @@
-﻿import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, defer, finalize, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { BuscadorEntrada, BuscadorResponse, BuscadorTelefonoResponse } from '../interfaces/consultas.interface';
+import { BuscadorEntrada, BuscadorResponse, BuscadorTelefonoResponse, ReniecResponse } from '../interfaces/consultas.interface';
 
 @Injectable({
     providedIn: 'root' 
@@ -11,6 +11,11 @@ export class ConsultasService {
     public consultarTelefono(telefono: string): Observable<BuscadorTelefonoResponse> {
         return this.http.post<BuscadorTelefonoResponse>(`${this.baseUrl}/api/buscador/buscar-telefono`, { telefono });
     }
+    // Identidad en RENIEC: solo individual, cuesta 1 token
+    public consultarReniec(dni: string): Observable<ReniecResponse> {
+        return this.http.get<ReniecResponse>(`${this.baseUrl}/api/buscador/reniec/${encodeURIComponent(dni)}`);
+    }
+
     private readonly http = inject(HttpClient);
     private readonly baseUrl = environment.baseUrl.replace(/\/$/, '');
 

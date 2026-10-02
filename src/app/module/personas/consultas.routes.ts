@@ -10,6 +10,7 @@ export const consultasRoutes: Routes = [
             { path: 'dni', loadComponent: () => import('./components/busqueda/consulta-dni/consulta-dni.component').then(m => m.ConsultaDniComponent) },
             { path: 'apellidos-nombres', loadComponent: () => import('./components/busqueda/consulta-nombres/consulta-nombres.component').then(m => m.ConsultaNombresComponent) },
             { path: 'telefono', loadComponent: () => import('./components/busqueda/consulta-telefono/consulta-telefono.component').then(m => m.ConsultaTelefonoComponent) },
+            { path: 'reniec', loadComponent: () => import('./components/busqueda/consulta-reniec/consulta-reniec.component').then(m => m.ConsultaReniecComponent) },
             { path: '', redirectTo: 'dni', pathMatch: 'full' },
         ],
     },

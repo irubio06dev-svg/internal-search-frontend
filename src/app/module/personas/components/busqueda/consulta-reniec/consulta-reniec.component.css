@@ -1,0 +1,41 @@
+.reniec-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.reniec-header .identity-grid {
+    flex: 1 1 260px;
+    min-width: 0;
+}
+
+.reniec-foto {
+    width: 120px;
+    height: 150px;
+    flex: none;
+    object-fit: cover;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--surface-muted);
+}
+
+.reniec-firma {
+    margin: 0;
+    flex: none;
+    text-align: center;
+}
+
+.reniec-firma img {
+    display: block;
+    max-width: 180px;
+    max-height: 80px;
+    object-fit: contain;
+    border-bottom: 1px solid var(--border-strong);
+}
+
+.reniec-firma figcaption {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--text-muted);
+}

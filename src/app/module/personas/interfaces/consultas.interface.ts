@@ -97,3 +97,50 @@ export interface BuscadorTelefonoResponse {
   documentosAsociados: number;
   registros: Movil[];
 }
+
+
+// ---- RENIEC (consulta individual) ----
+export interface ReniecPersona {
+    nuDni?: string;
+    digitoVerificacion?: string;
+    apePaterno?: string;
+    apeMaterno?: string;
+    apCasada?: string;
+    preNombres?: string;
+    sexo?: string;
+    feNacimiento?: string;
+    nuEdad?: string;
+    estadoCivil?: string;
+    gradoInstruccion?: string;
+    estatura?: string;
+    donaOrganos?: string;
+    feEmision?: string;
+    feCaducidad?: string;
+    feInscripcion?: string;
+    deRestriccion?: string;
+    desDireccion?: string;
+    distDireccion?: string;
+    provDireccion?: string;
+    depaDireccion?: string;
+    distrito?: string;
+    provincia?: string;
+    departamento?: string;
+    nomPadre?: string;
+    nomMadre?: string;
+    nuDocMadre?: string;
+    nuDocPadre?: string;
+    feFallecimiento?: string;
+    observacion?: string;
+}
+
+export interface ReniecDatos {
+    foto?: string;
+    firma?: string;
+    listaAni?: ReniecPersona[];
+}
+
+export interface ReniecResponse {
+    dni: string;
+    encontrado: boolean;
+    datos: ReniecDatos | null;
+}
