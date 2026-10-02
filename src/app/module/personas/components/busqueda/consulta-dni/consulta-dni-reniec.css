@@ -1,13 +1,10 @@
+/* Panel RENIEC dentro de los resultados de la consulta por DNI */
 .reniec-header {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-start;
     gap: 20px;
-}
-
-.reniec-header .identity-grid {
-    flex: 1 1 260px;
-    min-width: 0;
+    margin-bottom: 8px;
 }
 
 .reniec-foto {
@@ -22,7 +19,6 @@
 
 .reniec-firma {
     margin: 0;
-    flex: none;
     text-align: center;
 }
 
@@ -38,4 +34,24 @@
     margin-top: 4px;
     font-size: 12px;
     color: var(--text-muted);
+}
+
+.reniec-button {
+    margin-top: 12px;
+    padding: 10px 18px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--brand-blue);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.reniec-button:hover:not(:disabled) {
+    background: var(--navy-hover);
+}
+
+.reniec-button:disabled {
+    opacity: 0.6;
+    cursor: wait;
 }

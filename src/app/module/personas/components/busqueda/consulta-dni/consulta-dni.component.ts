@@ -4,16 +4,19 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { ConsultasService } from '../../../services/consultas.service';
-import { BuscadorResponse } from '../../../interfaces/consultas.interface';
+import { BuscadorResponse, ReniecResponse } from '../../../interfaces/consultas.interface';
+import { imagenReniec, nombreReniec, seccionesReniec } from '../../../utils/reniec.utils';
+import { mensajeError } from '../../../../../shared/utils/http-error.utils';
 import { ActivatedRoute } from '@angular/router';
 
 type Seccion = 'moviles' | 'sueldos' | 'deudas' | 'lineasCredito' | 'calificaciones';
+type Pestana = Seccion | 'reniec';
 
 @Component({
     selector: 'app-consulta-dni',
     imports: [ReactiveFormsModule, DatePipe, DecimalPipe],
     templateUrl: './consulta-dni.component.html',
-    styleUrl: './consulta-dni.component.css',
+    styleUrls: ['./consulta-dni.component.css', './consulta-dni-reniec.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConsultaDniComponent {
@@ -34,7 +37,7 @@ export class ConsultaDniComponent {
     readonly cargando = signal(false);
     readonly error = signal('');
     readonly documentoConsultado = signal('');
-    readonly seccionActiva = signal<Seccion>('moviles');
+    readonly seccionActiva = signal<Pestana>('moviles');
     readonly secciones: { id: Seccion; titulo: string }[] = [
         { id: 'moviles', titulo: 'Teléfonos' },
         { id: 'sueldos', titulo: 'Información laboral' },
@@ -43,21 +46,59 @@ export class ConsultaDniComponent {
         { id: 'calificaciones', titulo: 'Calificaciones' },
     ];
 
+    // RENIEC solo aplica a personas (DNI); en la pestaña la consulta es bajo demanda y cuesta 1 token
+    readonly pestanas: { id: Pestana; titulo: string }[] = this.esEmpresa
+        ? this.secciones
+        : [...this.secciones, { id: 'reniec', titulo: 'RENIEC' }];
+
+    readonly reniec = signal<ReniecResponse | null>(null);
+    readonly reniecCargando = signal(false);
+    readonly reniecError = signal('');
+    readonly reniecPersona = computed(() => this.reniec()?.datos?.listaAni?.[0] ?? null);
+    readonly reniecNombre = computed(() => nombreReniec(this.reniecPersona()));
+    readonly reniecFoto = computed(() => imagenReniec(this.reniec()?.datos?.foto));
+    readonly reniecFirma = computed(() => imagenReniec(this.reniec()?.datos?.firma));
+    readonly reniecSecciones = computed(() => seccionesReniec(this.reniecPersona()));
+
+    conteo(id: Pestana, datos: BuscadorResponse): number | string {
+        if (id === 'reniec') return this.reniecPersona() ? 1 : '—';
+        return datos[id]?.length ?? 0;
+    }
+
+    consultarReniec(): void {
+        if (this.reniecCargando() || this.esEmpresa) return;
+
+        this.reniecCargando.set(true);
+        this.reniecError.set('');
+
+        this.servicio.consultarReniec(this.documentoConsultado())
+            .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.reniecCargando.set(false)))
+            .subscribe({
+                next: r => this.reniec.set(r),
+                error: e => this.reniecError.set(mensajeError(e, 'No se pudo consultar RENIEC. Intenta nuevamente.')),
+            });
+    }
+
     navegarTabs(event: KeyboardEvent, indice: number): void {
         let destino: number;
         switch (event.key) {
-            case 'ArrowRight': destino = (indice + 1) % this.secciones.length; break;
-            case 'ArrowLeft': destino = (indice - 1 + this.secciones.length) % this.secciones.length; break;
+            case 'ArrowRight': destino = (indice + 1) % this.pestanas.length; break;
+            case 'ArrowLeft': destino = (indice - 1 + this.pestanas.length) % this.pestanas.length; break;
             case 'Home': destino = 0; break;
-            case 'End': destino = this.secciones.length - 1; break;
+            case 'End': destino = this.pestanas.length - 1; break;
             default: return;
         }
         event.preventDefault();
-        this.seccionActiva.set(this.secciones[destino].id);
+        this.seccionActiva.set(this.pestanas[destino].id);
         const boton = event.currentTarget as HTMLButtonElement;
         boton.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[destino]?.focus();
     }
+    // Si la base interna no tiene el nombre, se usa el de RENIEC cuando ya se consultó
     readonly nombre = computed(() => {
+        const interno = this.nombreInterno();
+        return interno === 'No disponible' && this.reniecNombre() ? this.reniecNombre() : interno;
+    });
+    private readonly nombreInterno = computed(() => {
         const datos = this.resultado();
         if (this.esEmpresa) {
             return datos?.deudas?.find(d => d.razonSocial)?.razonSocial
@@ -81,6 +122,8 @@ export class ConsultaDniComponent {
         if (this.formulario.invalid) return;
         this.error.set('');
         this.resultado.set(null);
+        this.reniec.set(null);
+        this.reniecError.set('');
         this.documentoConsultado.set(this.dni.value);
         this.cargando.set(true);
 
@@ -89,7 +132,9 @@ export class ConsultaDniComponent {
             .subscribe({
                 next: resultado => {
                     this.resultado.set(resultado);
-                    this.seccionActiva.set(this.secciones.find(seccion => resultado[seccion.id]?.length)?.id ?? 'moviles');
+                    // Sin datos internos, una persona se abre en RENIEC (las empresas siguen en Teléfonos)
+                    this.seccionActiva.set(this.secciones.find(seccion => resultado[seccion.id]?.length)?.id
+                        ?? (this.esEmpresa ? 'moviles' : 'reniec'));
                 },
                 error: () => this.error.set('No se pudo realizar la consulta. Intenta nuevamente.'),
             });
@@ -99,6 +144,8 @@ export class ConsultaDniComponent {
         if (this.cargando()) return;
         this.formulario.reset();
         this.resultado.set(null);
+        this.reniec.set(null);
+        this.reniecError.set('');
         this.error.set('');
         this.documentoConsultado.set('');
     }

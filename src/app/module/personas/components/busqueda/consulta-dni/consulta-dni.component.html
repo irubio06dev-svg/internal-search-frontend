@@ -50,7 +50,7 @@
             } @else if (error()) {
                 <div class="empty-state"><h3>No pudimos completar la búsqueda</h3><p class="field-error">{{ error() }}</p></div>
             } @else if (resultado(); as datos) {
-                @if (!tieneDatos()) {
+                @if (!tieneDatos() && esEmpresa) {
                     <div class="empty-state"><h3>No se encontraron registros</h3><p>No hay información disponible para este {{ tipoDocumento }}.</p></div>
                 } @else {
                     <div class="person-details">
@@ -59,13 +59,13 @@
                             <div><dt>Documento</dt><dd>{{ datos.documento || documentoConsultado() }}</dd></div>
                         </dl>
                         <div class="result-tabs" role="tablist" aria-label="Secciones de resultados">
-                            @for (seccion of secciones; track seccion.id; let indice = $index) {
+                            @for (seccion of pestanas; track seccion.id; let indice = $index) {
                                 <button type="button" role="tab" class="result-tab"
                                     [id]="'dni-tab-' + seccion.id" [attr.aria-controls]="'dni-panel-' + seccion.id"
                                     [attr.aria-selected]="seccionActiva() === seccion.id"
                                     [attr.tabindex]="seccionActiva() === seccion.id ? 0 : -1"
                                     (click)="seccionActiva.set(seccion.id)" (keydown)="navegarTabs($event, indice)">
-                                    {{ seccion.titulo }} <span class="tab-count">{{ datos[seccion.id]?.length ?? 0 }}</span>
+                                    {{ seccion.titulo }} <span class="tab-count">{{ conteo(seccion.id, datos) }}</span>
                                 </button>
                             }
                         </div>
@@ -144,6 +144,39 @@
                             </dl>
                         } @empty { <p class="no-phones">No hay registros disponibles en esta secci&#243;n.</p> }
                         </section>
+                        @if (!esEmpresa) {
+                        <section role="tabpanel" id="dni-panel-reniec" aria-labelledby="dni-tab-reniec" [hidden]="seccionActiva() !== 'reniec'" tabindex="0">
+                        <h3 class="detail-title">Identidad (RENIEC)</h3>
+                        @if (reniecCargando()) {
+                            <div class="loading-state" role="status"><p>Consultando RENIEC…</p><span class="inline-spinner" aria-hidden="true"></span></div>
+                        } @else if (reniecError()) {
+                            <p class="field-error" role="alert">{{ reniecError() }}</p>
+                            <button type="button" class="reniec-button" (click)="consultarReniec()">Reintentar</button>
+                        } @else if (reniec(); as r) {
+                            @if (!r.encontrado || !reniecPersona()) {
+                                <p class="no-phones">RENIEC no tiene datos para este DNI.</p>
+                            } @else {
+                                <div class="reniec-header">
+                                    @if (reniecFoto(); as src) { <img class="reniec-foto" [src]="src" alt="Fotografía del titular del DNI" /> }
+                                    @if (reniecFirma(); as src) {
+                                        <figure class="reniec-firma"><img [src]="src" alt="Firma del titular" /><figcaption>Firma</figcaption></figure>
+                                    }
+                                </div>
+                                @for (bloque of reniecSecciones(); track bloque.titulo) {
+                                    <h4 class="detail-title">{{ bloque.titulo }}</h4>
+                                    <dl class="phone-grid">
+                                        @for (campo of bloque.campos; track campo.etiqueta) {
+                                            <div><dt>{{ campo.etiqueta }}</dt><dd>{{ campo.valor }}</dd></div>
+                                        }
+                                    </dl>
+                                }
+                            }
+                        } @else {
+                            <p class="no-phones">Consulta los datos de identidad de este DNI en RENIEC. Cada consulta descuenta 1 token.</p>
+                            <button type="button" class="reniec-button" (click)="consultarReniec()">Consultar en RENIEC</button>
+                        }
+                        </section>
+                        }
                     </div>
                 }
             } @else {
