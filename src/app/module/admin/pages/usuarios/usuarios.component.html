@@ -57,6 +57,8 @@
                             <div class="flex flex-wrap justify-end gap-1">
                                 <button type="button" class="btn btn-xs btn-ip-outline" (click)="abrirTokens(u)">Tokens</button>
                                 <button type="button" class="btn btn-xs btn-ip-outline" (click)="abrirRoles(u)">Roles</button>
+                                <button type="button" class="btn btn-xs btn-ip-outline" [disabled]="u.id === miId()"
+                                    title="Cierra todas las sesiones abiertas del usuario" (click)="cerrarSesiones(u)">Cerrar sesiones</button>
                                 <button type="button" class="btn btn-xs btn-ip-outline" [disabled]="u.id === miId() && u.estado === 1"
                                     (click)="cambiarEstado(u)">{{ u.estado === 1 ? 'Desactivar' : 'Activar' }}</button>
                             </div>

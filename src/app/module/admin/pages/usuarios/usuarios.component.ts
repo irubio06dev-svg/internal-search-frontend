@@ -253,6 +253,21 @@ export class UsuariosComponent implements OnInit {
         });
     }
 
+    async cerrarSesiones(u: UsuarioListado): Promise<void> {
+        const ok = await AlertUtils.confirm(
+            '¿Cerrar sesiones?',
+            `${u.usuario} tendrá que volver a iniciar sesión en todos sus equipos.`,
+            'Sí, cerrar sesiones',
+            'Cancelar',
+        );
+        if (!ok) return;
+
+        this.admin.cerrarSesiones(u.id).subscribe({
+            next: () => AlertUtils.success('Sesiones cerradas', `${u.usuario} deberá iniciar sesión nuevamente.`),
+            error: e => AlertUtils.error('No se pudieron cerrar las sesiones', mensajeError(e)),
+        });
+    }
+
     async cambiarEstado(u: UsuarioListado): Promise<void> {
         const activar = u.estado !== 1;
         const ok = await AlertUtils.confirm(

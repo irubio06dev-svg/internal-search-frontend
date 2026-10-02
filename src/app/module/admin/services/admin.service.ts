@@ -43,6 +43,10 @@ export class AdminService {
         return this.http.put<void>(`${this.base}/system/usuarios/${codUsuario}/roles`, { codRoles });
     }
 
+    cerrarSesiones(codUsuario: number): Observable<void> {
+        return this.http.post<void>(`${this.base}/system/usuarios/${codUsuario}/cerrar-sesiones`, {});
+    }
+
     asignarTokens(body: AsignarTokensRequest): Observable<SaldoTokens> {
         return this.http.post<SaldoTokens>(`${this.base}/system/tokens/asignar`, body);
     }
