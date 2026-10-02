@@ -147,8 +147,8 @@ export class HomeComponent implements OnInit {
             icono: 'config',
             orden: 900,
             children: [
-                { ...base, codMenu: -2, codMenuPadre: -1, nomMenu: 'Usuarios y tokens', ruta: 'usuarios', icono: 'userSideBar', orden: 1 },
-                { ...base, codMenu: -3, codMenuPadre: -1, nomMenu: 'Auditoría', ruta: 'auditoria', icono: 'report', orden: 2 },
+                { ...base, codMenu: -2, codMenuPadre: -1, nomMenu: 'Usuarios y tokens', ruta: 'usuarios', icono: 'userSideBar', orden: 1, children: [] },
+                { ...base, codMenu: -3, codMenuPadre: -1, nomMenu: 'Auditoría', ruta: 'auditoria', icono: 'report', orden: 2, children: [] },
             ],
         }];
     }
