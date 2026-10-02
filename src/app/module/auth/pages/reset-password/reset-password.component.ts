@@ -23,7 +23,7 @@ function politicaClave(control: AbstractControl): ValidationErrors | null {
     template: `
         <app-auth-card titulo="Define tu contraseña" subtitulo="Elige una contraseña nueva para tu cuenta.">
             @if (listo()) {
-                <div role="status" class="rounded-lg bg-[#E8ECF3] p-4 text-sm">
+                <div role="status" class="rounded-lg bg-[var(--blue-10)] p-4 text-sm">
                     Tu contraseña quedó actualizada. Ya puedes iniciar sesión.
                 </div>
                 <a routerLink="/auth/login" class="btn btn-ip mt-6 w-full">Iniciar sesión</a>

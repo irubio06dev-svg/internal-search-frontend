@@ -215,7 +215,7 @@
             <h2 id="tokens-title" class="ip-title text-xl">Tokens de {{ u.usuario }}</h2>
 
             @if (esIlimitado(u)) {
-                <p class="mt-4 rounded-lg bg-[#E8ECF3] p-4 text-sm">
+                <p class="mt-4 rounded-lg bg-[var(--blue-10)] p-4 text-sm">
                     <strong>ADMIN GENERAL</strong> tiene tokens ilimitados: no consume saldo ni necesita asignación.
                 </p>
                 <div class="modal-action">
@@ -223,7 +223,7 @@
                 </div>
             } @else {
                 <p class="mt-2 text-sm text-slate-600">
-                    Saldo actual: <strong class="text-lg text-[#1B4589]">{{ u.saldoTokens }}</strong>
+                    Saldo actual: <strong class="text-lg text-[var(--brand-blue)]">{{ u.saldoTokens }}</strong>
                 </p>
 
                 <form [formGroup]="tokensForm" (ngSubmit)="guardarTokens()" class="mt-4 grid gap-3">
@@ -258,7 +258,7 @@
                     </div>
                 </form>
 
-                <h3 class="mt-6 text-sm font-bold text-[#1B4589]">Últimos movimientos</h3>
+                <h3 class="mt-6 text-sm font-bold text-[var(--brand-blue)]">Últimos movimientos</h3>
                 <div class="mt-2 max-h-56 overflow-y-auto">
                     <table class="table table-sm">
                         <thead><tr><th>Fecha</th><th>Acción</th><th class="text-right">Cant.</th><th class="text-right">Saldo</th></tr></thead>

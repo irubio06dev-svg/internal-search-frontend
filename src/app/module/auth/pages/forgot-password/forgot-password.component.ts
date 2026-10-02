@@ -12,7 +12,7 @@ import { AuthService } from '../../services/auth.service';
     template: `
         <app-auth-card titulo="Recupera tu contraseña" subtitulo="Ingresa tu usuario o tu correo y te enviaremos un enlace para crear una nueva.">
             @if (enviado()) {
-                <div role="status" class="rounded-lg bg-[#E8ECF3] p-4 text-sm">
+                <div role="status" class="rounded-lg bg-[var(--blue-10)] p-4 text-sm">
                     Si los datos son correctos, enviamos las instrucciones al correo registrado.
                     El enlace vence en pocos minutos y solo se puede usar una vez.
                 </div>
@@ -32,7 +32,7 @@ import { AuthService } from '../../services/auth.service';
                         @if (cargando()) { <span class="loading loading-spinner loading-sm"></span> }
                         Enviar enlace
                     </button>
-                    <a routerLink="/auth/login" class="text-center text-sm text-[#1B4589] hover:underline">Volver a iniciar sesión</a>
+                    <a routerLink="/auth/login" class="text-center text-sm text-[var(--brand-blue)] hover:underline">Volver a iniciar sesión</a>
                 </form>
             }
         </app-auth-card>
