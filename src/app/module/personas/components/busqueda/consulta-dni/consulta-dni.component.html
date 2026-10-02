@@ -164,7 +164,7 @@
                                 </div>
                                 @for (bloque of reniecSecciones(); track bloque.titulo) {
                                     <h4 class="detail-title">{{ bloque.titulo }}</h4>
-                                    <dl class="phone-grid">
+                                    <dl class="phone-grid reniec-grid">
                                         @for (campo of bloque.campos; track campo.etiqueta) {
                                             <div><dt>{{ campo.etiqueta }}</dt><dd>{{ campo.valor }}</dd></div>
                                         }

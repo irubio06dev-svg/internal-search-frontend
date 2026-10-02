@@ -17,8 +17,18 @@
     background: var(--surface-muted);
 }
 
+/* Los bloques de RENIEC son secciones (Identidad, Domicilio...), no "Registro N" como el resto */
+.phone-grid.reniec-grid::before {
+    content: none;
+    display: none;
+}
+
 .reniec-firma {
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
     text-align: center;
 }
 
