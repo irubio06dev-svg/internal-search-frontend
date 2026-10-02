@@ -6,6 +6,7 @@ import { HomeService } from '../service/home.service';
 import { ResponseRoute } from '../interfaces/home.interface';
 import { LogoutComponent } from '../components/logout/logout.component';
 import { SidebarmenuComponent } from '../../../shared/sidebarmenu/sidebarmenu.component';
+import { ROL_ADMIN_GENERAL } from '../../../core/constants/roles';
 import { HeaderSidebarComponent } from '../components/header-sidebar/header-sidebar.component';
 import { SubtitleSidebarComponent } from '../components/header-subtitle/subtitle-sidebar.component';
 
@@ -125,8 +126,31 @@ export class HomeComponent implements OnInit {
                 });
         };
 
-        return prepareMenu(tree);
+        return prepareMenu([...tree, ...this.menuAdministracion()]);
+    }
 
+    // Entradas fijas para ADMIN GENERAL (no dependen de RolMenu en base de datos).
+    // Los códigos negativos no chocan con los de RRCC.Menus.
+    private menuAdministracion(): ResponseRoute[] {
+        const esAdmin = this.authService.user()?.roles
+            ?.some(r => r.rol?.toUpperCase() === ROL_ADMIN_GENERAL);
+
+        if (!esAdmin) return [];
+
+        const base = { codMenuPadre: null, puedeVer: 1, puedeCrear: 1, puedeEditar: 1, puedeEliminar: 1 };
+
+        return [{
+            ...base,
+            codMenu: -1,
+            nomMenu: 'Administración',
+            ruta: 'admin',
+            icono: 'config',
+            orden: 900,
+            children: [
+                { ...base, codMenu: -2, codMenuPadre: -1, nomMenu: 'Usuarios y tokens', ruta: 'usuarios', icono: 'userSideBar', orden: 1 },
+                { ...base, codMenu: -3, codMenuPadre: -1, nomMenu: 'Auditoría', ruta: 'auditoria', icono: 'report', orden: 2 },
+            ],
+        }];
     }
 }
 

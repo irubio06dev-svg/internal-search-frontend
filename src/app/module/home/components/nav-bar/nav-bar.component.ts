@@ -1,4 +1,5 @@
-import { Component, computed, ElementRef, HostListener, ViewChild, inject, signal } from '@angular/core';
+import { Component, computed, ElementRef, HostListener, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { TokensService } from '../../../../core/services/tokens.service';
 import { AuthService } from '../../../auth/services/auth.service';
 import { IconsComponent } from '../../../../shared/icons/icons.component';
 
@@ -8,9 +9,14 @@ import { IconsComponent } from '../../../../shared/icons/icons.component';
     templateUrl: './nav-bar.component.html',
     styleUrl: './nav-bar.component.css',
 })
-export class NavBarComponent {
+export class NavBarComponent implements OnInit {
     readonly authService = inject(AuthService);
+    readonly tokensService = inject(TokensService);
     readonly userMenuOpen = signal(false);
+
+    ngOnInit(): void {
+        this.tokensService.refresh().subscribe();
+    }
     readonly displayRoles = computed(() =>
         this.authService.user()?.roles?.map(role => role.rol).filter(Boolean).join(', ') || 'Sin rol asignado'
     );

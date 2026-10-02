@@ -4,6 +4,7 @@ import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { AuthResponse, UsuarioResponse } from '../interfaces/auth-response.interface';
 import { environment } from '../../../../environments/environment.development';
 import { User } from '../interfaces/auth.interface';
+import { TokensService } from '../../../core/services/tokens.service';
 
 
 type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
@@ -17,6 +18,7 @@ export class AuthService {
     private _token = signal<string | null>(typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null);
 
     private http = inject(HttpClient);
+    private tokensService = inject(TokensService);
     private env = environment.baseUrl;
 
     authStatus = computed<AuthStatus>(() => {
@@ -50,6 +52,15 @@ export class AuthService {
         );
     }
 
+    // Recuperación de contraseña (endpoints anónimos; el backend responde igual exista o no la cuenta)
+    public forgotPassword(identificador: string): Observable<{ message: string }> {
+        return this.http.post<{ message: string }>(`${this.env}system/auth/forgot-password`, { identificador });
+    }
+
+    public resetPassword(token: string, nuevaClave: string): Observable<{ message: string }> {
+        return this.http.post<{ message: string }>(`${this.env}system/auth/reset-password`, { token, nuevaClave });
+    }
+
     public checkStatus(): Observable<boolean> {
         const token = typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null;
 
@@ -75,6 +86,7 @@ export class AuthService {
     public logout(): void {
         this._token.set(null);
         this._user.set(null);
+        this.tokensService.clear();
         this._authStatus.set('not-authenticated');
         if (typeof localStorage !== 'undefined') {
 

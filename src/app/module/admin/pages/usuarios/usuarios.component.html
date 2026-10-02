@@ -1,0 +1,281 @@
+<section class="ip-font mx-auto max-w-275 px-1 py-4 sm:p-6" aria-labelledby="usuarios-title">
+    <header class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+            <h1 id="usuarios-title" class="ip-title text-2xl">Usuarios y tokens</h1>
+            <p class="mt-2 text-sm text-slate-600">
+                Crea cuentas, asigna roles y administra los tokens con los que cada usuario puede consultar.
+            </p>
+        </div>
+        <button type="button" class="btn btn-ip" (click)="abrirCrear()">Nuevo usuario</button>
+    </header>
+
+    <form class="mt-6 flex flex-wrap gap-2" (submit)="$event.preventDefault(); buscar(q.value)">
+        <input #q class="input input-bordered w-full sm:w-80" type="search" placeholder="Buscar por usuario, nombre o correo"
+            aria-label="Buscar usuarios" [value]="texto()" />
+        <button type="submit" class="btn btn-ip-outline">Buscar</button>
+    </form>
+
+    @if (error(); as e) {
+        <div role="alert" class="alert alert-error mt-4"><span>{{ e }}</span></div>
+    }
+
+    <div class="ip-card mt-4 overflow-x-auto">
+        <table class="table ip-table">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Nombre</th>
+                    <th>Roles</th>
+                    <th class="text-right">Tokens</th>
+                    <th>Estado</th>
+                    <th class="text-right">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (u of usuarios(); track u.id) {
+                    <tr>
+                        <td class="font-semibold">{{ u.usuario }}<div class="text-xs font-normal text-slate-500">{{ u.correo }}</div></td>
+                        <td>{{ u.nombreCompleto }}</td>
+                        <td>
+                            <div class="flex flex-wrap gap-1">
+                                @for (r of u.roles; track r) {
+                                    <span class="badge badge-soft">{{ r }}</span>
+                                } @empty {
+                                    <span class="text-xs text-slate-500">Sin rol</span>
+                                }
+                            </div>
+                        </td>
+                        <td class="text-right font-semibold">{{ esIlimitado(u) ? 'Ilimitado' : u.saldoTokens }}</td>
+                        <td>
+                            @if (u.estado === 1) {
+                                <span class="badge badge-success badge-soft">Activo</span>
+                            } @else {
+                                <span class="badge badge-error badge-soft">Inactivo</span>
+                            }
+                        </td>
+                        <td class="text-right">
+                            <div class="flex flex-wrap justify-end gap-1">
+                                <button type="button" class="btn btn-xs btn-ip-outline" (click)="abrirTokens(u)">Tokens</button>
+                                <button type="button" class="btn btn-xs btn-ip-outline" (click)="abrirRoles(u)">Roles</button>
+                                <button type="button" class="btn btn-xs btn-ip-outline" [disabled]="u.id === miId() && u.estado === 1"
+                                    (click)="cambiarEstado(u)">{{ u.estado === 1 ? 'Desactivar' : 'Activar' }}</button>
+                            </div>
+                        </td>
+                    </tr>
+                } @empty {
+                    <tr>
+                        <td colspan="6" class="py-10 text-center text-slate-500">
+                            {{ cargando() ? 'Cargando usuarios...' : 'No se encontraron usuarios.' }}
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <nav class="mt-4 flex items-center justify-between text-sm" aria-label="Paginación">
+        <span class="text-slate-600">{{ total() }} usuario(s)</span>
+        <div class="flex items-center gap-2">
+            <button type="button" class="btn btn-sm btn-ip-outline" [disabled]="pagina() <= 1" (click)="irA(pagina() - 1)">Anterior</button>
+            <span>Página {{ pagina() }} de {{ totalPaginas() }}</span>
+            <button type="button" class="btn btn-sm btn-ip-outline" [disabled]="pagina() >= totalPaginas()" (click)="irA(pagina() + 1)">Siguiente</button>
+        </div>
+    </nav>
+</section>
+
+<!-- MODAL: nuevo usuario -->
+@if (modal() === 'crear') {
+    <div class="modal modal-open ip-font" role="dialog" aria-modal="true" aria-labelledby="crear-title">
+        <div class="modal-box max-w-2xl">
+            <h2 id="crear-title" class="ip-title text-xl">Nuevo usuario</h2>
+
+            <form [formGroup]="crearForm" (ngSubmit)="crear()" class="mt-4 grid gap-3 sm:grid-cols-2">
+                <label class="form-control">
+                    <span class="label-text mb-1 text-sm font-semibold">Nombres *</span>
+                    <input class="input input-bordered w-full" formControlName="nombres" autocomplete="off" />
+                </label>
+                <label class="form-control">
+                    <span class="label-text mb-1 text-sm font-semibold">Apellido paterno *</span>
+                    <input class="input input-bordered w-full" formControlName="apePat" autocomplete="off" />
+                </label>
+                <label class="form-control">
+                    <span class="label-text mb-1 text-sm font-semibold">Apellido materno</span>
+                    <input class="input input-bordered w-full" formControlName="apeMat" autocomplete="off" />
+                </label>
+                <label class="form-control">
+                    <span class="label-text mb-1 text-sm font-semibold">Usuario *</span>
+                    <input class="input input-bordered w-full" formControlName="usuarioLogin" autocomplete="off" />
+                    @if (crearForm.controls.usuarioLogin.touched && crearForm.controls.usuarioLogin.invalid) {
+                        <span class="mt-1 text-xs text-error">Mínimo 4 caracteres: letras, números, punto, guion o guion bajo.</span>
+                    }
+                </label>
+                <label class="form-control sm:col-span-2">
+                    <span class="label-text mb-1 text-sm font-semibold">Correo *</span>
+                    <input class="input input-bordered w-full" type="email" formControlName="correo" autocomplete="off" />
+                    @if (crearForm.controls.correo.touched && crearForm.controls.correo.invalid) {
+                        <span class="mt-1 text-xs text-error">Ingresa un correo válido.</span>
+                    }
+                </label>
+                <label class="form-control">
+                    <span class="label-text mb-1 text-sm font-semibold">DNI</span>
+                    <input class="input input-bordered w-full" formControlName="dni" autocomplete="off" />
+                </label>
+                <label class="form-control">
+                    <span class="label-text mb-1 text-sm font-semibold">Teléfono</span>
+                    <input class="input input-bordered w-full" formControlName="telefono" autocomplete="off" />
+                </label>
+
+                <fieldset class="sm:col-span-2">
+                    <legend class="mb-1 text-sm font-semibold">Roles *</legend>
+                    <div class="flex flex-wrap gap-x-5 gap-y-2">
+                        @for (r of roles(); track r.codigoRol) {
+                            <label class="flex cursor-pointer items-center gap-2 text-sm" [title]="r.descripcion ?? ''">
+                                <input type="checkbox" class="checkbox checkbox-sm" [checked]="rolesSeleccionados().includes(r.codigoRol)"
+                                    (change)="toggleRol(r.codigoRol)" />
+                                {{ r.rol }}
+                            </label>
+                        }
+                    </div>
+                </fieldset>
+
+                <label class="form-control">
+                    <span class="label-text mb-1 text-sm font-semibold">Tokens iniciales</span>
+                    <input class="input input-bordered w-full" type="number" min="0" formControlName="tokensIniciales"
+                        [attr.disabled]="rolesElegidosIncluyenAdmin() ? '' : null" />
+                    <span class="mt-1 text-xs text-slate-500">
+                        {{ rolesElegidosIncluyenAdmin() ? 'ADMIN GENERAL tiene tokens ilimitados.' : 'Cantidad de consultas con las que arranca.' }}
+                    </span>
+                </label>
+                <label class="form-control">
+                    <span class="label-text mb-1 text-sm font-semibold">Contraseña (opcional)</span>
+                    <input class="input input-bordered w-full" type="password" formControlName="clave" autocomplete="new-password" />
+                    <span class="mt-1 text-xs text-slate-500">
+                        Si la dejas vacía, enviamos un correo para que el usuario defina la suya.
+                    </span>
+                </label>
+
+                @if (errorModal(); as e) {
+                    <div role="alert" class="alert alert-error sm:col-span-2"><span>{{ e }}</span></div>
+                }
+
+                <div class="modal-action sm:col-span-2">
+                    <button type="button" class="btn btn-ip-outline" (click)="cerrar()" [disabled]="guardando()">Cancelar</button>
+                    <button type="submit" class="btn btn-ip" [disabled]="guardando()">
+                        @if (guardando()) { <span class="loading loading-spinner loading-sm"></span> }
+                        Crear usuario
+                    </button>
+                </div>
+            </form>
+        </div>
+        <button class="modal-backdrop" type="button" aria-label="Cerrar" (click)="cerrar()"></button>
+    </div>
+}
+
+<!-- MODAL: roles -->
+@if (modal() === 'roles' && seleccionado(); as u) {
+    <div class="modal modal-open ip-font" role="dialog" aria-modal="true" aria-labelledby="roles-title">
+        <div class="modal-box">
+            <h2 id="roles-title" class="ip-title text-xl">Roles de {{ u.usuario }}</h2>
+            <p class="mt-1 text-sm text-slate-600">{{ u.nombreCompleto }}</p>
+
+            <div class="mt-4 flex flex-col gap-3">
+                @for (r of roles(); track r.codigoRol) {
+                    <label class="flex cursor-pointer items-start gap-3 text-sm">
+                        <input type="checkbox" class="checkbox checkbox-sm mt-0.5" [checked]="rolesSeleccionados().includes(r.codigoRol)"
+                            (change)="toggleRol(r.codigoRol)" />
+                        <span><span class="font-semibold">{{ r.rol }}</span>
+                            @if (r.descripcion) { <span class="block text-xs text-slate-500">{{ r.descripcion }}</span> }
+                        </span>
+                    </label>
+                }
+            </div>
+
+            @if (errorModal(); as e) {
+                <div role="alert" class="alert alert-error mt-4"><span>{{ e }}</span></div>
+            }
+
+            <div class="modal-action">
+                <button type="button" class="btn btn-ip-outline" (click)="cerrar()" [disabled]="guardando()">Cancelar</button>
+                <button type="button" class="btn btn-ip" (click)="guardarRoles()" [disabled]="guardando()">
+                    @if (guardando()) { <span class="loading loading-spinner loading-sm"></span> }
+                    Guardar roles
+                </button>
+            </div>
+        </div>
+        <button class="modal-backdrop" type="button" aria-label="Cerrar" (click)="cerrar()"></button>
+    </div>
+}
+
+<!-- MODAL: tokens -->
+@if (modal() === 'tokens' && seleccionado(); as u) {
+    <div class="modal modal-open ip-font" role="dialog" aria-modal="true" aria-labelledby="tokens-title">
+        <div class="modal-box max-w-xl">
+            <h2 id="tokens-title" class="ip-title text-xl">Tokens de {{ u.usuario }}</h2>
+
+            @if (esIlimitado(u)) {
+                <p class="mt-4 rounded-lg bg-[#E8ECF3] p-4 text-sm">
+                    <strong>ADMIN GENERAL</strong> tiene tokens ilimitados: no consume saldo ni necesita asignación.
+                </p>
+                <div class="modal-action">
+                    <button type="button" class="btn btn-ip" (click)="cerrar()">Cerrar</button>
+                </div>
+            } @else {
+                <p class="mt-2 text-sm text-slate-600">
+                    Saldo actual: <strong class="text-lg text-[#1B4589]">{{ u.saldoTokens }}</strong>
+                </p>
+
+                <form [formGroup]="tokensForm" (ngSubmit)="guardarTokens()" class="mt-4 grid gap-3">
+                    <div role="tablist" class="tabs tabs-box w-fit">
+                        <button type="button" role="tab" class="tab" [class.tab-active]="modoTokens() === 'asignar'"
+                            (click)="modoTokens.set('asignar')">Asignar</button>
+                        <button type="button" role="tab" class="tab" [class.tab-active]="modoTokens() === 'retirar'"
+                            (click)="modoTokens.set('retirar')">Retirar</button>
+                    </div>
+
+                    <label class="form-control">
+                        <span class="label-text mb-1 text-sm font-semibold">Cantidad de tokens</span>
+                        <input class="input input-bordered w-full" type="number" min="1" formControlName="cantidad" />
+                    </label>
+                    <label class="form-control">
+                        <span class="label-text mb-1 text-sm font-semibold">Motivo *</span>
+                        <input class="input input-bordered w-full" formControlName="motivo" maxlength="250"
+                            placeholder="Ej.: recarga mensual de la campaña" />
+                        <span class="mt-1 text-xs text-slate-500">Queda registrado en el historial y en la auditoría.</span>
+                    </label>
+
+                    @if (errorModal(); as e) {
+                        <div role="alert" class="alert alert-error"><span>{{ e }}</span></div>
+                    }
+
+                    <div class="flex justify-end gap-2">
+                        <button type="button" class="btn btn-ip-outline" (click)="cerrar()" [disabled]="guardando()">Cancelar</button>
+                        <button type="submit" class="btn btn-ip" [disabled]="guardando()">
+                            @if (guardando()) { <span class="loading loading-spinner loading-sm"></span> }
+                            {{ modoTokens() === 'asignar' ? 'Asignar tokens' : 'Retirar tokens' }}
+                        </button>
+                    </div>
+                </form>
+
+                <h3 class="mt-6 text-sm font-bold text-[#1B4589]">Últimos movimientos</h3>
+                <div class="mt-2 max-h-56 overflow-y-auto">
+                    <table class="table table-sm">
+                        <thead><tr><th>Fecha</th><th>Acción</th><th class="text-right">Cant.</th><th class="text-right">Saldo</th></tr></thead>
+                        <tbody>
+                            @for (m of movimientos(); track m.codMovimiento) {
+                                <tr>
+                                    <td class="whitespace-nowrap">{{ fechaUtc(m.fecha) | date: 'dd/MM/yy HH:mm' }}</td>
+                                    <td>{{ m.accion }}<div class="text-xs text-slate-500">{{ m.detalle }}</div></td>
+                                    <td class="text-right" [class.text-error]="m.cantidad < 0">{{ m.cantidad > 0 ? '+' : '' }}{{ m.cantidad }}</td>
+                                    <td class="text-right">{{ m.saldoResultante }}</td>
+                                </tr>
+                            } @empty {
+                                <tr><td colspan="4" class="py-4 text-center text-slate-500">Sin movimientos todavía.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+        <button class="modal-backdrop" type="button" aria-label="Cerrar" (click)="cerrar()"></button>
+    </div>
+}

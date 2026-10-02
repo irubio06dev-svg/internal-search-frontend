@@ -1,5 +1,6 @@
 import { Routes } from "@angular/router";
 import { HomeComponent } from "./pages/home.component";
+import { adminGuard } from "../../core/guards/admin.guard";
 
 
 
@@ -11,6 +12,13 @@ export const homeRoutes: Routes = [
             {
                 path: 'personas',
                 loadChildren: () => import('../personas/consultas.routes'),
+            },
+
+            // Administración de cuentas, tokens y auditoría: solo ADMIN GENERAL
+            {
+                path: 'admin',
+                canMatch: [adminGuard],
+                loadChildren: () => import('../admin/admin.routes'),
             },
 
             {

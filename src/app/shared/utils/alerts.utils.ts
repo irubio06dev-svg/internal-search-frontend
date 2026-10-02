@@ -30,6 +30,54 @@ export class AlertUtils {
         }).then((result) => result.isConfirmed);
     }
 
+    private static readonly customClass = {
+        popup: 'swal-popup-custom',
+        title: 'swal-title-custom',
+        htmlContainer: 'swal-text-custom',
+        confirmButton: 'swal-confirm-btn',
+        icon: 'swal-icon-custom',
+    };
+
+    static success(title: string, text = ''): Promise<boolean> {
+        return Swal.fire({
+            title,
+            text,
+            icon: 'success',
+            iconColor: '#1B4589',
+            confirmButtonText: 'Entendido',
+            buttonsStyling: false,
+            customClass: AlertUtils.customClass,
+        }).then((result) => result.isConfirmed);
+    }
+
+    static error(title: string, text = ''): Promise<boolean> {
+        return Swal.fire({
+            title,
+            text,
+            icon: 'error',
+            iconColor: '#ED1C24',
+            confirmButtonText: 'Entendido',
+            buttonsStyling: false,
+            customClass: AlertUtils.customClass,
+        }).then((result) => result.isConfirmed);
+    }
+
+    static sinTokens(saldo?: number, costo?: number): Promise<boolean> {
+        const detalle = saldo !== undefined && costo !== undefined
+            ? ` Tienes ${saldo} token(s) y esta consulta cuesta ${costo}.`
+            : '';
+
+        return Swal.fire({
+            title: 'Sin tokens disponibles',
+            text: `Solicita a un administrador que te asigne más tokens.${detalle}`,
+            icon: 'info',
+            iconColor: '#1B4589',
+            confirmButtonText: 'Entendido',
+            buttonsStyling: false,
+            customClass: AlertUtils.customClass,
+        }).then((result) => result.isConfirmed);
+    }
+
     static sessionExpired(): Promise<boolean> {
         return Swal.fire({
             title: 'Sesión expirada',

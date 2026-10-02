@@ -8,6 +8,18 @@ export const routes: Routes = [
         path: 'login',
         component: LoginPageComponent,
     },
+    // Recuperación de contraseña: públicas y sin NotAuthenticatedGuard, porque el enlace del correo
+    // debe abrir aunque haya otra sesión iniciada en el navegador.
+    {
+        path: 'auth/forgot-password',
+        loadComponent: () => import('./module/auth/pages/forgot-password/forgot-password.component')
+            .then(m => m.ForgotPasswordComponent),
+    },
+    {
+        path: 'auth/reset-password',
+        loadComponent: () => import('./module/auth/pages/reset-password/reset-password.component')
+            .then(m => m.ResetPasswordComponent),
+    },
     {
         path: 'auth',
         loadChildren: () => import('./module/auth/auth.routes'),

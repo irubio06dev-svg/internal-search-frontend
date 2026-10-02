@@ -1,0 +1,90 @@
+<section class="ip-font mx-auto max-w-275 px-1 py-4 sm:p-6" aria-labelledby="auditoria-title">
+    <header>
+        <h1 id="auditoria-title" class="ip-title text-2xl">Auditoría</h1>
+        <p class="mt-2 text-sm text-slate-600">
+            Accesos, consultas, altas de cuentas, cambios de rol y movimientos de tokens.
+        </p>
+    </header>
+
+    <form [formGroup]="filtros" (ngSubmit)="aplicar()" class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5 lg:items-end">
+        <label class="form-control">
+            <span class="label-text mb-1 text-sm font-semibold">Desde</span>
+            <input class="input input-bordered w-full" type="date" formControlName="desde" />
+        </label>
+        <label class="form-control">
+            <span class="label-text mb-1 text-sm font-semibold">Hasta</span>
+            <input class="input input-bordered w-full" type="date" formControlName="hasta" />
+        </label>
+        <label class="form-control">
+            <span class="label-text mb-1 text-sm font-semibold">Usuario</span>
+            <input class="input input-bordered w-full" formControlName="usuario" placeholder="Usuario exacto" autocomplete="off" />
+        </label>
+        <label class="form-control">
+            <span class="label-text mb-1 text-sm font-semibold">Acción</span>
+            <select class="select select-bordered w-full" formControlName="accion">
+                <option value="">Todas</option>
+                @for (a of acciones; track a) {
+                    <option [value]="a">{{ a }}</option>
+                }
+            </select>
+        </label>
+        <div class="flex gap-2">
+            <button type="submit" class="btn btn-ip">Filtrar</button>
+            <button type="button" class="btn btn-ip-outline" (click)="limpiar()">Limpiar</button>
+        </div>
+    </form>
+
+    @if (error(); as e) {
+        <div role="alert" class="alert alert-error mt-4"><span>{{ e }}</span></div>
+    }
+
+    <div class="ip-card mt-4 overflow-x-auto">
+        <table class="table table-sm ip-table">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Usuario</th>
+                    <th>Acción</th>
+                    <th>Detalle</th>
+                    <th>IP</th>
+                    <th>Resultado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (r of registros(); track r.codAuditoria) {
+                    <tr>
+                        <td class="whitespace-nowrap">{{ fechaUtc(r.fecha) | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+                        <td class="font-semibold">{{ r.usuario || '—' }}</td>
+                        <td class="whitespace-nowrap text-xs">{{ r.accion }}</td>
+                        <td class="max-w-md wrap-anywhere text-xs">
+                            @if (r.entidad) { <span class="text-slate-500">{{ r.entidad }} {{ r.entidadId }} · </span> }{{ r.detalle }}
+                        </td>
+                        <td class="whitespace-nowrap text-xs">{{ r.ip }}</td>
+                        <td>
+                            @if (r.exito) {
+                                <span class="badge badge-success badge-soft badge-sm">OK</span>
+                            } @else {
+                                <span class="badge badge-error badge-soft badge-sm">Fallido</span>
+                            }
+                        </td>
+                    </tr>
+                } @empty {
+                    <tr>
+                        <td colspan="6" class="py-10 text-center text-slate-500">
+                            {{ cargando() ? 'Cargando registros...' : 'No hay registros para el filtro elegido.' }}
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <nav class="mt-4 flex items-center justify-between text-sm" aria-label="Paginación">
+        <span class="text-slate-600">{{ total() }} registro(s)</span>
+        <div class="flex items-center gap-2">
+            <button type="button" class="btn btn-sm btn-ip-outline" [disabled]="pagina() <= 1" (click)="irA(pagina() - 1)">Anterior</button>
+            <span>Página {{ pagina() }} de {{ totalPaginas() }}</span>
+            <button type="button" class="btn btn-sm btn-ip-outline" [disabled]="pagina() >= totalPaginas()" (click)="irA(pagina() + 1)">Siguiente</button>
+        </div>
+    </nav>
+</section>

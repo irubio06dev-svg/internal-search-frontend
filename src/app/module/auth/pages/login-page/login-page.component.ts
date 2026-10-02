@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../interfaces/auth.interface';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -13,7 +13,7 @@ import { LoadingService } from '../../../../core/services/loading.service';
 
 @Component({
     selector: 'app-login-page',
-    imports: [ReactiveFormsModule, IconsComponent, LoginIconComponent, CarruselComponent],
+    imports: [ReactiveFormsModule, RouterLink, IconsComponent, LoginIconComponent, CarruselComponent],
     templateUrl: './login-page.component.html',
     styleUrl: './login-page.component.css',
 })

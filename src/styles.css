@@ -99,6 +99,60 @@ h1, h2, h3, .btn {
     --lx-accent: #103e73; /* ítem activo, badges, iconos destacados */
 }
 
+/* Identidad Informa Perú (Manual de marca 2026): azul #1B4589, rojo solo como acento */
+:root {
+    --ip-blue: #1B4589;
+    --ip-red: #ED1C24;
+    --ip-ink: #231F20;
+    --ip-blue-10: #E8ECF3;
+    --ip-blue-25: #C6D0E2;
+}
+
+.ip-font {
+    font-family: 'Leelawadee UI', Arial, sans-serif;
+    color: var(--ip-ink);
+}
+
+.ip-card {
+    background: #fff;
+    border: 1px solid var(--ip-blue-25);
+    border-top: 3px solid var(--ip-red);
+    border-radius: 0.75rem;
+}
+
+.ip-title {
+    color: var(--ip-blue);
+    font-weight: 700;
+}
+
+.btn-ip {
+    background: var(--ip-blue);
+    color: #fff;
+    border: 0;
+    box-shadow: none;
+}
+
+.btn-ip:hover:not(:disabled) {
+    background: #153569;
+}
+
+.btn-ip-outline {
+    background: #fff;
+    color: var(--ip-blue);
+    border: 1px solid var(--ip-blue);
+    box-shadow: none;
+}
+
+.btn-ip-outline:hover:not(:disabled) {
+    background: var(--ip-blue-10);
+}
+
+.ip-table th {
+    background: var(--ip-blue-10);
+    color: var(--ip-blue);
+    font-weight: 700;
+}
+
 .sidebar-header {
     background: var(--lx-violet-header);
 }
