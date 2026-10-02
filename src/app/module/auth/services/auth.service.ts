@@ -2,7 +2,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { AuthResponse, UsuarioResponse } from '../interfaces/auth-response.interface';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { User } from '../interfaces/auth.interface';
 import { TokensService } from '../../../core/services/tokens.service';
 

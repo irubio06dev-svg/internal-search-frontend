@@ -1,7 +1,7 @@
 ﻿import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, defer, finalize, Observable, tap, throwError } from 'rxjs';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { BuscadorEntrada, BuscadorResponse, BuscadorTelefonoResponse } from '../interfaces/consultas.interface';
 
 @Injectable({

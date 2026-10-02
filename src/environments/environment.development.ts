@@ -1,7 +1,5 @@
+// Entorno de DESARROLLO (ng serve)
 export const environment = {
-
-    produccion: true,
+    produccion: false,
     baseUrl: 'https://localhost:7172/'
-    // baseUrl: 'https://192.168.1.34:5165/'
-
 };
