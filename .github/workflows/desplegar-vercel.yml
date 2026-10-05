@@ -1,0 +1,55 @@
+# Publica el front en Vercel con cada push a main, sin importar quién lo haga.
+#
+# Por qué existe: el proyecto de Vercel no está conectado a este repositorio (la conexión nativa exige ser
+# administrador del repositorio), así que los push no compilaban nada. Este flujo despliega con un token.
+#
+# Requiere tres secretos del repositorio (Settings → Secrets and variables → Actions → New repository secret):
+#   VERCEL_TOKEN        token creado en Vercel (Account Settings → Tokens), con alcance al equipo "informa-peru"
+#   VERCEL_ORG_ID       id del equipo en Vercel
+#   VERCEL_PROJECT_ID   id del proyecto "internal-search-frontend" en Vercel
+# Mientras falten, el flujo NO falla: avisa y se omite. Vercel compila en su servidor con las variables del
+# proyecto (p. ej. API_URL), así que la dirección de la API no se guarda en este repositorio.
+name: Desplegar en Vercel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Si llegan varios push seguidos, solo se despliega el último
+concurrency:
+  group: vercel-produccion
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - name: Comprobar configuración
+        id: cfg
+        run: |
+          if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
+            echo "::warning title=Despliegue omitido::Faltan los secretos VERCEL_TOKEN, VERCEL_ORG_ID y/o VERCEL_PROJECT_ID del repositorio."
+            echo "listo=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "listo=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.cfg.outputs.listo == 'true'
+
+      - uses: actions/setup-node@v4
+        if: steps.cfg.outputs.listo == 'true'
+        with:
+          node-version: 22
+
+      - name: Desplegar en producción
+        if: steps.cfg.outputs.listo == 'true'
+        run: npx --yes vercel@latest deploy --prod --yes --token "$VERCEL_TOKEN"
