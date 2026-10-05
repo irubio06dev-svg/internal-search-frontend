@@ -162,6 +162,70 @@ h1, h2, h3, .btn {
     background: var(--ip-blue-10);
 }
 
+/* Botones de acción por fila: solo icono, el texto va en el tooltip y en aria-label */
+.ip-actions {
+    display: inline-flex;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.ip-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--ip-blue-25);
+    background: #fff;
+    color: var(--ip-blue);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.ip-icon-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.ip-icon-btn:hover:not(:disabled) {
+    background: var(--ip-blue-10);
+    border-color: var(--ip-blue);
+    transform: translateY(-1px);
+}
+
+.ip-icon-btn:focus-visible {
+    outline: 2px solid var(--ip-blue);
+    outline-offset: 2px;
+}
+
+.ip-icon-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Desactivar (acción delicada): rojo de marca como acento */
+.ip-icon-btn--danger {
+    color: var(--danger-text);
+    border-color: #f3c0c3;
+}
+
+.ip-icon-btn--danger:hover:not(:disabled) {
+    background: var(--danger-soft);
+    border-color: var(--brand-red);
+}
+
+/* Activar */
+.ip-icon-btn--ok {
+    color: #15803d;
+    border-color: #bbe5c8;
+}
+
+.ip-icon-btn--ok:hover:not(:disabled) {
+    background: #effaf3;
+    border-color: #15803d;
+}
+
 .ip-table th {
     background: var(--ip-blue-10);
     color: var(--ip-blue);
