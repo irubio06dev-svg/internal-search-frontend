@@ -594,3 +594,520 @@ input[type="number"] {
 .inline-spinner { display: inline-block; width: 38px; height: 38px; flex: none; border: 3px solid var(--blue-10); border-top-color: var(--brand-blue); border-radius: 50%; animation: inline-spin .8s linear infinite; }
 @keyframes inline-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .inline-spinner { animation: none; } }
+
+/* ==========================================================
+   VISTA GENERAL
+   ========================================================== */
+
+.general-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.general-panel[hidden] {
+    display: none;
+}
+
+
+/* ==========================================================
+   CABECERA
+   ========================================================== */
+
+.general-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.general-heading h3 {
+    margin: 0;
+
+    font-size: 1.1rem;
+    font-weight: 700;
+
+    color: var(--text);
+}
+
+.general-heading p {
+    margin: 0;
+
+    font-size: 0.85rem;
+
+    color: var(--text-muted);
+}
+
+
+/* ==========================================================
+   TARJETAS DE RESUMEN
+   ========================================================== */
+
+.general-summary {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(145px, 1fr)
+        );
+
+    gap: 12px;
+}
+
+
+.summary-card {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    min-height: 64px;
+
+    padding: 14px 16px;
+
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+
+    background: var(--surface);
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        background-color 0.15s ease;
+}
+
+
+.summary-button {
+    width: 100%;
+
+    font: inherit;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+
+.summary-button:hover {
+    border-color: var(--blue-50);
+
+    background: var(--surface-muted);
+
+    box-shadow:
+        0 2px 10px
+        rgba(27, 69, 137, 0.08);
+}
+
+
+.summary-button:focus {
+    outline: none;
+}
+
+
+.summary-button:focus-visible {
+    outline: 2px solid var(--navy);
+    outline-offset: 2px;
+}
+
+
+.summary-card span {
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    color: var(--text-muted);
+}
+
+
+.summary-card strong {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 30px;
+    height: 30px;
+
+    padding: 0 8px;
+
+    font-size: 0.8rem;
+    font-weight: 700;
+
+    font-variant-numeric: tabular-nums;
+
+    color: var(--navy);
+
+    background: var(--navy-soft);
+
+    border-radius: 999px;
+}
+
+
+/* ==========================================================
+   SECCIONES GENERALES
+   ========================================================== */
+
+.general-section {
+    overflow: hidden;
+
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+
+    background: var(--surface);
+}
+
+
+.general-section-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding: 14px 18px;
+
+    border-bottom:
+        1px solid
+        var(--border);
+
+    background: var(--surface);
+}
+
+
+.general-section-header h3 {
+    margin: 0;
+
+    font-size: 0.95rem;
+    font-weight: 700;
+
+    color: var(--text);
+}
+
+
+/* ==========================================================
+   CONTADORES / BADGES
+   ========================================================== */
+
+.general-count,
+.general-source {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 24px;
+    min-height: 24px;
+
+    padding: 2px 8px;
+
+    font-size: 0.72rem;
+    font-weight: 700;
+
+    font-variant-numeric: tabular-nums;
+
+    color: var(--navy);
+
+    background: var(--navy-soft);
+
+    border-radius: 999px;
+}
+
+
+.general-source {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+
+/* ==========================================================
+   GRID DE DATOS
+   ========================================================== */
+
+.general-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(180px, 1fr)
+        );
+
+    gap: 16px 24px;
+
+    margin: 0;
+
+    padding: 18px;
+}
+
+
+.general-grid + .general-grid {
+    border-top:
+        1px solid
+        var(--border);
+}
+
+
+.general-grid dt {
+    margin: 0 0 4px;
+
+    font-size: 0.72rem;
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.04em;
+
+    color: var(--text-muted);
+}
+
+
+.general-grid dd {
+    margin: 0;
+
+    font-size: 0.9rem;
+    font-weight: 400;
+
+    line-height: 1.4;
+
+    color: var(--text);
+
+    font-variant-numeric: tabular-nums;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* ==========================================================
+   RENIEC EN VISTA GENERAL
+   ========================================================== */
+
+.general-reniec {
+    padding: 18px;
+}
+
+
+.general-reniec-media {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    align-items: flex-start;
+
+    gap: 24px;
+
+    margin-bottom: 20px;
+}
+
+
+.general-reniec-data {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 16px;
+}
+
+
+.general-reniec-block {
+    overflow: hidden;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius: 10px;
+
+    background: var(--surface);
+}
+
+
+.general-reniec-block h4 {
+    margin: 0;
+
+    padding: 11px 18px;
+
+    font-size: 0.85rem;
+    font-weight: 700;
+
+    color: var(--text);
+
+    background: var(--surface-muted);
+
+    border-bottom:
+        1px solid
+        var(--border);
+}
+
+
+.general-reniec-block .general-grid {
+    padding: 16px 18px;
+}
+
+
+/* ==========================================================
+   ESTADOS VACÍOS
+   ========================================================== */
+
+.general-empty {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 10px;
+
+    padding: 20px 18px;
+}
+
+
+.general-empty p {
+    margin: 0;
+
+    font-size: 0.875rem;
+
+    color: var(--text-muted);
+}
+
+
+.general-empty small {
+    margin: 0;
+
+    font-size: 0.75rem;
+
+    color: var(--text-soft);
+}
+
+
+.general-no-data {
+    margin: 0;
+
+    padding: 20px 18px;
+
+    font-size: 0.875rem;
+
+    color: var(--text-muted);
+}
+
+
+/* ==========================================================
+   CARGANDO
+   ========================================================== */
+
+.general-loading {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 22px 18px;
+
+    font-size: 0.875rem;
+
+    color: var(--text-muted);
+}
+
+
+.general-loading .inline-spinner {
+    width: 24px;
+    height: 24px;
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+@media (max-width: 900px) {
+
+    .general-summary {
+        grid-template-columns:
+            repeat(
+                3,
+                minmax(0, 1fr)
+            );
+    }
+
+}
+
+
+@media (max-width: 720px) {
+
+    .general-panel {
+        gap: 16px;
+    }
+
+
+    .general-summary {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+
+    .general-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+
+        gap: 14px 16px;
+
+        padding: 16px;
+    }
+
+
+    .general-reniec {
+        padding: 16px;
+    }
+
+
+    .general-section-header {
+        padding:
+            13px
+            16px;
+    }
+
+}
+
+
+@media (max-width: 420px) {
+
+    .general-summary {
+        grid-template-columns: 1fr;
+    }
+
+
+    .general-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .summary-card {
+        min-height: 58px;
+    }
+
+
+    .general-reniec-media {
+        flex-direction: column;
+    }
+
+}
+
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .summary-card {
+        transition: none;
+    }
+
+}
