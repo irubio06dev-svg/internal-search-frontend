@@ -1,0 +1,127 @@
+<section class="card col-span-full overflow-hidden bg-[var(--surface)]" aria-labelledby="history-title">
+
+    <div class="border-b border-[var(--border)] px-6 py-[22px] max-[600px]:px-[18px] max-[600px]:py-[18px]">
+        <app-card-heading tituloId="history-title" titulo="Historial de descargas" tono="green"
+            descripcion="Consulta los archivos registrados en tu historial.">
+            <svg icono class="size-[21px] max-[600px]:size-[18px]" aria-hidden="true" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="1.7">
+                <path d="M3 3v18h18" />
+                <path d="M7 14l4-4 4 4 6-7" />
+            </svg>
+
+            <span class="badge badge-info">
+                {{ items().length }} {{ items().length === 1 ? 'archivo' : 'archivos' }}
+            </span>
+        </app-card-heading>
+    </div>
+
+
+    @if (cargando()) {
+
+    <div class="history-loading" role="status">
+        <span class="inline-spinner" aria-hidden="true"></span>
+        <p>Cargando historial de descargas...</p>
+    </div>
+
+    } @else if (error()) {
+
+    <div role="alert" class="flex flex-col items-center gap-3 px-6 py-[42px] text-center">
+        <p class="text-xs text-[var(--danger)]">{{ error() }}</p>
+        <button type="button" class="btn btn-outline btn-sm" (click)="reintentar.emit()">Reintentar</button>
+    </div>
+
+    } @else if (items().length) {
+
+    <div class="w-full overflow-x-auto" tabindex="0" role="region" aria-label="Archivos descargados">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th scope="col">Archivo</th>
+                    <th scope="col">Fecha y hora</th>
+                    <th scope="col" class="text-right">Total de documentos</th>
+                    <th scope="col" class="text-right">Con resultados</th>
+                    <th scope="col" class="text-right">Sin resultados</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Tamaño</th>
+                    <th scope="col"><span class="sr-only">Acción</span></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @for (item of items(); track item.id) {
+                <tr>
+                    <td>
+                        <div class="flex min-w-0 items-center gap-2.5">
+                            <span class="grid size-[34px] shrink-0 place-items-center rounded-lg bg-green-50 text-green-700">
+                                <svg class="size-[19px]" aria-hidden="true" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="1.7">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                                    <path d="M14 2v6h6M8 13h8M8 17h8" />
+                                </svg>
+                            </span>
+                            <span class="max-w-[260px] break-words text-xs font-semibold">{{ item.archivo }}</span>
+                        </div>
+                    </td>
+
+                    <td class="whitespace-nowrap">{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td class="text-right tabular-nums">{{ item.totalDnis }}</td>
+                    <td class="text-right tabular-nums">{{ item.dnisConResultados ?? '—' }}</td>
+                    <td class="text-right tabular-nums">{{ item.dnisSinResultados ?? '—' }}</td>
+                    <td>
+                        <span class="whitespace-nowrap rounded-md bg-[var(--navy-soft)] px-2 py-1 text-xs font-medium text-[var(--navy)]">
+                            {{ item.estado || 'No disponible' }}
+                        </span>
+                    </td>
+                    <td class="whitespace-nowrap">{{ item.tamanoBytes | appFileSizePipe }}</td>
+
+                    <td>
+                        <button type="button" class="btn btn-outline btn-xs"
+                            [disabled]="descargandoId() !== null"
+                            [attr.aria-busy]="descargandoId() === item.id"
+                            [attr.aria-label]="'Descargar ' + item.archivo" (click)="descargar.emit(item)">
+                            @if (descargandoId() === item.id) {
+                            <span class="loading loading-spinner loading-xs" aria-hidden="true"></span>
+                            } @else {
+                            <svg class="size-[15px]" aria-hidden="true" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.8">
+                                <path d="M12 3v12m0 0l-4-4m4 4l4-4" />
+                                <path d="M4 17v3h16v-3" />
+                            </svg>
+                            }
+                            {{ descargandoId() === item.id ? 'Descargando...' : 'Descargar' }}
+                        </button>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    } @else {
+
+    <div class="flex flex-col items-center px-6 py-[42px] text-center">
+        <div class="grid size-12 place-items-center rounded-full bg-[var(--accent-soft)] text-[var(--accent)]">
+            <svg class="size-[22px]" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M7 3h7l4 4v14H7z" />
+                <path d="M14 3v5h4M10 12h5m-5 4h5" />
+            </svg>
+        </div>
+        <h3 class="mt-3.5 text-sm font-bold text-[var(--text)]">Aún no tienes descargas</h3>
+        <p class="mt-2 max-w-[38ch] text-xs leading-6 text-[var(--text-muted)]">
+            Cuando proceses tu primera consulta, aparecerá aquí para que puedas descargarla nuevamente.
+        </p>
+    </div>
+
+    }
+
+
+    <div class="flex items-center gap-2 border-t border-[var(--border)] px-6 py-3.5 text-[11px] text-[var(--text-soft)]
+                max-[600px]:px-[18px]">
+        <svg class="size-[15px] shrink-0" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 11v5m0-8h.01" />
+        </svg>
+        <span>Historial de descargas asociado a tu usuario.</span>
+    </div>
+
+</section>

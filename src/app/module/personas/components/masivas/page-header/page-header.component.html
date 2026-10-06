@@ -1,0 +1,26 @@
+<header class="flex items-center gap-4 max-w-[1280px] mx-auto mb-5 max-[600px]:items-start max-[600px]:gap-3">
+
+    <div class="grid size-[52px] shrink-0 place-items-center rounded-[14px]
+                border border-[var(--border)] bg-[var(--navy-soft)] text-[var(--navy)]
+                max-[600px]:size-11 max-[600px]:rounded-xl">
+        <ng-content select="[icono]" />
+    </div>
+
+    <div class="min-w-0">
+        @if (ruta()) {
+        <nav class="mb-1 text-xs leading-[1.4] text-[var(--text-muted)]" aria-label="Ruta de navegación">
+            {{ ruta() }}
+        </nav>
+        }
+
+        <h1 class="m-0 text-2xl font-bold leading-tight tracking-tight text-[var(--text)] max-[600px]:text-[19px]">
+            {{ titulo() }}
+        </h1>
+
+        @if (descripcion()) {
+        <p class="mt-1.5 text-sm leading-6 text-[var(--text-muted)] max-[600px]:text-xs">
+            {{ descripcion() }}
+        </p>
+        }
+    </div>
+</header>

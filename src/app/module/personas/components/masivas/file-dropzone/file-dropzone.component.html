@@ -1,0 +1,29 @@
+<input #fileInput type="file" hidden [accept]="accept()" (change)="onInputChange($event)" />
+
+<div class="flex min-h-[230px] w-full cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border-2
+            border-dashed border-[var(--border-strong)] bg-[var(--surface-muted)] px-5 py-[30px] text-center transition
+            hover:border-[var(--navy)] hover:bg-[var(--navy-soft)]
+            focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--navy)]
+            max-[600px]:min-h-[190px] max-[600px]:px-3.5 max-[600px]:py-6"
+    role="button" tabindex="0" aria-label="Seleccionar archivo TXT o CSV de hasta 5 MB"
+    appDragDrop (filesDropped)="onDrop($event)"
+    (click)="fileInput.click()" (keydown.enter)="fileInput.click()"
+    (keydown.space)="$event.preventDefault(); fileInput.click()">
+
+    <div class="grid size-[58px] place-items-center rounded-full bg-[var(--navy-soft)] text-[var(--navy)] max-[600px]:size-[50px]">
+        <svg class="size-7 max-[600px]:size-6" aria-hidden="true" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5" />
+            <path d="M4 14v4a2 2 0 002 2h12a2 2 0 002-2v-4" />
+        </svg>
+    </div>
+
+    <div class="text-sm font-semibold leading-5 text-[var(--text)]">Arrastra tu archivo aquí</div>
+    <div class="-mt-1 text-xs leading-5 text-[var(--text-muted)]">O haz clic para seleccionar un archivo</div>
+
+    <div class="mt-1 flex flex-wrap justify-center gap-2">
+        <span class="badge badge-sm border border-[var(--border)] bg-white text-[var(--text-muted)]">TXT</span>
+        <span class="badge badge-sm border border-[var(--border)] bg-white text-[var(--text-muted)]">CSV</span>
+        <span class="badge badge-sm border border-[var(--border)] bg-white text-[var(--text-muted)]">Máximo 5 MB</span>
+    </div>
+</div>

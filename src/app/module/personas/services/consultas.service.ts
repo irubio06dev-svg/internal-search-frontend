@@ -16,6 +16,8 @@ export class ConsultasService {
         return this.http.get<ReniecResponse>(`${this.baseUrl}/api/buscador/reniec/${encodeURIComponent(dni)}`);
     }
 
+    
+
     private readonly http = inject(HttpClient);
     private readonly baseUrl = environment.baseUrl.replace(/\/$/, '');
 

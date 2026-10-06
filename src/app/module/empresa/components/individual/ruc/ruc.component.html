@@ -51,20 +51,21 @@
         @for (seccion of secciones(); track seccion.id; let i = $index) {
         <section role="tabpanel" [id]="'ruc-panel-' + i" [attr.aria-labelledby]="'ruc-tab-' + i"
             [hidden]="activa() !== seccion.id" tabindex="0">
-            @for (registro of seccion.registros; track $index) {
-            <dl class="phone-grid">@for (campo of campos(registro); track campo.clave) { <div>
+            <app-record-carousel [records]="seccion.registros">
+                        @for (registro of seccion.registros; track $index) {
+            <dl class="phone-grid" appRecordSlide>@for (campo of campos(registro); track campo.clave) { <div>
                     <dt>{{ titulo(campo.clave) }}</dt>
                     <dd>{{ texto(campo.valor, campo.clave) }}</dd>
                 </div> }</dl>
             } @empty { <p class="no-phones">No hay registros en esta sección.</p> }
+                    </app-record-carousel>
         </section>
         }
         }
         } @else {
         <div class="empty-state">
             <h3>{{ consultado() ? 'No se encontraron registros' : 'Consulta una empresa' }}</h3>
-            <p>{{ consultado() ? 'No hay información disponible para este RUC.' : 'Ingresa el RUC para ver la
-                información de la empresa.' }}</p>
+            <p>{{ consultado() ? 'No hay información disponible para este RUC.' : 'Ingresa el RUC para ver la información de la empresa.' }}</p>
         </div>
         }
     </section>

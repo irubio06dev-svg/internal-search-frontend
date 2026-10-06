@@ -6,5 +6,5 @@
 //   - Front y API bajo el mismo dominio detrás de un proxy:  '/'
 export const environment = {
     produccion: true,
-    baseUrl: 'https://localhost:7172/'
+    baseUrl: 'http://localhost:8080/'
 };

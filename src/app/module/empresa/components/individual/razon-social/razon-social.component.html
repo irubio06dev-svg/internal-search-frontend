@@ -53,9 +53,11 @@
                 </div>
                 @for (seccion of secciones(); track seccion.id; let i = $index) {
                     <section role="tabpanel" [id]="'razon-panel-' + i" [attr.aria-labelledby]="'razon-tab-' + i" [hidden]="activa() !== seccion.id" tabindex="0">
+                        <app-record-carousel [records]="seccion.registros">
                         @for (registro of seccion.registros; track $index) {
-                            <dl class="phone-grid">@for (campo of campos(registro); track campo.clave) { <div><dt>{{ titulo(campo.clave) }}</dt><dd>{{ texto(campo.valor, campo.clave) }}</dd></div> }</dl>
+                            <dl class="phone-grid" appRecordSlide>@for (campo of campos(registro); track campo.clave) { <div><dt>{{ titulo(campo.clave) }}</dt><dd>{{ texto(campo.valor, campo.clave) }}</dd></div> }</dl>
                         } @empty { <p class="no-phones">No hay registros en esta sección.</p> }
+                    </app-record-carousel>
                     </section>
                 }
             }

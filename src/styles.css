@@ -686,3 +686,138 @@ h1, h2, h3, .btn {
 @media (prefers-reduced-motion: reduce) {
     .swal-corporate, .swal-corporate button { animation: none !important; transition: none !important; }
 }
+
+
+/* ==========================================================
+   Consulta masiva – estilos compartidos (tarjetas, botones, badges,
+   checkbox y alertas). Usa los tokens globales de styles.css.
+   Se incluye en el padre y en los hijos que usan estas clases.
+   ========================================================== */
+
+/* ---------- Tarjetas ---------- */
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(35, 31, 32, 0.05);
+}
+
+/* ---------- Botones (DaisyUI) ---------- */
+.btn {
+    font-family: inherit;
+    font-weight: 700;
+    border-radius: 8px;
+    box-shadow: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-primary {
+    color: #ffffff;
+    background: var(--navy);
+    border-color: var(--navy);
+}
+
+.btn-primary:hover:not(:disabled):not([disabled]) {
+    background: var(--navy-hover);
+    border-color: var(--navy-hover);
+}
+
+.btn-primary:disabled,
+.btn-primary[disabled] {
+    color: #ffffff;
+    background: var(--navy);
+    border-color: var(--navy);
+    opacity: 0.5;
+}
+
+.btn-outline {
+    color: var(--navy);
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+}
+
+.btn-outline:hover:not(:disabled):not([disabled]) {
+    color: var(--navy);
+    background: var(--navy-soft);
+    border-color: var(--navy);
+}
+
+.btn-outline:disabled,
+.btn-outline[disabled] {
+    color: var(--navy);
+    background: var(--surface);
+    border-color: var(--border-strong);
+    opacity: 0.5;
+}
+
+.btn-ghost:hover:not(:disabled):not([disabled]) {
+    background: var(--danger-soft);
+    color: var(--danger-text);
+}
+
+.btn:focus {
+    outline: none;
+}
+
+.btn:focus-visible {
+    outline: 2px solid var(--navy);
+    outline-offset: 2px;
+}
+
+/* ---------- Badges ---------- */
+.badge-info {
+    color: var(--navy);
+    background: var(--navy-soft);
+    border-color: transparent;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.03em;
+}
+
+/* ---------- Checkbox ---------- */
+.checkbox-primary {
+    --chkbg: var(--navy);
+    --chkfg: #ffffff;
+    border-color: var(--blue-50);
+}
+
+.checkbox-primary:checked {
+    background-color: var(--navy);
+    border-color: var(--navy);
+    color: #ffffff;
+}
+
+.checkbox-primary:focus-visible {
+    outline: 2px solid var(--navy);
+    outline-offset: 2px;
+}
+
+/* ---------- Alertas ---------- */
+.alert {
+    border-radius: 8px;
+    font-family: inherit;
+}
+
+.alert-error {
+    color: var(--danger-text);
+    background: var(--danger-soft);
+    border: 1px solid #F8C9CB;
+}
+
+.alert-success {
+    color: #14663A;
+    background: #EAF6EF;
+    border: 1px solid #BFE3CD;
+}
+
+.alert-warning {
+    color: #7A4B00;
+    background: #FFF6E5;
+    border: 1px solid #F3D9A4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btn {
+        transition: none;
+    }
+}

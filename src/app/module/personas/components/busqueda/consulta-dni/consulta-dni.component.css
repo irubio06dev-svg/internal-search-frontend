@@ -255,7 +255,7 @@
     animation: shimmer 1.4s ease infinite;
 }
 
-.skeleton + .skeleton {
+.skeleton+.skeleton {
     width: 50%;
 }
 
@@ -265,8 +265,13 @@
 }
 
 @keyframes shimmer {
-    0%   { background-position: 100% 50%; }
-    100% { background-position: 0 50%; }
+    0% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0 50%;
+    }
 }
 
 /* ==========================================================
@@ -284,7 +289,7 @@
     border-bottom: 1px solid var(--border-strong);
 }
 
-.identity-grid > div {
+.identity-grid>div {
     min-width: 0;
 }
 
@@ -312,7 +317,7 @@
 }
 
 /* Documento como etiqueta suave */
-.identity-grid > div:last-child dd {
+.identity-grid>div:last-child dd {
     display: inline-block;
     padding: 4px 12px;
     font-size: 0.85rem;
@@ -578,17 +583,20 @@
 /* Chrome, Edge, Safari */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 /* Firefox */
 input[type="number"] {
-  -moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
 
-.loading-records { display: grid; gap: 16px; margin-top: 12px; }
-.loading-record { display: flex; flex-direction: column; gap: 12px; padding: 16px 0; border-top: 1px solid var(--border); }
+.loading-records {
+    display: grid;
+    gap: 16px;
+    margin-top: 12px;
+}
 
 .loading-state { min-height: 220px; align-items: center; justify-content: center; text-align: center; }
 .inline-spinner { display: inline-block; width: 38px; height: 38px; flex: none; border: 3px solid var(--blue-10); border-top-color: var(--brand-blue); border-radius: 50%; animation: inline-spin .8s linear infinite; }
@@ -1014,6 +1022,40 @@ input[type="number"] {
 .general-loading .inline-spinner {
     width: 24px;
     height: 24px;
+}
+
+.document-select {
+    min-height: 2.75rem;
+    padding: 0 2.25rem 0 0.75rem; /* Espacio a la derecha para que la flecha nativa no se encime al texto */
+    border: 1.5px solid #1a365d;   /* Azul oscuro corporativo similar al de tus botones/inputs */
+    border-radius: 0.5rem;
+    background-color: #ffffff;    /* Fondo blanco limpio */
+    color: #1a365d;               /* Texto del mismo tono azul corporativo */
+    font: inherit;
+    font-weight: 500;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Efecto cuando pasa el cursor */
+.document-select:hover:not(:disabled) {
+    border-color: #2a4365;
+}
+
+/* Efecto al hacer clic / enfocar */
+.document-select:focus {
+    border-color: #2b6cb0;
+    box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.15);
+}
+
+/* Estado cuando está cargando (deshabilitado) */
+.document-select:disabled {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+    color: #94a3b8;
+    cursor: not-allowed;
+    opacity: 0.8;
 }
 
 

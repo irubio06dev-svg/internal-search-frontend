@@ -1,3 +1,1 @@
-:host {
-  display: block;
-}
+@import '../../../personas/pages/masivas/consultas-masivas.component.css';

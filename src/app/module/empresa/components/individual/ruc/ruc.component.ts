@@ -1,3 +1,4 @@
+import { RecordCarouselComponent, RecordSlideDirective } from '../../../../../shared/record-carousel.component';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -7,7 +8,7 @@ import { EmpresaResponse } from '../../../interfaces/empresa-response.interface'
 
 @Component({
     selector: 'app-ruc',
-    imports: [ReactiveFormsModule],
+    imports: [RecordCarouselComponent, RecordSlideDirective, ReactiveFormsModule],
     templateUrl: './ruc.component.html',
     styleUrls: ['../../../../personas/components/busqueda/consulta-dni/consulta-dni.component.css', './ruc.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,

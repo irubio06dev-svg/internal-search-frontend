@@ -1,0 +1,79 @@
+<section class="card w-full bg-[var(--surface)]" aria-labelledby="options-title">
+    <div class="card-body p-6 max-[600px]:p-[18px]">
+
+        <app-card-heading tituloId="options-title" titulo="Información a incluir"
+            descripcion="Selecciona las secciones que necesitas para tu Excel.">
+            <svg icono class="size-[21px] max-[600px]:size-[18px]" aria-hidden="true" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="1.7">
+                <path d="M4 5h16M4 12h16M4 19h16" />
+                <circle cx="9" cy="5" r="2" />
+                <circle cx="15" cy="12" r="2" />
+                <circle cx="7" cy="19" r="2" />
+            </svg>
+        </app-card-heading>
+
+
+        <fieldset class="mt-5" [disabled]="deshabilitado()">
+            <legend class="sr-only">Secciones a incluir en el Excel</legend>
+
+            <div class="grid grid-cols-2 gap-3 max-[600px]:gap-2 max-[380px]:grid-cols-1">
+                @for (opcion of opciones(); track opcion.id) {
+                <label class="flex min-h-[78px] cursor-pointer items-start gap-2.5
+                              rounded-[10px] border border-[var(--border)] bg-[var(--surface)] p-3.5 transition
+                              hover:border-[var(--navy)] hover:bg-[var(--surface-muted)]
+                              has-[:checked]:border-[var(--navy)] has-[:checked]:bg-[var(--navy-soft)]
+                              has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-60
+                              max-[600px]:min-h-[70px] max-[600px]:p-2.5">
+
+                    <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mt-0.5 shrink-0"
+                        [checked]="seleccionadas().includes(opcion.id)" (change)="onCambio(opcion.id, $event)" />
+
+                    <span class="flex min-w-0 flex-1 flex-col">
+                        <strong class="text-xs font-bold leading-5 text-[var(--text)] max-[600px]:text-[11px]">
+                            {{ opcion.nombre }}
+                        </strong>
+                        <small class="text-[11px] text-[var(--text-muted)] max-[600px]:text-[10px]">
+                            {{ opcion.detalle }}
+                        </small>
+                    </span>
+                </label>
+                }
+            </div>
+        </fieldset>
+
+
+        <div class="mt-[18px] flex flex-wrap items-center justify-between gap-3.5 border-t border-[var(--border)] pt-4
+                    max-[600px]:flex-col max-[600px]:items-start">
+
+            <div class="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+                <span class="badge badge-info font-bold">{{ seleccionadas().length }}/{{ opciones().length }}</span>
+                <span>{{ seleccionadas().length === 1 ? 'sección seleccionada' : 'secciones seleccionadas' }}</span>
+            </div>
+
+            <div class="flex flex-wrap gap-2 max-[600px]:w-full">
+                <button type="button" class="btn btn-primary btn-sm max-[600px]:flex-1"
+                    [disabled]="deshabilitado() || todasSeleccionadas()" (click)="seleccionarTodas.emit(true)">
+                    <svg class="size-[15px]" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M5 12l4 4L19 6" />
+                    </svg>
+                    Seleccionar todas
+                </button>
+
+                <button type="button" class="btn btn-outline btn-sm max-[600px]:flex-1"
+                    [disabled]="deshabilitado() || seleccionadas().length === 0" (click)="seleccionarTodas.emit(false)">
+                    <svg class="size-[15px]" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M5 12h14" />
+                    </svg>
+                    Desmarcar todas
+                </button>
+            </div>
+        </div>
+
+        <p class="mt-3 text-[11px] leading-5 text-[var(--text-muted)]" aria-live="polite">
+            {{ seleccionadas().length
+            ? 'Las secciones seleccionadas se incluirán en el Excel.'
+            : 'Selecciona al menos una sección para continuar.' }}
+        </p>
+
+    </div>
+</section>

@@ -1,0 +1,140 @@
+﻿<section class="w-full max-w-[1440px] mx-auto px-7 max-[600px]:p-4 max-[380px]:p-3" aria-label="Consulta masiva">
+
+    <app-page-header ruta="Empresas / Consulta masiva" titulo="Consulta masiva de empresas por RUC"
+        descripcion="Procesa múltiples RUC y descarga los resultados en un archivo Excel.">
+        <svg icono class="size-[26px] max-[600px]:size-[22px]" aria-hidden="true" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="3" />
+            <path d="M8 8h8M8 12h8M8 16h5" />
+        </svg>
+    </app-page-header>
+
+
+    <div class="grid w-full max-w-[1280px] mx-auto items-start
+                grid-cols-[minmax(0,1.15fr)_minmax(320px,.85fr)] gap-6
+                max-[1050px]:grid-cols-1 max-[1050px]:max-w-[820px] max-[600px]:gap-4">
+
+        <!-- ================= DOCUMENTOS A CONSULTAR ================= -->
+        <section class="card w-full bg-[var(--surface)]" aria-labelledby="upload-title">
+            <div class="card-body p-6 max-[600px]:p-[18px]">
+
+                <app-card-heading tituloId="upload-title" titulo="RUC a consultar"
+                    [descripcion]="modoEntrada() === 'pegar'
+                        ? 'Copia los RUC desde Excel u otro lugar y pégalos aquí.'
+                        : 'Sube un archivo TXT o CSV con los RUC a consultar.'">
+
+                    <svg icono class="size-[21px] max-[600px]:size-[18px]" aria-hidden="true" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5" />
+                        <path d="M4 14v4a2 2 0 002 2h12a2 2 0 002-2v-4" />
+                    </svg>
+
+                    @if (modoEntrada() === 'archivo') {
+                    <div class="flex gap-2">
+                        @for (formato of ['txt', 'csv']; track formato) {
+                        <button type="button" class="btn btn-sm btn-outline" (click)="descargarPlantilla($any(formato))">
+                            <svg class="size-[15px]" aria-hidden="true" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                                <path d="M14 2v6h6M8 13h8M8 17h8" />
+                            </svg>
+                            Plantilla {{ formato.toUpperCase() }}
+                        </button>
+                        }
+                    </div>
+                    }
+                </app-card-heading>
+
+
+                <app-selector-modo class="mt-[18px] block" [modo]="modoEntrada()" [deshabilitado]="estado().cargando"
+                    (cambiar)="cambiarModo($event)" />
+
+
+                @if (modoEntrada() === 'pegar') {
+
+                <app-pegar-documentos class="mt-4 block"
+                    placeholder="Pega los RUC de 11 dígitos, uno por línea o separados por comas.&#10;&#10;20100070970&#10;20100047218" [texto]="textoPegado()" [analisis]="analisisPegado()" [limite]="limiteDocumentos"
+                    [excedeLimite]="excedeLimite()" [tiposAceptados]="tiposAceptados" [deshabilitado]="estado().cargando"
+                    (textoChange)="onTextoPegado($event)" (quitarInvalidos)="quitarInvalidos()" (limpiar)="limpiarTexto()" />
+
+                } @else {
+
+                @if (archivoSeleccionado(); as archivo) {
+                <app-archivo-seleccionado class="mt-4 block" [archivo]="archivo" [lineas]="cantidadLineasDetectadas()"
+                    [deshabilitado]="estado().cargando" (quitar)="quitarArchivo()" />
+                } @else {
+                <app-file-dropzone class="mt-4 block" [deshabilitado]="estado().cargando" (archivos)="onArchivos($event)" />
+                }
+
+                }
+
+
+                @if (mostrarAdvertenciaVolumen()) {
+                <div class="alert alert-warning mt-4 rounded-lg px-3.5 py-3 text-xs" role="note">
+                    <svg class="size-[17px] shrink-0" aria-hidden="true" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.7">
+                        <path d="M12 9v4m0 4h.01" />
+                        <path d="M10.3 3.9L2.5 17.4A2 2 0 004.2 20h15.6a2 2 0 001.7-2.6L13.7 3.9a2 2 0 00-3.4 0z" />
+                    </svg>
+                    <div>
+                        <strong>Consulta de gran volumen</strong>
+                        <p class="mt-1">Las consultas grandes pueden tardar varios minutos en procesarse. Te avisaremos cuando termine.</p>
+                    </div>
+                </div>
+                }
+
+
+                @if (estado().cargando) {
+                <app-progreso-carga class="mt-[18px] block" [progreso]="estado().progreso"
+                    [progresoDisponible]="progresoDisponible()" [mensaje]="estado().mensaje" (cancelar)="cancelarCarga()" />
+                }
+
+
+                @if (mensaje()) {
+                <app-alerta class="mt-3 block" [tipo]="tipoMensaje()" [mensaje]="mensaje()"
+                    [mostrarReintentar]="mostrarReintentar()" (reintentar)="reintentar()" />
+                }
+
+
+                <!-- ACCIÓN PRINCIPAL -->
+                <div class="mt-5">
+                    <button type="button" class="btn btn-primary w-full" aria-describedby="ayuda-procesar"
+                        [disabled]="!puedeProcesar()" (click)="procesar()">
+
+                        @if (estado().cargando) {
+                        <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
+                        } @else {
+                        <svg class="size-[18px]" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                            <path d="M12 3v12m0 0l-4-4m4 4l4-4" />
+                            <path d="M4 17v3h16v-3" />
+                        </svg>
+                        }
+
+                        {{ textoBotonProcesar() }}
+                    </button>
+
+                    @if (!puedeProcesar() && !estado().cargando && textoAyuda()) {
+                    <p id="ayuda-procesar"
+                        class="mt-2 flex items-center justify-center gap-1.5 text-center text-[11px] text-[var(--text-muted)]">
+                        <svg class="size-4 shrink-0" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                            <circle cx="12" cy="12" r="9" />
+                            <path d="M12 11v5m0-8h.01" />
+                        </svg>
+                        {{ textoAyuda() }}
+                    </p>
+                    }
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ================= INFORMACIÓN A INCLUIR ================= -->
+        <app-selector-secciones [opciones]="opciones" [seleccionadas]="seccionesSeleccionadas()"
+            [deshabilitado]="estado().cargando"
+            (cambiarSeccion)="seleccionarSeccion($event)" (seleccionarTodas)="seleccionarTodas($event)" />
+
+
+    </div>
+</section>
+

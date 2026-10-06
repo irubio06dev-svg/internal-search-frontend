@@ -38,32 +38,27 @@
             } @else { <div class="empty-state"><span class="empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 5h4m-3 14h2"/></svg></span><h3>Realiza tu primera consulta</h3><p>Ingresa un celular en el buscador. Aqu&#237; aparecer&#225;n los registros asociados.</p></div> }
         </div>
         @if (resultado(); as datos) {
-            @for (grupo of visibles(); track grupo.documento) {
-                <article class="person-details">
-                    <dl class="identity-grid">
-                        <div><dt>Apellidos y nombres</dt><dd class="person-name">{{ grupo.nombre }}</dd></div>
-                        <div><dt>Documento</dt><dd>{{ grupo.documento }}</dd></div>
-                    </dl>
-                    <h3 class="detail-title">Registros telef&#243;nicos <span class="document-badge">{{ grupo.registros.length }}</span></h3>
-                    @for (registro of grupo.registros; track $index) {
-                        <dl class="phone-grid">
+            <article class="person-details">
+                <h3 class="detail-title">Registros telef&#243;nicos <span class="document-badge">{{ datos.registros.length }}</span></h3>
+                <app-record-carousel [records]="datos.registros">
+                    @for (registro of datos.registros; track $index) {
+                        <dl class="phone-grid" appRecordSlide>
+                            <div><dt>Periodo</dt><dd>{{ texto(registro.periodo) }}</dd></div>
+                            <div><dt>Documento</dt><dd>{{ texto(registro.documento) }}</dd></div>
+                            <div><dt>Apellido Paterno</dt><dd>{{ texto(registro.apePat) }}</dd></div>
+                            <div><dt>Apellido Materno</dt><dd>{{ texto(registro.apeMat) }}</dd></div>
+                            <div><dt>Prenombres</dt><dd class="person-name">{{ texto(registro.prenombres) }}</dd></div>
                             <div><dt>Tel&#233;fono</dt><dd>{{ texto(registro.telefono) }}</dd></div>
-                            <div><dt>Operadora</dt><dd>{{ texto(registro.empresaOperadora) }}</dd></div>
-                            <div><dt>Plan / modalidad</dt><dd>{{ texto(registro.planMovil) }} / {{ texto(registro.modalidad) }}</dd></div>
-                            <div><dt>Per&#237;odo del registro</dt><dd>{{ texto(registro.periodo) }}</dd></div>
-                            <div><dt>Fecha de alta</dt><dd>{{ (registro.fechaAlta | date:'dd/MM/yyyy') || 'No disponible' }}</dd></div>
-                            <div><dt>Fecha de carga</dt><dd>{{ (registro.fechaCarga | date:'dd/MM/yyyy') || 'No disponible' }}</dd></div>
+                            <div><dt>Fecha Alta</dt><dd>{{ (registro.fechaAlta | date:'dd/MM/yyyy') || 'No disponible' }}</dd></div>
+                            <div><dt>Plan M&#243;vil</dt><dd>{{ texto(registro.planMovil) }}</dd></div>
+                            <div><dt>Modalidad</dt><dd>{{ texto(registro.modalidad) }}</dd></div>
+                            <div><dt>Empresa Operadora</dt><dd>{{ texto(registro.empresaOperadora) }}</dd></div>
                         </dl>
+                    } @empty {
+                        <div class="empty-state"><h3>No se encontraron registros</h3><p>Verifica el celular e intenta nuevamente.</p></div>
                     }
-                </article>
-            } @empty { <div class="empty-state"><h3>No se encontraron registros</h3><p>Verifica el celular e intenta nuevamente.</p></div> }
-            @if (paginas() > 1) {
-                <nav class="pagination" aria-label="Paginaci&#243;n de documentos">
-                    <button type="button" class="clear-button" [disabled]="pagina() === 1" (click)="pagina.set(pagina() - 1)">Anterior</button>
-                    <span aria-live="polite">P&#225;gina {{ pagina() }} de {{ paginas() }}</span>
-                    <button type="button" class="clear-button" [disabled]="pagina() === paginas()" (click)="pagina.set(pagina() + 1)">Siguiente</button>
-                </nav>
-            }
+                </app-record-carousel>
+            </article>
         }
     </section>
 </section>

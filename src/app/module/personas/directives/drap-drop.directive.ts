@@ -5,7 +5,7 @@ import { Directive, EventEmitter, HostBinding, HostListener, Output } from '@ang
       standalone: true
 
 })
-export class DrapDropDirective {
+export class DragDropDirective {
 
     @Output() filesDropped = new EventEmitter<FileList>();
     @Output() dragStateChange = new EventEmitter<boolean>();

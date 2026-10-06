@@ -1,22 +1,34 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CommonModule } from '@angular/common';
-import { AuthService } from '../../../auth/services/auth.service';
 import { Subscription, TimeoutError, finalize } from 'rxjs';
+import { AuthService } from '../../../auth/services/auth.service';
 import { HistorialDescarga } from '../../interfaces/historial.interface';
 import { EstadoCarga, TipoMensaje } from '../../interfaces/consultas-masivas';
 import { ConsultasMasivasService } from '../../services/consultas-masiva.service';
 import { ValidacionService } from '../../services/validacion.service';
-import { DrapDropDirective } from '../../directives/drap-drop.directive';
-import { FileSizePipePipe } from '../../../../core/pipes/FileSizePipe-pipe.pipe';
+
+
+import { PageHeaderComponent } from '../../components/masivas/page-header/page-header.component';
+import { CardHeadingComponent } from '../../components/masivas/card-heading/card-heading.component';
+import { ModoEntrada, SelectorModoComponent } from '../../components/masivas/selector-modo/selector-modo.component';
+import { PegarDocumentosComponent } from '../../components/masivas/pegar-documentos/pegar-documentos.component';
+import { ProgresoCargaComponent } from '../../components/masivas/progreso-carga/progreso-carga.component';
+import { AlertaComponent } from '../../components/masivas/alerta/alerta.component';
+import { OpcionSeccion, SelectorSeccionesComponent } from '../../components/masivas/selector-secciones/selector-secciones.component';
+import { FileDropzoneComponent } from '../../components/masivas/file-dropzone/file-dropzone.component';
+import { ArchivoSeleccionadoComponent } from '../../components/masivas/archivo-seleccionado/archivo-seleccionado.component';
+import { HistorialDescargasComponent } from '../../components/masivas/historial-descargas/historial-descargas.component';
+import { analizarDocumentos, crearArchivoDocumentos, formatearNumero, LIMITE_DOCUMENTOS, TIPOS_DOCUMENTO } from '../../../../shared/utils/analizar-documentos';
 
 interface ArchivoGenerado { nombre: string; blob: Blob; }
 
-const REGEX_DNI = /(?<![\w])[0-9]{8}(?![\w])/g;
-
 @Component({
     selector: 'app-consultas-masivas',
-    imports: [CommonModule, DrapDropDirective, FileSizePipePipe],
+    imports: [
+        PageHeaderComponent, CardHeadingComponent, SelectorModoComponent, PegarDocumentosComponent,
+        FileDropzoneComponent, ArchivoSeleccionadoComponent, ProgresoCargaComponent, AlertaComponent,
+        SelectorSeccionesComponent, HistorialDescargasComponent,
+    ],
     templateUrl: './consultas-masivas.component.html',
     styleUrl: './consultas-masivas.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,7 +41,7 @@ export class ConsultasMasivasComponent implements OnInit {
     private subscripcionActual?: Subscription;
 
     // Los ids deben coincidir con SeccionesMasivo del backend
-    readonly opciones = [
+    readonly opciones: OpcionSeccion[] = [
         { id: 'moviles', nombre: 'Teléfonos', detalle: 'Números, operadoras y planes.' },
         { id: 'sueldos', nombre: 'Información laboral', detalle: 'Empresas e ingresos reportados.' },
         { id: 'deuda', nombre: 'Deudas', detalle: 'Entidades, saldos y períodos.' },
@@ -37,6 +49,12 @@ export class ConsultasMasivasComponent implements OnInit {
         { id: 'calificacion', nombre: 'Calificaciones', detalle: 'Clasificación crediticia reportada.' },
     ];
 
+    readonly limiteDocumentos = LIMITE_DOCUMENTOS;
+    readonly tiposAceptados = TIPOS_DOCUMENTO.map(t => t.nombre).join(', ');
+
+    // ---------- Estado ----------
+    readonly modoEntrada = signal<ModoEntrada>('pegar');
+    readonly textoPegado = signal<string>('');
     readonly seccionesSeleccionadas = signal<string[]>(this.opciones.map(o => o.id));
     readonly archivoSeleccionado = signal<File | null>(null);
     readonly cantidadLineasDetectadas = signal<number | null>(null);
@@ -50,44 +68,92 @@ export class ConsultasMasivasComponent implements OnInit {
     readonly errorHistorial = signal<string>('');
     readonly enviandoHistorial = signal<boolean>(false);
     readonly descargandoId = signal<number | null>(null);
-    private readonly totalDnisDetectados = signal<number>(0);
-    readonly todasSeleccionadas = computed(() => this.seccionesSeleccionadas().length === this.opciones.length);
-    readonly seleccionParcial = computed(() => this.seccionesSeleccionadas().length > 0 && !this.todasSeleccionadas());
-    readonly mostrarAdvertenciaVolumen = computed(() => (this.cantidadLineasDetectadas() ?? 0) > 2000);
-    readonly extensionArchivo = computed(() => this.archivoSeleccionado()?.name.split('.').pop()?.toUpperCase() ?? '');
-    readonly puedeProcesar = computed(() => !!this.archivoSeleccionado() && !this.estado().cargando && !this.enviandoHistorial() && this.cantidadLineasDetectadas() !== null && this.seccionesSeleccionadas().length > 0 && this.totalDnisDetectados() > 0);
-    readonly textoBotonProcesar = computed(() => this.enviandoHistorial() ? 'Enviando historial...' : this.estado().cargando ? 'Procesando...' : 'Procesar y descargar Excel');
+    private readonly totalDocumentosArchivo = signal<number>(0);
+
+    // ---------- Derivados ----------
+    readonly analisisPegado = computed(() => analizarDocumentos(this.textoPegado()));
+
+    readonly excedeLimite = computed(() =>
+        this.modoEntrada() === 'pegar' && this.analisisPegado().validos.length > LIMITE_DOCUMENTOS);
+
+    readonly totalDocumentos = computed(() =>
+        this.modoEntrada() === 'pegar' ? this.analisisPegado().validos.length : this.totalDocumentosArchivo());
+
+    readonly mostrarAdvertenciaVolumen = computed(() =>
+        this.modoEntrada() === 'pegar'
+            ? this.analisisPegado().validos.length > 2000 && !this.excedeLimite()
+            : (this.cantidadLineasDetectadas() ?? 0) > 2000);
+
+    readonly puedeProcesar = computed(() => {
+        if (this.estado().cargando || this.enviandoHistorial() || !this.seccionesSeleccionadas().length) return false;
+
+        return this.modoEntrada() === 'pegar'
+            ? this.analisisPegado().validos.length > 0 && !this.excedeLimite()
+            : !!this.archivoSeleccionado() && this.cantidadLineasDetectadas() !== null && this.totalDocumentosArchivo() > 0;
+    });
+
+    readonly textoBotonProcesar = computed(() => {
+        if (this.enviandoHistorial()) return 'Enviando historial...';
+        if (this.estado().cargando) return 'Procesando...';
+        const total = this.totalDocumentos();
+        return total > 0 && !this.excedeLimite()
+            ? `Procesar ${formatearNumero(total)} ${total === 1 ? 'documento' : 'documentos'} y descargar Excel`
+            : 'Procesar y descargar Excel';
+    });
+
+    readonly textoAyuda = computed(() => {
+        if (!this.seccionesSeleccionadas().length) return 'Selecciona al menos una sección para continuar.';
+        if (this.modoEntrada() === 'pegar') {
+            if (this.excedeLimite()) return `El máximo es ${formatearNumero(LIMITE_DOCUMENTOS)} documentos por consulta. Divide la lista en varias consultas.`;
+            if (!this.analisisPegado().validos.length) return 'Pega al menos un documento válido para continuar.';
+        } else if (!this.archivoSeleccionado()) {
+            return 'Selecciona un archivo para continuar.';
+        }
+        return '';
+    });
 
     ngOnInit(): void { this.cargarHistorial(); }
 
-    nombreSeccion(id: string): string {
-        return this.opciones.find(o => o.id === id)?.nombre ?? id;
+    // ---------- Modo de entrada ----------
+    cambiarModo(modo: ModoEntrada): void {
+        if (this.estado().cargando || this.modoEntrada() === modo) return;
+        this.modoEntrada.set(modo);
+        this.limpiarMensaje();
     }
 
-    // ---------- Selección de secciones ----------
+    // ---------- Texto pegado ----------
+    onTextoPegado(texto: string): void {
+        this.textoPegado.set(texto);
+        if (this.tipoMensaje() === 'error') this.limpiarMensaje();
+    }
+
+    quitarInvalidos(): void {
+        this.textoPegado.set(this.analisisPegado().validos.join('\n'));
+    }
+
+    limpiarTexto(): void {
+        if (this.estado().cargando) return;
+        this.textoPegado.set('');
+        this.limpiarMensaje();
+    }
+
+    // ---------- Secciones ----------
     seleccionarTodas(marcado: boolean): void {
         if (this.estado().cargando) return;
         this.seccionesSeleccionadas.set(marcado ? this.opciones.map(o => o.id) : []);
     }
 
-    seleccionarSeccion(id: string, marcado: boolean): void {
+    seleccionarSeccion({ id, marcado }: { id: string; marcado: boolean }): void {
         if (this.estado().cargando) return;
         const sinId = this.seccionesSeleccionadas().filter(s => s !== id);
         this.seccionesSeleccionadas.set(marcado ? [...sinId, id] : sinId);
     }
 
-    // ---------- Selección de archivo ----------
-    onFilesDropped(files: FileList): void {
+    // ---------- Archivo ----------
+    onArchivos(files: File[]): void {
         if (this.estado().cargando || !files.length) return;
         if (files.length !== 1) return this.mostrarMensaje('Selecciona un solo archivo.', 'error');
         void this.seleccionarArchivo(files[0]);
-    }
-
-    onFileInputChange(event: Event): void {
-        const input = event.target as HTMLInputElement;
-        const archivo = input.files?.[0];
-        input.value = '';
-        if (archivo) void this.seleccionarArchivo(archivo);
     }
 
     private async seleccionarArchivo(archivo: File): Promise<void> {
@@ -96,50 +162,36 @@ export class ConsultasMasivasComponent implements OnInit {
         this.limpiarMensaje();
 
         const { valido, mensajeError } = this.validacion.validar(archivo);
-        if (!valido) {
-            return this.mostrarMensaje(
-                mensajeError ?? 'Archivo no permitido.',
-                'error'
-            );
-        }
+        if (!valido) return this.mostrarMensaje(mensajeError ?? 'Archivo no permitido.', 'error');
 
         this.archivoSeleccionado.set(archivo);
         this.cantidadLineasDetectadas.set(null);
 
         try {
             const texto = await archivo.text();
-
             if (this.archivoSeleccionado() !== archivo) return;
 
-            const dnis = texto.match(REGEX_DNI) ?? [];
-            const totalDnis = new Set(dnis).size;
+            const total = analizarDocumentos(texto).validos.length;
+            this.totalDocumentosArchivo.set(total);
+            this.cantidadLineasDetectadas.set(texto.split(/\r\n|\n|\r/).filter(l => l.trim()).length);
 
-            this.totalDnisDetectados.set(totalDnis);
-            this.cantidadLineasDetectadas.set(
-                texto.split(/\r\n|\n|\r/).filter(l => l.trim()).length
-            );
-
-            // Validar que el archivo tenga al menos un DNI
-            if (totalDnis === 0) {
-                this.archivoSeleccionado.set(null);
-                this.mostrarMensaje(
-                    'El archivo no contiene DNIs válidos.',
-                    'error'
-                );
-                return;
+            if (total === 0) {
+                this.resetArchivo();
+                return this.mostrarMensaje('El archivo no contiene documentos válidos.', 'error');
             }
 
+            if (total > LIMITE_DOCUMENTOS) {
+                this.resetArchivo();
+                this.mostrarMensaje(
+                    `El archivo tiene ${formatearNumero(total)} documentos. El máximo es ${formatearNumero(LIMITE_DOCUMENTOS)} por consulta.`,
+                    'error');
+            }
         } catch {
             if (this.archivoSeleccionado() !== archivo) return;
-
-            this.archivoSeleccionado.set(null);
-            this.mostrarMensaje(
-                'No se pudo leer el archivo. Selecciona otro.',
-                'error'
-            );
+            this.resetArchivo();
+            this.mostrarMensaje('No se pudo leer el archivo. Selecciona otro.', 'error');
         }
     }
-
 
     quitarArchivo(): void {
         if (this.estado().cargando) return;
@@ -150,33 +202,35 @@ export class ConsultasMasivasComponent implements OnInit {
     private resetArchivo(): void {
         this.archivoSeleccionado.set(null);
         this.cantidadLineasDetectadas.set(null);
-        this.totalDnisDetectados.set(0);
+        this.totalDocumentosArchivo.set(0);
+    }
+
+    descargarPlantilla(formato: 'txt' | 'csv'): void {
+        const contenido = '00000000\r\n20000000001\r\n000000001\r\n';
+        const tipo = formato === 'txt' ? 'text/plain;charset=utf-8' : 'text/csv;charset=utf-8';
+        this.service.descargarBlob(new Blob([contenido], { type: tipo }), `Plantilla_Documentos.${formato}`);
     }
 
     // ---------- Procesar ----------
-    procesarArchivo(): void {
-        const archivo = this.archivoSeleccionado();
-        if (!archivo || this.estado().cargando || this.enviandoHistorial()
-            || this.cantidadLineasDetectadas() === null || !this.seccionesSeleccionadas().length) return;
+    procesar(): void {
+        if (!this.puedeProcesar()) return;
 
-        if (!this.totalDnisDetectados()) {
-            return this.mostrarMensaje('No se detectaron DNI de 8 dígitos en el archivo.', 'error');
-        }
+        const archivo = this.modoEntrada() === 'pegar'
+            ? crearArchivoDocumentos(this.analisisPegado().validos)
+            : this.archivoSeleccionado();
+        if (!archivo) return;
 
         const secciones = [...this.seccionesSeleccionadas()];
-        const totalDnis = this.totalDnisDetectados();
+        const totalDocumentos = this.totalDocumentos();
 
         this.limpiarMensaje();
         this.progresoDisponible.set(false);
-        this.estado.set({ cargando: true, progreso: 0, mensaje: 'Enviando archivo y preparando Excel...' });
+        this.estado.set({ cargando: true, progreso: 0, mensaje: 'Enviando documentos y preparando Excel...' });
 
         this.subscripcionActual = this.service.exportarMasivo(archivo, secciones)
             .pipe(
                 takeUntilDestroyed(this.destroyRef),
-                finalize(() => {
-                    this.estado.set({ cargando: false, progreso: 0, mensaje: '' });
-
-                }),
+                finalize(() => this.estado.set({ cargando: false, progreso: 0, mensaje: '' })),
             )
             .subscribe({
                 next: evento => {
@@ -186,25 +240,25 @@ export class ConsultasMasivasComponent implements OnInit {
                         this.estado.set({
                             cargando: true,
                             progreso: p,
-                            mensaje: p >= 100 ? 'Archivo enviado. Preparando Excel...' : `Subiendo... ${p}%`,
+                            mensaje: p >= 100 ? 'Documentos enviados. Preparando Excel...' : `Subiendo... ${p}%`,
                         });
                     } else if (evento.tipo === 'completado') {
-                        this.alCompletar(evento.archivo, evento.nombreArchivo, secciones, totalDnis);
+                        this.alCompletar(evento.archivo, evento.nombreArchivo, secciones, totalDocumentos);
                     }
-
                 },
                 error: err => void this.alError(err),
             });
     }
 
-    private alCompletar(blob: Blob | undefined, nombre: string | undefined, secciones: string[], totalDnis: number): void {
+    private alCompletar(blob: Blob | undefined, nombre: string | undefined, secciones: string[], totalDocumentos: number): void {
         if (!blob?.size) return this.mostrarMensaje('El servidor no devolvió un archivo Excel.', 'error');
 
         const item: ArchivoGenerado = { nombre: nombre ?? 'Resultado_Masivo.xlsx', blob };
         this.service.descargarBlob(item.blob, item.nombre);
         this.resetArchivo();
+        this.textoPegado.set('');
         this.mostrarMensaje('Excel generado. Se inició la descarga.', 'success');
-        this.guardarHistorial(item, secciones, totalDnis);
+        this.guardarHistorial(item, secciones, totalDocumentos);
     }
 
     private async alError(err: any): Promise<void> {
@@ -226,7 +280,7 @@ export class ConsultasMasivasComponent implements OnInit {
     }
 
     reintentar(): void {
-        if (this.mostrarReintentar()) this.procesarArchivo();
+        if (this.mostrarReintentar()) this.procesar();
     }
 
     // ---------- Historial ----------
@@ -236,33 +290,20 @@ export class ConsultasMasivasComponent implements OnInit {
         this.cargandoHistorial.set(true);
         this.errorHistorial.set('');
         this.service.obtenerHistorial(usuario.id)
-            .pipe(
-                takeUntilDestroyed(this.destroyRef),
-                finalize(() => {
-                    this.cargandoHistorial.set(false);
-
-                }),
-            )
+            .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.cargandoHistorial.set(false)))
             .subscribe({
                 next: datos => this.historialCargas.set(datos),
                 error: () => this.errorHistorial.set('No se pudo cargar el historial.'),
             });
     }
 
-    private guardarHistorial(item: ArchivoGenerado, secciones: string[], totalDnis: number): void {
+    private guardarHistorial(item: ArchivoGenerado, secciones: string[], totalDocumentos: number): void {
         this.enviandoHistorial.set(true);
-        this.service.enviarHistorial(item.blob, item.nombre, secciones, totalDnis)
-            .pipe(
-                takeUntilDestroyed(this.destroyRef),
-                finalize(() => {
-                    this.enviandoHistorial.set(false);
-
-                }),
-            )
+        this.service.enviarHistorial(item.blob, item.nombre, secciones, totalDocumentos)
+            .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.enviandoHistorial.set(false)))
             .subscribe({
                 next: () => this.cargarHistorial(),
-                error: () => this.mostrarMensaje(
-                    'El Excel se descargó, pero no se pudo guardar en el historial.', 'error'),
+                error: () => this.mostrarMensaje('El Excel se descargó, pero no se pudo guardar en el historial.', 'error'),
             });
     }
 
@@ -277,20 +318,10 @@ export class ConsultasMasivasComponent implements OnInit {
             });
     }
 
-    descargarPlantilla(formato: 'txt' | 'csv'): void {
-        const contenido = '00000000\r\n00000001\r\n';
-        const tipo = formato === 'txt' ? 'text/plain;charset=utf-8' : 'text/csv;charset=utf-8';
-
-        this.service.descargarBlob(
-            new Blob([contenido], { type: tipo }),
-            `Plantilla_DNI.${formato}`);
-    }
-
     // ---------- Mensajes ----------
     private mostrarMensaje(texto: string, tipo: TipoMensaje): void {
         this.mensaje.set(texto);
         this.tipoMensaje.set(tipo);
-
     }
 
     private limpiarMensaje(): void {

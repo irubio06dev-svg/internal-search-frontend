@@ -1,0 +1,23 @@
+<div class="alert rounded-lg px-3 py-2.5 text-xs"
+    [attr.role]="tipo() === 'error' ? 'alert' : 'status'"
+    [class.alert-success]="tipo() === 'success'" [class.alert-error]="tipo() === 'error'">
+
+    @if (tipo() === 'success') {
+    <svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12l4 4L19 6" />
+    </svg>
+    } @else {
+    <svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 8v5m0 3h.01" />
+    </svg>
+    }
+
+    <span>{{ mensaje() }}</span>
+
+    @if (tipo() === 'error' && mostrarReintentar()) {
+    <button type="button" class="btn btn-outline btn-xs" (click)="reintentar.emit()">
+        Reintentar
+    </button>
+    }
+</div>
