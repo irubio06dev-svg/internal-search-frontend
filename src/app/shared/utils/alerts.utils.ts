@@ -78,6 +78,28 @@ export class AlertUtils {
         }).then((result) => result.isConfirmed);
     }
 
+    private static ultimoAvisoSinConexion = 0;
+
+    // Aviso discreto (no bloquea la pantalla) cuando no hay respuesta del servidor. Se muestra uno solo cada 15 s
+    // para que, si varias peticiones fallan a la vez, no se acumulen avisos.
+    static sinConexion(): void {
+        const ahora = Date.now();
+        if (ahora - AlertUtils.ultimoAvisoSinConexion < 15000) return;
+        AlertUtils.ultimoAvisoSinConexion = ahora;
+
+        void Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'warning',
+            iconColor: '#b45309',
+            title: 'Sin conexión con el servidor',
+            text: 'Revisa tu internet o inténtalo de nuevo en unos minutos.',
+            showConfirmButton: false,
+            timer: 8000,
+            timerProgressBar: true,
+        });
+    }
+
     static sessionExpired(): Promise<boolean> {
         return Swal.fire({
             title: 'Sesión expirada',

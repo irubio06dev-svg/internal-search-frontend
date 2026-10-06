@@ -42,6 +42,9 @@ export function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) 
                 // El backend descuenta un token por consulta; sin saldo responde 402
                 alertUtils.sinTokens(err.error?.saldo, err.error?.costo);
                 tokensService.refresh().subscribe();
+            } else if (err.status === 0 && !req.url.includes('/system/auth/login')) {
+                // Sin respuesta (servidor apagado, sin internet o llamada bloqueada). El login muestra su propio mensaje.
+                alertUtils.sinConexion();
             } else if (err.status === 403) {
                 alertUtils.error('Sin permiso', 'Tu rol no permite realizar esta acción.');
             } else if (err.status === 429) {
