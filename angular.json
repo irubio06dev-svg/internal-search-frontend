@@ -29,10 +29,10 @@
               "src/styles.css"
             ],
             "server": "src/main.server.ts",
-            "outputMode": "static",
             "security": {
               "allowedHosts": []
             }
+            
           },
           "configurations": {
             "production": {
