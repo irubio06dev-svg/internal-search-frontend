@@ -30,6 +30,7 @@ export const ACCIONES_AUDITORIA = [
     selector: 'app-auditoria',
     imports: [ReactiveFormsModule, DatePipe],
     templateUrl: './auditoria.component.html',
+    styleUrl: '../admin-pages.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuditoriaComponent implements OnInit {

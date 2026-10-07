@@ -1,0 +1,87 @@
+:host {
+    display: block;
+    min-width: 0;
+}
+
+.consultas-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--border-strong);
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.consultas-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.consulta-tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    padding: 12px 14px 14px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.consulta-tab::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+    background: var(--navy);
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+}
+
+.consulta-tab:hover:not(:disabled) {
+    color: var(--navy);
+    background: var(--surface-muted);
+}
+
+.consulta-tab:hover:not(:disabled)::after {
+    transform: scaleX(1);
+    background: var(--blue-50);
+}
+
+.consulta-tab.is-active {
+    font-weight: 700;
+    color: var(--navy);
+}
+
+.consulta-tab.is-active::after,
+.consulta-tab.is-active:hover:not(:disabled)::after {
+    transform: scaleX(1);
+    background: var(--navy);
+}
+
+.consulta-tab:focus-visible {
+    outline: 2px solid var(--navy);
+    outline-offset: -2px;
+    border-radius: 6px;
+}
+
+.consulta-tab:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .consulta-tab,
+    .consulta-tab::after {
+        transition: none;
+    }
+}

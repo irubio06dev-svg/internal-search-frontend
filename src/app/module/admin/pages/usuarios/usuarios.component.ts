@@ -14,6 +14,7 @@ type Modal = 'crear' | 'roles' | 'tokens' | null;
     selector: 'app-usuarios',
     imports: [ReactiveFormsModule, DatePipe],
     templateUrl: './usuarios.component.html',
+    styleUrls: ['../admin-pages.css', './usuarios.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsuariosComponent implements OnInit {

@@ -71,7 +71,8 @@
               "buildTarget": "internal-search:build:production"
             },
             "development": {
-              "buildTarget": "internal-search:build:development"
+              "buildTarget": "internal-search:build:development",
+              "hmr": false
             }
           },
           "defaultConfiguration": "development"

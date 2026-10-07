@@ -1170,6 +1170,132 @@ input[type="number"] {
     height: 24px;
 }
 
+.phone-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-bottom: 16px;
+    color: var(--text);
+    font-size: 0.875rem;
+}
+
+.phone-filter-label {
+    font-weight: 600;
+}
+
+.phone-filter-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    box-sizing: border-box;
+    height: 38px;
+    min-height: 0;
+    min-width: min(240px, 100%);
+    max-width: 100%;
+    padding: 0 12px;
+    border: 3px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--surface);
+    /* color: var(--navy); */
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+@media (max-width: 720px) {
+    .phone-filter-trigger {
+        height: 44px;
+    }
+}
+
+.phone-filter-trigger:hover,
+.phone-filter-trigger[aria-expanded="true"] {
+    border-color: var(--navy);
+    background: var(--navy-soft);
+}
+
+.search-controls .document-type-trigger {
+    box-sizing: border-box;
+    min-height: 0;
+    min-width: min(160px, 100%);
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 12px;
+    font-weight: 500;
+}
+
+.phone-filter-trigger:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.phone-filter-trigger svg,
+.phone-filter-option svg {
+    width: 18px;
+    height: 18px;
+    flex: none;
+}
+
+.phone-filter-options {
+    position: fixed;
+    margin: 0;
+    padding: 5px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 3px 8px rgb(21 54 112 / 12%);
+}
+
+.phone-filter-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    min-height: 40px;
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: .875rem;
+    font-variant-numeric: tabular-nums;
+    text-align: left;
+    cursor: pointer;
+}
+
+.phone-filter-option:hover {
+    background: var(--surface-muted);
+}
+
+.phone-filter-option[aria-pressed="true"] {
+    background: var(--navy-soft);
+    color: var(--navy);
+    font-weight: 600;
+}
+
+.phone-filter-trigger:focus-visible,
+.phone-filter-option:focus-visible {
+    outline: 2px solid var(--navy);
+    outline-offset: -2px;
+}
+
+.phone-filter-count {
+    padding: 4px 9px;
+    border-radius: 6px;
+    background: var(--navy-soft);
+    color: var(--navy);
+    font-size: .75rem;
+    font-weight: 600;
+}
+
 .document-select {
     min-height: 2.75rem;
     padding: 0 2.25rem 0 0.75rem;

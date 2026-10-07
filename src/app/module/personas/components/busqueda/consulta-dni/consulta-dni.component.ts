@@ -222,9 +222,8 @@ export class ConsultaDniComponent {
     // ACCIONES
     // =========================================================
 
-    cambiarTipo(event: Event): void {
+    cambiarTipo(tipo: TipoDocumento): void {
         if (this.cargando()) return;
-        const tipo = (event.target as HTMLSelectElement).value as TipoDocumento;
         if (!(tipo in DOCUMENTOS)) return;
         this.tipoDocumento.set(tipo);
         this.limpiar();
@@ -238,6 +237,8 @@ export class ConsultaDniComponent {
 
         this.error.set('');
         this.resultado.set(null);
+        this.telefonoSeleccionado.set('');
+        this.resetPaginas();
         this.reniec.set(null);
         this.reniecError.set('');
         this.documentoConsultado.set(this.dni.value);
@@ -272,6 +273,8 @@ export class ConsultaDniComponent {
     limpiar(): void {
         if (this.cargando()) return;
         this.formulario.reset();
+        this.telefonoSeleccionado.set('');
+        this.resetPaginas();
         this.resultado.set(null);
         this.reniec.set(null);
         this.reniecError.set('');
@@ -314,7 +317,91 @@ export class ConsultaDniComponent {
         return (lista ?? []).slice(inicio, inicio + this.elementosPorPagina());
     }
 
-    readonly movilesPagina = computed(() => this.cortar(this.resultado()?.moviles, 'moviles'));
+    readonly telefonoSeleccionado = signal('');
+    readonly filtroTelefonoAbierto = signal(false);
+    readonly selectorDocumentoAbierto = signal(false);
+    private readonly eventosSelectores = new Map<HTMLElement, AbortController>();
+
+    constructor() {
+        this.destroyRef.onDestroy(() => this.eventosSelectores.forEach(eventos => eventos.abort()));
+    }
+
+    actualizarEstadoFiltroTelefono(lista: HTMLElement, documento = false): void {
+        const abierto = lista.matches(':popover-open');
+        (documento ? this.selectorDocumentoAbierto : this.filtroTelefonoAbierto).set(abierto);
+        if (!abierto) {
+            this.eventosSelectores.get(lista)?.abort();
+            this.eventosSelectores.delete(lista);
+        }
+    }
+
+    abrirFiltroTelefono(lista: HTMLElement, boton: HTMLButtonElement): void {
+        if (lista.matches(':popover-open')) {
+            lista.hidePopover();
+            return;
+        }
+        this.posicionarFiltroTelefono(lista, boton);
+        lista.showPopover();
+        lista.querySelector<HTMLButtonElement>('[aria-pressed="true"]')?.focus({ preventScroll: true });
+        this.eventosSelectores.get(lista)?.abort();
+        const eventos = new AbortController();
+        this.eventosSelectores.set(lista, eventos);
+        const { signal } = eventos;
+        window.addEventListener('scroll', event => {
+            if (event.target instanceof Node && lista.contains(event.target)) return;
+            if (lista.matches(':popover-open')) this.posicionarFiltroTelefono(lista, boton);
+        }, { capture: true, passive: true, signal });
+        window.addEventListener('resize', () => {
+            if (lista.matches(':popover-open')) this.posicionarFiltroTelefono(lista, boton);
+        }, { passive: true, signal });
+    }
+
+    private posicionarFiltroTelefono(lista: HTMLElement, boton: HTMLButtonElement): void {
+        const rect = boton.getBoundingClientRect();
+        const ancho = Math.min(Math.max(rect.width, 240), window.innerWidth - 24);
+        const debajo = window.innerHeight - rect.bottom - 20;
+        const arriba = rect.top - 20;
+        const abrirArriba = debajo < 200 && arriba > debajo;
+        Object.assign(lista.style, {
+            width: `${ancho}px`,
+            left: `${Math.max(12, Math.min(rect.left, window.innerWidth - ancho - 12))}px`,
+            top: abrirArriba ? 'auto' : `${rect.bottom + 6}px`,
+            bottom: abrirArriba ? `${window.innerHeight - rect.top + 6}px` : 'auto',
+            maxHeight: `${Math.max(0, Math.min(320, abrirArriba ? arriba : debajo))}px`,
+        });
+    }
+
+    navegarTelefonos(event: KeyboardEvent, lista: HTMLElement): void {
+        const botones = Array.from(lista.querySelectorAll<HTMLButtonElement>('button'));
+        const actual = botones.indexOf(event.target as HTMLButtonElement);
+        let siguiente: number;
+        switch (event.key) {
+            case 'ArrowDown': siguiente = (actual + 1) % botones.length; break;
+            case 'ArrowUp': siguiente = (actual - 1 + botones.length) % botones.length; break;
+            case 'Home': siguiente = 0; break;
+            case 'End': siguiente = botones.length - 1; break;
+            default: return;
+        }
+        event.preventDefault();
+        botones[siguiente]?.focus();
+    }
+    readonly telefonosDisponibles = computed(() => [...new Set(
+        (this.resultado()?.moviles ?? [])
+            .map(movil => movil.telefono?.trim() ?? '')
+            .filter(telefono => telefono !== '')
+    )].sort());
+    readonly movilesFiltrados = computed(() => {
+        const moviles = this.resultado()?.moviles ?? [];
+        const telefono = this.telefonoSeleccionado();
+        return telefono ? moviles.filter(movil => movil.telefono?.trim() === telefono) : moviles;
+    });
+
+    filtrarTelefono(telefono: string): void {
+        this.telefonoSeleccionado.set(telefono);
+        this.cambiarPagina('moviles', 1);
+    }
+
+    readonly movilesPagina = computed(() => this.cortar(this.movilesFiltrados(), 'moviles'));
     readonly sueldosPagina = computed(() => this.cortar(this.resultado()?.sueldos, 'sueldos'));
     readonly deudasPagina = computed(() => this.cortar(this.resultado()?.deudas, 'deudas'));
     readonly lineasCreditoPagina = computed(() => this.cortar(this.resultado()?.lineasCredito, 'lineasCredito'));

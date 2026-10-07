@@ -1,12 +1,18 @@
-<section class="ip-font mx-auto max-w-275 px-1 py-4 sm:p-6" aria-labelledby="auditoria-title">
-    <header>
+<section class="admin-page" aria-labelledby="auditoria-title">
+    <header class="admin-header">
+        <span class="admin-page-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2" /><path d="M9 4V2h6v2M9 9h6M9 13h6M9 17h4" /></svg>
+        </span>
+        <div>
         <h1 id="auditoria-title" class="ip-title text-2xl">Auditoría</h1>
         <p class="mt-2 text-sm text-slate-600">
             Accesos, consultas, altas de cuentas, cambios de rol y movimientos de tokens.
         </p>
+        </div>
     </header>
 
-    <form [formGroup]="filtros" (ngSubmit)="aplicar()" class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5 lg:items-end">
+    <div class="admin-card">
+    <form [formGroup]="filtros" (ngSubmit)="aplicar()" class="admin-filters admin-audit-filters">
         <label class="form-control">
             <span class="label-text mb-1 text-sm font-semibold">Desde</span>
             <input class="input input-bordered w-full" type="date" formControlName="desde" />
@@ -38,7 +44,7 @@
         <div role="alert" class="alert alert-error mt-4"><span>{{ e }}</span></div>
     }
 
-    <div class="ip-card mt-4 overflow-x-auto">
+    <div class="admin-table-wrap" [attr.aria-busy]="cargando()" tabindex="0" role="region" aria-label="Registros de auditoría">
         <table class="table table-sm ip-table">
             <thead>
                 <tr>
@@ -79,7 +85,7 @@
         </table>
     </div>
 
-    <nav class="mt-4 flex items-center justify-between text-sm" aria-label="Paginación">
+    <nav class="admin-pagination" aria-label="Paginación">
         <span class="text-slate-600">{{ total() }} registro(s)</span>
         <div class="flex items-center gap-2">
             <button type="button" class="btn btn-sm btn-ip-outline" [disabled]="pagina() <= 1" (click)="irA(pagina() - 1)">Anterior</button>
@@ -87,4 +93,5 @@
             <button type="button" class="btn btn-sm btn-ip-outline" [disabled]="pagina() >= totalPaginas()" (click)="irA(pagina() + 1)">Siguiente</button>
         </div>
     </nav>
+    </div>
 </section>

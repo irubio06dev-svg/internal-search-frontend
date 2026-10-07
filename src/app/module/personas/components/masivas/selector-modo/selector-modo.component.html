@@ -1,9 +1,9 @@
-<div class="inline-flex w-full max-w-[360px] rounded-[10px] border border-[var(--border)] bg-[var(--surface-muted)] p-1"
+<div class="consultas-tabs"
     role="tablist" aria-label="Forma de ingresar documentos">
 
     <button type="button" role="tab"
-        class="flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition"
-        [ngClass]="modo() === 'pegar' ? claseActiva : claseInactiva"
+        class="consulta-tab"
+        [class.is-active]="modo() === 'pegar'"
         [attr.aria-selected]="modo() === 'pegar'" [disabled]="deshabilitado()"
         (click)="cambiar.emit('pegar')">
         <svg class="size-[15px]" aria-hidden="true" viewBox="0 0 24 24" fill="none"
@@ -15,8 +15,8 @@
     </button>
 
     <button type="button" role="tab"
-        class="flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition"
-        [ngClass]="modo() === 'archivo' ? claseActiva : claseInactiva"
+        class="consulta-tab"
+        [class.is-active]="modo() === 'archivo'"
         [attr.aria-selected]="modo() === 'archivo'" [disabled]="deshabilitado()"
         (click)="cambiar.emit('archivo')">
         <svg class="size-[15px]" aria-hidden="true" viewBox="0 0 24 24" fill="none"

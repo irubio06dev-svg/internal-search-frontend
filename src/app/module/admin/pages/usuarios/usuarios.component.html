@@ -1,5 +1,8 @@
-<section class="ip-font mx-auto max-w-275 px-1 py-4 sm:p-6" aria-labelledby="usuarios-title">
-    <header class="flex flex-wrap items-start justify-between gap-4">
+<section class="admin-page" aria-labelledby="usuarios-title">
+    <header class="admin-header">
+        <span class="admin-page-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3" /><path d="M3 21v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6M21 21v-2a6 6 0 0 0-4-5.65" /></svg>
+        </span>
         <div>
             <h1 id="usuarios-title" class="ip-title text-2xl">Usuarios y tokens</h1>
             <p class="mt-2 text-sm text-slate-600">
@@ -14,7 +17,8 @@
         </button>
     </header>
 
-    <form class="mt-6 flex flex-wrap gap-2" (submit)="$event.preventDefault(); buscar(q.value)">
+    <div class="admin-card">
+    <form class="admin-filters admin-search" (submit)="$event.preventDefault(); buscar(q.value)">
         <input #q class="input input-bordered w-full sm:w-80" type="search" placeholder="Buscar por usuario, nombre o correo"
             aria-label="Buscar usuarios" [value]="texto()" />
         <button type="submit" class="btn btn-ip-outline">Buscar</button>
@@ -24,7 +28,7 @@
         <div role="alert" class="alert alert-error mt-4"><span>{{ e }}</span></div>
     }
 
-    <div class="ip-card mt-4 overflow-x-auto">
+    <div class="admin-table-wrap" [attr.aria-busy]="cargando()" tabindex="0" role="region" aria-label="Lista de usuarios">
         <table class="table ip-table">
             <thead>
                 <tr>
@@ -111,7 +115,7 @@
         </table>
     </div>
 
-    <nav class="mt-4 flex items-center justify-between text-sm" aria-label="Paginación">
+    <nav class="admin-pagination" aria-label="Paginación">
         <span class="text-slate-600">{{ total() }} usuario(s)</span>
         <div class="flex items-center gap-2">
             <button type="button" class="btn btn-sm btn-ip-outline" [disabled]="pagina() <= 1" (click)="irA(pagina() - 1)">Anterior</button>
@@ -119,15 +123,34 @@
             <button type="button" class="btn btn-sm btn-ip-outline" [disabled]="pagina() >= totalPaginas()" (click)="irA(pagina() + 1)">Siguiente</button>
         </div>
     </nav>
+    </div>
 </section>
 
 <!-- MODAL: nuevo usuario -->
 @if (modal() === 'crear') {
     <div class="modal modal-open ip-font" role="dialog" aria-modal="true" aria-labelledby="crear-title">
-        <div class="modal-box max-w-2xl">
-            <h2 id="crear-title" class="ip-title text-xl">Nuevo usuario</h2>
+        <div class="modal-box create-user-modal">
+            <header class="create-user-header">
+                <span class="create-user-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="8" r="3" /><path d="M3 21v-2a6 6 0 0 1 12 0v2M19 7v6M16 10h6" />
+                    </svg>
+                </span>
+                <div>
+                    <h2 id="crear-title">Nuevo usuario</h2>
+                    <p>Crea su cuenta y configura el acceso al sistema.</p>
+                </div>
+                <button type="button" class="create-user-close" aria-label="Cerrar nuevo usuario"
+                    (click)="cerrar()" [disabled]="guardando()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+                </button>
+            </header>
 
-            <form [formGroup]="crearForm" (ngSubmit)="crear()" class="mt-4 grid gap-3 sm:grid-cols-2">
+            <form [formGroup]="crearForm" (ngSubmit)="crear()" class="create-user-form">
+                <div class="create-user-section">
+                    <h3>Datos de la cuenta</h3>
+                    <p>Los campos con * son obligatorios.</p>
+                </div>
                 <label class="form-control">
                     <span class="label-text mb-1 text-sm font-semibold">Nombres *</span>
                     <input class="input input-bordered w-full" formControlName="nombres" autocomplete="off" />
@@ -163,14 +186,17 @@
                     <input class="input input-bordered w-full" formControlName="telefono" autocomplete="off" />
                 </label>
 
-                <fieldset class="sm:col-span-2">
-                    <legend class="mb-1 text-sm font-semibold">Roles *</legend>
-                    <div class="flex flex-wrap gap-x-5 gap-y-2">
+                <fieldset class="create-user-roles">
+                    <legend>Roles y permisos *</legend>
+                    <p class="create-user-help">Selecciona los niveles de acceso que tendrá el usuario.</p>
+                    <div class="create-user-role-list">
                         @for (r of roles(); track r.codigoRol) {
-                            <label class="flex cursor-pointer items-center gap-2 text-sm" [title]="r.descripcion ?? ''">
+                            <label class="create-user-role" [class.is-selected]="rolesSeleccionados().includes(r.codigoRol)">
                                 <input type="checkbox" class="checkbox checkbox-sm" [checked]="rolesSeleccionados().includes(r.codigoRol)"
                                     (change)="toggleRol(r.codigoRol)" />
-                                {{ r.rol }}
+                                <span><strong>{{ r.rol }}</strong>
+                                    @if (r.descripcion) { <small>{{ r.descripcion }}</small> }
+                                </span>
                             </label>
                         }
                     </div>
@@ -196,7 +222,7 @@
                     <div role="alert" class="alert alert-error sm:col-span-2"><span>{{ e }}</span></div>
                 }
 
-                <div class="modal-action sm:col-span-2">
+                <div class="modal-action create-user-actions">
                     <button type="button" class="btn btn-ip-outline" (click)="cerrar()" [disabled]="guardando()">Cancelar</button>
                     <button type="submit" class="btn btn-ip" [disabled]="guardando()">
                         @if (guardando()) { <span class="loading loading-spinner loading-sm"></span> }
@@ -263,11 +289,11 @@
                 </p>
 
                 <form [formGroup]="tokensForm" (ngSubmit)="guardarTokens()" class="mt-4 grid gap-3">
-                    <div role="tablist" class="tabs tabs-box w-fit">
+                    <div role="tablist" class="admin-tabs" aria-label="Operación de tokens">
                         <button type="button" role="tab" class="tab" [class.tab-active]="modoTokens() === 'asignar'"
-                            (click)="modoTokens.set('asignar')">Asignar</button>
+                            [attr.aria-selected]="modoTokens() === 'asignar'" (click)="modoTokens.set('asignar')">Asignar</button>
                         <button type="button" role="tab" class="tab" [class.tab-active]="modoTokens() === 'retirar'"
-                            (click)="modoTokens.set('retirar')">Retirar</button>
+                            [attr.aria-selected]="modoTokens() === 'retirar'" (click)="modoTokens.set('retirar')">Retirar</button>
                     </div>
 
                     <label class="form-control">

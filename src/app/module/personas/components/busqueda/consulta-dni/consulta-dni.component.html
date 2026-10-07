@@ -1,13 +1,17 @@
 <section class="dni-search" [attr.aria-label]="'Consulta por ' + config().etiqueta">
     <form class="search-form" [formGroup]="formulario" (ngSubmit)="buscar()" novalidate>
-        <label for="dni-busqueda">Número de {{ config().etiqueta }}</label>
+        <label for="dni-busqueda">Tipo de documento</label>
         <div class="search-controls">
-            <select class="document-select" aria-label="Tipo de documento" [disabled]="cargando()"
-                (change)="cambiarTipo($event)">
-                @for (tipo of tiposDocumento; track tipo.id) {
-                <option [value]="tipo.id" [selected]="tipo.id === tipoDocumento()">{{ tipo.etiqueta }}</option>
-                }
-            </select>
+            <button type="button" class="phone-filter-trigger document-type-trigger" #selectorDocumento
+                [attr.aria-label]="'Tipo de documento: ' + config().etiqueta" [disabled]="cargando()"
+                aria-haspopup="dialog" aria-controls="dni-lista-documentos"
+                [attr.aria-expanded]="selectorDocumentoAbierto()"
+                (click)="abrirFiltroTelefono(listaDocumentos, selectorDocumento)">
+                <span>{{ config().etiqueta }}</span>
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
             <div class="search-input">
                 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                     stroke-linecap="round" stroke-linejoin="round">
@@ -39,6 +43,24 @@
         <p id="dni-ayuda" class="field-hint">Escribe el número sin puntos ni guiones.</p>
         }
     </form>
+
+    <div id="dni-lista-documentos" class="phone-filter-options" popover="auto" #listaDocumentos
+        role="dialog" aria-label="Tipo de documento"
+        (toggle)="actualizarEstadoFiltroTelefono(listaDocumentos, true)"
+        (keydown)="navegarTelefonos($event, listaDocumentos)">
+        @for (tipo of tiposDocumento; track tipo.id) {
+        <button type="button" class="phone-filter-option" [disabled]="cargando()"
+            [attr.aria-pressed]="tipoDocumento() === tipo.id"
+            (click)="cambiarTipo(tipo.id); listaDocumentos.hidePopover(); selectorDocumento.focus()">
+            <span>{{ tipo.etiqueta }}</span>
+            @if (tipoDocumento() === tipo.id) {
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m5 12 4 4L19 6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            }
+        </button>
+        }
+    </div>
 
     <section class="result-card" aria-label="Resultados de la consulta" [attr.aria-busy]="cargando()">
         <div aria-live="polite">
@@ -448,6 +470,40 @@
 
                     <h3 class="detail-title">Teléfonos asociados</h3>
 
+                    <div class="phone-filter">
+                        <span id="dni-filtro-label" class="phone-filter-label">Filtrar por teléfono</span>
+                        <button type="button" id="dni-filtro-telefono" class="phone-filter-trigger" #filtroTelefono
+                            aria-haspopup="dialog" aria-controls="dni-lista-telefonos"
+                            aria-labelledby="dni-filtro-label dni-filtro-valor"
+                            [attr.aria-expanded]="filtroTelefonoAbierto()"
+                            [disabled]="!telefonosDisponibles().length"
+                            (click)="abrirFiltroTelefono(listaTelefonos, filtroTelefono)">
+                            <span id="dni-filtro-valor">{{ telefonoSeleccionado() || 'Todos los teléfonos' }}</span>
+                            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                        <div id="dni-lista-telefonos" class="phone-filter-options" popover="auto" #listaTelefonos
+                            role="dialog" aria-labelledby="dni-filtro-label"
+                            (toggle)="actualizarEstadoFiltroTelefono(listaTelefonos)"
+                            (keydown)="navegarTelefonos($event, listaTelefonos)">
+                            @for (telefono of [''].concat(telefonosDisponibles()); track telefono) {
+                            <button type="button" class="phone-filter-option"
+                                [attr.aria-pressed]="telefonoSeleccionado() === telefono"
+                                (click)="filtrarTelefono(telefono); listaTelefonos.hidePopover(); filtroTelefono.focus()">
+                                <span>{{ telefono || 'Todos los teléfonos' }}</span>
+                                @if (telefonoSeleccionado() === telefono) {
+                                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m5 12 4 4L19 6" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                }
+                            </button>
+                            }
+                        </div>
+                        <span class="phone-filter-count" aria-live="polite">{{ movilesFiltrados().length | number }}
+                            {{ movilesFiltrados().length === 1 ? 'registro' : 'registros' }}</span>
+                    </div>
+
                     <div class="table-card h-[calc(50vh-400px)] min-h-[300px] overflow-auto">
                         <table class="custom-table text-center">
                             <thead>
@@ -500,7 +556,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <app-paginacion [paginaActual]="pagina('moviles')" [totalElementos]="datos.moviles.length"
+                    <app-paginacion [paginaActual]="pagina('moviles')" [totalElementos]="movilesFiltrados().length"
                         [elementosPorPagina]="elementosPorPagina()" (cambioPagina)="cambiarPagina('moviles', $event)" />
 
                 </section>
