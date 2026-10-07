@@ -8,6 +8,8 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 import { documentoValidator, getDocumentoErrorMessage, LONGITUDES_POR_TIPO } from '../../../../shared/utils/validators';
 import Swal from 'sweetalert2';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { BuscadorResponse } from '../../interfaces/empresas.interface';
+import { ConsultasService } from '../../../personas/services/consultas.service';
 
 
 type Grupo = 'documento' | 'telefono' | 'nombres' | null;
@@ -24,63 +26,63 @@ export class EmpresaIndividualComponent {
 
 
 
-    // private readonly fb = inject(FormBuilder);
-    // private readonly consultaService = inject(ConsultasService);
+    private readonly fb = inject(FormBuilder);
+    private readonly consultaService = inject(ConsultasService);
 
-    // resultado = signal<BuscadorResponse | null>(null);
+    resultado = signal<BuscadorResponse | null>(null);
 
-    // error: string | null = null;
-    // isLoading = false;
+    error: string | null = null;
+    isLoading = false;
 
-    // formulario: FormGroup = this.fb.group({
-    //     documento: ['DNI', Validators.required],
-    //     tipoDocumento: [''],
-    // });
+    formulario: FormGroup = this.fb.group({
+        documento: ['DNI', Validators.required],
+        tipoDocumento: [''],
+    });
 
-    // public buscar(): void {
+    public buscar(): void {
 
-    //     if (this.formulario.invalid) {
-    //         this.formulario.markAllAsTouched();
-    //         return;
-    //     }
+        if (this.formulario.invalid) {
+            this.formulario.markAllAsTouched();
+            return;
+        }
 
-    //     this.isLoading = true;
-    //     this.error = null;
-    //     this.resultado.set(null);
+        this.isLoading = true;
+        this.error = null;
+        this.resultado.set(null);
 
-    //     this.consultaService.consultar(this.formulario.getRawValue()).subscribe({
+        this.consultaService.consultar(this.formulario.getRawValue()).subscribe({
 
-    //         next: (response: BuscadorResponse) => {
-    //             console.log(response);
-    //             this.resultado.set(response);
-    //             this.isLoading = false;
-    //         },
+            next: (response: BuscadorResponse) => {
+                console.log(response);
+                this.resultado.set(response);
+                this.isLoading = false;
+            },
 
-    //         error: (error) => {
-    //             console.error('Error al realizar la consulta:', error);
+            error: (error) => {
+                console.error('Error al realizar la consulta:', error);
 
-    //             this.error =
-    //                 error?.error?.message ??
-    //                 'Ocurrió un error al realizar la consulta.';
+                this.error =
+                    error?.error?.message ??
+                    'Ocurrió un error al realizar la consulta.';
 
-    //             this.isLoading = false;
-    //         },
+                this.isLoading = false;
+            },
 
-    //         complete: () => {
-    //             this.isLoading = false;
-    //         }
+            complete: () => {
+                this.isLoading = false;
+            }
 
-    //     });
-    // }
+        });
+    }
 
-    // public limpiar(): void {
-    //     this.formulario.reset({
-    //         tipoDocumento: 'DNI',
-    //         documento: ''
-    //     });
+    public limpiar(): void {
+        this.formulario.reset({
+            tipoDocumento: 'DNI',
+            documento: ''
+        });
 
-    //     this.resultado.set(null);
-    //     this.error = null;
-    // }
+        this.resultado.set(null);
+        this.error = null;
+    }
 
 }   
