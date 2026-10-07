@@ -108,329 +108,336 @@
                     </div>
 
                     <!-- CONTADORES -->
-                    <div class="general-summary">
+                    <div class="general-summary grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+
                         <button type="button" class="summary-card summary-button"
                             (click)="seccionActiva.set('moviles')">
-                            <span>Teléfonos</span>
-                            <strong>{{ datos.moviles.length }}</strong>
+                            <div class="flex h-full w-full items-center gap-3">
+                                <span class="summary-icon flex h-10 w-10 shrink-0 items-center justify-center">
+                                    <app-ui-icon name="hash" />
+                                </span>
+                                <span
+                                    class="summary-text flex min-w-0 flex-1 flex-col items-start justify-center gap-1 text-left">
+                                    <span class="flex min-h-[2.3em] items-end leading-tight">Teléfonos</span>
+                                    <strong>{{ datos.moviles.length }}</strong>
+                                </span>
+                            </div>
                         </button>
 
                         <button type="button" class="summary-card summary-button"
                             (click)="seccionActiva.set('sueldos')">
-                            <span>Información laboral</span>
-                            <strong>{{ datos.sueldos.length }}</strong>
+                            <div class="flex h-full w-full items-center gap-3">
+                                <span class="summary-icon flex h-10 w-10 shrink-0 items-center justify-center">
+                                    <app-ui-icon name="briefcase" />
+                                </span>
+                                <span
+                                    class="summary-text flex min-w-0 flex-1 flex-col items-start justify-center gap-1 text-left">
+                                    <span class="flex min-h-[2.3em] items-end leading-tight">Inf. laboral</span>
+                                    <strong>{{ datos.sueldos.length }}</strong>
+                                </span>
+                            </div>
                         </button>
 
                         <button type="button" class="summary-card summary-button" (click)="seccionActiva.set('deudas')">
-                            <span>Deudas</span>
-                            <strong>{{ datos.deudas.length }}</strong>
+                            <div class="flex h-full w-full items-center gap-3">
+                                <span class="summary-icon flex h-10 w-10 shrink-0 items-center justify-center">
+                                    <app-ui-icon name="bank" />
+                                </span>
+                                <span
+                                    class="summary-text flex min-w-0 flex-1 flex-col items-start justify-center gap-1 text-left">
+                                    <span class="flex min-h-[2.3em] items-end leading-tight">Deudas</span>
+                                    <strong>{{ datos.deudas.length }}</strong>
+                                </span>
+                            </div>
                         </button>
 
                         <button type="button" class="summary-card summary-button"
                             (click)="seccionActiva.set('lineasCredito')">
-                            <span>Líneas de crédito</span>
-                            <strong>{{ datos.lineasCredito.length }}</strong>
+                            <div class="flex h-full w-full items-center gap-3">
+                                <span class="summary-icon flex h-10 w-10 shrink-0 items-center justify-center">
+                                    <app-ui-icon name="card" />
+                                </span>
+                                <span
+                                    class="summary-text flex min-w-0 flex-1 flex-col items-start justify-center gap-1 text-left">
+                                    <span class="flex min-h-[2.3em] items-end leading-tight">L. crédito</span>
+                                    <strong>{{ datos.lineasCredito.length }}</strong>
+                                </span>
+                            </div>
                         </button>
 
                         <button type="button" class="summary-card summary-button"
                             (click)="seccionActiva.set('calificaciones')">
-                            <span>Calificaciones</span>
-                            <strong>{{ datos.calificaciones.length }}</strong>
+                            <div class="flex h-full w-full items-center gap-3">
+                                <span class="summary-icon flex h-10 w-10 shrink-0 items-center justify-center">
+                                    <app-ui-icon name="shield" />
+                                </span>
+                                <span
+                                    class="summary-text flex min-w-0 flex-1 flex-col items-start justify-center gap-1 text-left">
+                                    <span class="flex min-h-[2.3em] items-end leading-tight">Calificaciones</span>
+                                    <strong>{{ datos.calificaciones.length }}</strong>
+                                </span>
+                            </div>
                         </button>
 
                         @if (esDni()) {
                         <button type="button" class="summary-card summary-button" (click)="seccionActiva.set('reniec')">
-                            <span>RENIEC</span>
-                            <strong>{{ reniecPersona() ? 1 : '—' }}</strong>
+                            <div class="flex h-full w-full items-center gap-3">
+                                <span class="summary-icon flex h-10 w-10 shrink-0 items-center justify-center">
+                                    <app-ui-icon name="file" />
+                                </span>
+                                <span
+                                    class="summary-text flex min-w-0 flex-1 flex-col items-start justify-center gap-1 text-left">
+                                    <span class="flex min-h-[2.3em] items-end leading-tight">RENIEC</span>
+                                    <strong>{{ reniecPersona() ? 1 : '—' }}</strong>
+                                </span>
+                            </div>
                         </button>
                         }
                     </div>
 
-                    <!-- RENIEC -->
-                    @if (esDni()) {
-                    <section class="general-section">
-                        <div class="general-section-header">
-                            <h3>Identidad</h3>
-                            <span class="general-source">RENIEC</span>
-                        </div>
-
-                        @if (reniecCargando()) {
-
-                        <div class="general-loading">
-                            <span class="inline-spinner" aria-hidden="true"></span>
-                            <span>Consultando RENIEC…</span>
-                        </div>
-
-                        } @else if (reniecError()) {
-
-                        <div class="general-empty">
-                            <p class="field-error">{{ reniecError() }}</p>
-                            <button type="button" class="reniec-button" (click)="consultarReniec()">Reintentar</button>
-                        </div>
-
-                        } @else if (reniecPersona()) {
-
-                        <div class="general-reniec">
-                            <div class="general-reniec-media">
-                                @if (reniecFoto(); as src) {
-                                <img class="reniec-foto" [src]="src" alt="Fotografía del titular del DNI" />
-                                }
-                                @if (reniecFirma(); as src) {
-                                <figure class="reniec-firma">
-                                    <img [src]="src" alt="Firma del titular" />
-                                    <figcaption>Firma</figcaption>
-                                </figure>
-                                }
-                            </div>
-
-                            <div class="general-reniec-data">
-                                @for (bloque of reniecSecciones(); track bloque.titulo) {
-                                <div class="general-reniec-block">
-                                    <h4>{{ bloque.titulo }}</h4>
-                                    <dl class="general-grid">
-                                        @for (campo of bloque.campos; track campo.etiqueta) {
-                                        <div>
-                                            <dt>{{ campo.etiqueta }}</dt>
-                                            <dd>{{ campo.valor }}</dd>
-                                        </div>
-                                        }
-                                    </dl>
-                                </div>
-                                }
-                            </div>
-                        </div>
-
-                        } @else {
-
-                        <div class="general-empty">
-                            <p>Los datos de RENIEC todavía no han sido consultados.</p>
-                            <button type="button" class="reniec-button" (click)="consultarReniec()"
-                                [disabled]="reniecCargando()">
-                                Consultar RENIEC
-                            </button>
-                            <small>Esta consulta descuenta 1 token.</small>
-                        </div>
-
-                        }
-                    </section>
-                    }
+                    <!-- RENIEC: pega aquí tu bloque actual "@if (esDni()) { <section class="general-section"> ... }" sin cambios -->
 
                     <!-- TELÉFONOS -->
                     <section class="general-section">
                         <div class="general-section-header">
-                            <h3>Teléfonos asociados</h3>
+                            <h3><app-ui-icon name="hash" /> Teléfonos asociados</h3>
                             <span class="general-count">{{ datos.moviles.length }}</span>
                         </div>
 
-                        @for (movil of datos.moviles; track $index) {
-                        <dl class="general-grid">
-                            <div>
-                                <dt>Teléfono</dt>
-                                <dd>{{ movil.telefono || 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Operadora</dt>
-                                <dd>{{ movil.empresaOperadora || 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Plan / modalidad</dt>
-                                <dd>{{ movil.planMovil || 'No disponible' }} / {{ movil.modalidad || 'No disponible' }}
-                                </dd>
-                            </div>
-                            <div>
-                                <dt>Período del registro</dt>
-                                <dd>{{ movil.periodo || 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Fecha de alta</dt>
-                                <dd>{{ (movil.fechaAlta | date:'dd/MM/yyyy') || 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Fecha de carga</dt>
-                                <dd>{{ (movil.fechaCarga | date:'dd/MM/yyyy') || 'No disponible' }}</dd>
-                            </div>
-                        </dl>
-                        } @empty {
-                        <p class="general-no-data">No hay teléfonos asociados.</p>
-                        }
+                        <div class="general-table-wrap">
+                            <table class="custom-table general-table text-center">
+                                <thead>
+                                    <tr>
+                                        <th>Período</th>
+                                        <th>Teléfono</th>
+                                        <th>Fecha de alta</th>
+                                        <th>Plan</th>
+                                        <th>Modalidad</th>
+                                        <th>Operadora</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (movil of datos.moviles.slice(0, filasResumen); track $index) {
+                                    <tr>
+                                        <td><span class="badge-periodo">{{ movil.periodo || '—' }}</span></td>
+                                        <td class="phone-number">{{ movil.telefono || '—' }}</td>
+                                        <td>{{ (movil.fechaAlta | date:'dd/MM/yyyy') || '—' }}</td>
+                                        <td>{{ movil.planMovil || '—' }}</td>
+                                        <td><span [class]="movil.modalidad ? 'badge-modalidad' : ''">{{ movil.modalidad
+                                                || '—' }}</span></td>
+                                        <td>
+                                            <span class="badge-operadora"
+                                                [attr.data-operadora]="movil.empresaOperadora | lowercase">
+                                                {{ movil.empresaOperadora || '—' }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    } @empty {
+                                    <tr>
+                                        <td colspan="6" class="general-empty-row">No hay teléfonos asociados.</td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="p-5">
+                            @if (datos.moviles.length > filasResumen) {
+                            <button type="button" class="ver-todos" (click)="seccionActiva.set('moviles')">
+                                Ver todos ({{ datos.moviles.length }}) →
+                            </button>
+                            }
+
+                        </div>
                     </section>
 
                     <!-- INFORMACIÓN LABORAL -->
                     <section class="general-section">
                         <div class="general-section-header">
-                            <h3>Información laboral</h3>
+                            <h3><app-ui-icon name="briefcase" /> Información laboral</h3>
                             <span class="general-count">{{ datos.sueldos.length }}</span>
                         </div>
 
-                        @for (sueldo of datos.sueldos; track $index) {
-                        <dl class="general-grid">
-                            <div>
-                                <dt>Empresa</dt>
-                                <dd>{{ sueldo.empresa || 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>RUC</dt>
-                                <dd>{{ sueldo.ruc || 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Período</dt>
-                                <dd>{{ sueldo.periodo || 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Género</dt>
-                                <dd>{{ sueldo.genero || 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Sueldo reportado</dt>
-                                <dd>{{ (sueldo.montoSueldo | number:'1.2-2') ?? 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Gratificación / bono</dt>
-                                <dd>{{ (sueldo.gratifBono | number:'1.2-2') ?? 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Ingreso estimado anual</dt>
-                                <dd>{{ (sueldo.ingresoEstimadoAnual | number:'1.2-2') ?? 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Rango de sueldo</dt>
-                                <dd>{{ sueldo.rangoSueldo || 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Nivel de ingreso</dt>
-                                <dd>{{ sueldo.nivelIngreso || 'No disponible' }}</dd>
-                            </div>
-                        </dl>
-                        } @empty {
-                        <p class="general-no-data">No hay información laboral disponible.</p>
+                        <div class="general-table-wrap">
+                            <table class="custom-table general-table text-center">
+                                <thead>
+                                    <tr>
+                                        <th>Período</th>
+                                        <th>Empresa</th>
+                                        <th>RUC</th>
+                                        <th>Sueldo</th>
+                                        <th>Ingreso anual</th>
+                                        <th>Nivel</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (sueldo of datos.sueldos.slice(0, filasResumen); track $index) {
+                                    <tr>
+                                        <td><span class="badge-periodo">{{ sueldo.periodo || '—' }}</span></td>
+                                        <td class="font-medium">{{ sueldo.empresa || '—' }}</td>
+                                        <td>{{ sueldo.ruc || '—' }}</td>
+                                        <td class="num">{{ (sueldo.montoSueldo | number:'1.2-2') ?? '—' }}</td>
+                                        <td class="num">{{ (sueldo.ingresoEstimadoAnual | number:'1.2-2') ?? '—' }}</td>
+                                        <td><span class="badge-soft">{{ sueldo.nivelIngreso || '—' }}</span></td>
+                                    </tr>
+                                    } @empty {
+                                    <tr>
+                                        <td colspan="6" class="general-empty-row">No hay información laboral disponible.
+                                        </td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        @if (datos.sueldos.length > filasResumen) {
+                        <button type="button" class="ver-todos" (click)="seccionActiva.set('sueldos')">
+                            Ver todos ({{ datos.sueldos.length }}) →
+                        </button>
                         }
                     </section>
 
                     <!-- DEUDAS -->
                     <section class="general-section">
                         <div class="general-section-header">
-                            <h3>Deudas</h3>
+                            <h3><app-ui-icon name="bank" /> Deudas</h3>
                             <span class="general-count">{{ datos.deudas.length }}</span>
                         </div>
 
-                        @for (registro of datos.deudas; track $index) {
-                        <dl class="general-grid">
-                            <div>
-                                <dt>Entidad</dt>
-                                <dd>{{ registro.entidad ?? 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Período</dt>
-                                <dd>{{ registro.periodo || 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Tipo de deuda</dt>
-                                <dd>{{ registro.tipoDeuda ?? 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Saldo</dt>
-                                <dd>{{ (registro.saldo | number:'1.2-2') ?? 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Días</dt>
-                                <dd>{{ registro.dias ?? 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Calificación</dt>
-                                <dd>{{ registro.calificacion ?? 'No disponible' }}</dd>
-                            </div>
-                        </dl>
-                        } @empty {
-                        <p class="general-no-data">No hay deudas registradas.</p>
+                        <div class="general-table-wrap">
+                            <table class="custom-table general-table text-center">
+                                <thead>
+                                    <tr>
+                                        <th>Período</th>
+                                        <th>Entidad</th>
+                                        <th>Tipo de deuda</th>
+                                        <th>Días</th>
+                                        <th>Calificación</th>
+                                        <th>Saldo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (registro of datos.deudas.slice(0, filasResumen); track $index) {
+                                    <tr>
+                                        <td><span class="badge-periodo">{{ registro.periodo || '—' }}</span></td>
+                                        <td class="font-medium">{{ registro.entidad ?? '—' }}</td>
+                                        <td>{{ registro.tipoDeuda ?? '—' }}</td>
+                                        <td><span class="badge-dias" [class.alto]="(registro.dias ?? 0) > 30">{{
+                                                registro.dias ?? '—' }}</span></td>
+                                        <td><span class="badge-soft">{{ registro.calificacion ?? '—' }}</span></td>
+                                        <td class="num">{{ (registro.saldo | number:'1.2-2') ?? '—' }}</td>
+                                    </tr>
+                                    } @empty {
+                                    <tr>
+                                        <td colspan="6" class="general-empty-row">No hay deudas registradas.</td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        @if (datos.deudas.length > filasResumen) {
+                        <button type="button" class="ver-todos" (click)="seccionActiva.set('deudas')">
+                            Ver todos ({{ datos.deudas.length }}) →
+                        </button>
                         }
                     </section>
 
                     <!-- LÍNEAS DE CRÉDITO -->
                     <section class="general-section">
                         <div class="general-section-header">
-                            <h3>Líneas de crédito</h3>
+                            <h3><app-ui-icon name="card" /> Líneas de crédito</h3>
                             <span class="general-count">{{ datos.lineasCredito.length }}</span>
                         </div>
 
-                        @for (registro of datos.lineasCredito; track $index) {
-                        <dl class="general-grid">
-                            <div>
-                                <dt>Entidad</dt>
-                                <dd>{{ registro.entidad ?? 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Período</dt>
-                                <dd>{{ registro.periodo || 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Tipo</dt>
-                                <dd>{{ registro.tipo ?? 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Monto de línea</dt>
-                                <dd>{{ (registro.lineaCreditoMonto | number:'1.2-2') ?? 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Línea utilizada</dt>
-                                <dd>{{ (registro.lineaUtilizada | number:'1.2-2') ?? 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Línea no utilizada</dt>
-                                <dd>{{ (registro.lineaNoUtilizada | number:'1.2-2') ?? 'No disponible' }}</dd>
-                            </div>
-                        </dl>
-                        } @empty {
-                        <p class="general-no-data">No hay líneas de crédito registradas.</p>
+                        <div class="general-table-wrap">
+                            <table class="custom-table general-table text-center">
+                                <thead>
+                                    <tr>
+                                        <th>Período</th>
+                                        <th>Entidad</th>
+                                        <th>Tipo</th>
+                                        <th>Línea</th>
+                                        <th>Utilizada</th>
+                                        <th>No utilizada</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (registro of datos.lineasCredito.slice(0, filasResumen); track $index) {
+                                    <tr>
+                                        <td><span class="badge-periodo">{{ registro.periodo || '—' }}</span></td>
+                                        <td class="font-medium">{{ registro.entidad ?? '—' }}</td>
+                                        <td><span class="badge-soft">{{ registro.tipo ?? '—' }}</span></td>
+                                        <td class="num">{{ (registro.lineaCreditoMonto | number:'1.2-2') ?? '—' }}</td>
+                                        <td class="num">{{ (registro.lineaUtilizada | number:'1.2-2') ?? '—' }}</td>
+                                        <td class="num">{{ (registro.lineaNoUtilizada | number:'1.2-2') ?? '—' }}</td>
+                                    </tr>
+                                    } @empty {
+                                    <tr>
+                                        <td colspan="6" class="general-empty-row">No hay líneas de crédito registradas.
+                                        </td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        @if (datos.lineasCredito.length > filasResumen) {
+                        <button type="button" class="ver-todos" (click)="seccionActiva.set('lineasCredito')">
+                            Ver todos ({{ datos.lineasCredito.length }}) →
+                        </button>
                         }
                     </section>
 
                     <!-- CALIFICACIONES -->
                     <section class="general-section">
                         <div class="general-section-header">
-                            <h3>Calificaciones</h3>
+                            <h3><app-ui-icon name="shield" /> Calificaciones</h3>
                             <span class="general-count">{{ datos.calificaciones.length }}</span>
                         </div>
 
-                        @for (registro of datos.calificaciones; track $index) {
-                        <dl class="general-grid">
-                            <div>
-                                <dt>Período</dt>
-                                <dd>{{ registro.periodo || 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Código SBS</dt>
-                                <dd>{{ registro.codigoSbs ?? 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Normal (NOR)</dt>
-                                <dd>{{ (registro.nor | number:'1.2-2') ?? 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Problemas potenciales (CPP)</dt>
-                                <dd>{{ (registro.cpp | number:'1.2-2') ?? 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Deficiente (DEF)</dt>
-                                <dd>{{ (registro.def | number:'1.2-2') ?? 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Dudoso (DUD)</dt>
-                                <dd>{{ (registro.dud | number:'1.2-2') ?? 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Pérdida (PER)</dt>
-                                <dd>{{ (registro.per | number:'1.2-2') ?? 'No disponible' }}</dd>
-                            </div>
-                            <div>
-                                <dt>Reportan</dt>
-                                <dd>{{ registro.reportan ?? 'No disponible' }}</dd>
-                            </div>
-                        </dl>
-                        } @empty {
-                        <p class="general-no-data">No hay calificaciones registradas.</p>
+                        <div class="general-table-wrap">
+                            <table class="custom-table general-table text-center">
+                                <thead>
+                                    <tr>
+                                        <th>Período</th>
+                                        <th>Código SBS</th>
+                                        <th>NOR</th>
+                                        <th>CPP</th>
+                                        <th>DEF</th>
+                                        <th>DUD</th>
+                                        <th>PER</th>
+                                        <th>Reportan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (registro of datos.calificaciones.slice(0, filasResumen); track $index) {
+                                    <tr>
+                                        <td><span class="badge-periodo">{{ registro.periodo || '—' }}</span></td>
+                                        <td>{{ registro.codigoSbs ?? '—' }}</td>
+                                        <td class="num cal-nor">{{ (registro.nor | number:'1.2-2') ?? '—' }}</td>
+                                        <td class="num cal-cpp">{{ (registro.cpp | number:'1.2-2') ?? '—' }}</td>
+                                        <td class="num cal-def">{{ (registro.def | number:'1.2-2') ?? '—' }}</td>
+                                        <td class="num cal-dud">{{ (registro.dud | number:'1.2-2') ?? '—' }}</td>
+                                        <td class="num cal-per">{{ (registro.per | number:'1.2-2') ?? '—' }}</td>
+                                        <td>{{ registro.reportan ?? '—' }}</td>
+                                    </tr>
+                                    } @empty {
+                                    <tr>
+                                        <td colspan="8" class="general-empty-row">No hay calificaciones registradas.
+                                        </td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        @if (datos.calificaciones.length > filasResumen) {
+                        <button type="button" class="ver-todos" (click)="seccionActiva.set('calificaciones')">
+                            Ver todos ({{ datos.calificaciones.length }}) →
+                        </button>
                         }
                     </section>
-
                 </section>
 
                 <!-- ======================================
@@ -441,36 +448,60 @@
 
                     <h3 class="detail-title">Teléfonos asociados</h3>
 
-                    @for (movil of datos.moviles; track $index) {
-                    <dl class="phone-grid">
-                        <div>
-                            <dt>Teléfono</dt>
-                            <dd>{{ movil.telefono || 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Operadora</dt>
-                            <dd>{{ movil.empresaOperadora || 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Plan / modalidad</dt>
-                            <dd>{{ movil.planMovil || 'No disponible' }} / {{ movil.modalidad || 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Período del registro</dt>
-                            <dd>{{ movil.periodo || 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Fecha de alta</dt>
-                            <dd>{{ (movil.fechaAlta | date:'dd/MM/yyyy') || 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Fecha de carga</dt>
-                            <dd>{{ (movil.fechaCarga | date:'dd/MM/yyyy') || 'No disponible' }}</dd>
-                        </div>
-                    </dl>
-                    } @empty {
-                    <p class="no-phones">No hay teléfonos asociados disponibles.</p>
-                    }
+                    <div class="table-card h-[calc(50vh-400px)] min-h-[300px] overflow-auto">
+                        <table class="custom-table text-center">
+                            <thead>
+                                <tr>
+                                    <th><span class="th-content"><app-ui-icon name="calendar" />Período</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="file" />Documento</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="hash" />Teléfono</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="calendar" />Fecha de alta</span>
+                                    </th>
+                                    <th><span class="th-content"><app-ui-icon name="tag" />Plan móvil</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="tag" />Modalidad</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="building" />Operadora</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (movil of movilesPagina(); track $index) {
+                                <tr>
+                                    <td><span class="badge-periodo">{{ movil.periodo || 'No disponible' }}</span></td>
+                                    <td class="font-medium">{{ movil.documento || 'No disponible' }}</td>
+                                    <td class="phone-number">{{ movil.telefono || 'No disponible' }}</td>
+                                    <td>{{ (movil.fechaAlta | date:'dd/MM/yyyy') || 'No disponible' }}</td>
+                                    <td>{{ movil.planMovil || 'No disponible' }}</td>
+                                    <td>
+                                        <span [class]="movil.modalidad ? 'badge-modalidad' : ''">
+                                            {{ movil.modalidad || 'No disponible' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge-operadora"
+                                            [attr.data-operadora]="movil.empresaOperadora | lowercase">
+                                            {{ movil.empresaOperadora || 'No disponible' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                } @empty {
+                                <tr>
+                                    <td colspan="10" class="empty-cell">
+                                        <div class="empty-inner">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round" class="empty-icon">
+                                                <path
+                                                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                                            </svg>
+                                            <span>No hay teléfonos asociados disponibles.</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <app-paginacion [paginaActual]="pagina('moviles')" [totalElementos]="datos.moviles.length"
+                        [elementosPorPagina]="elementosPorPagina()" (cambioPagina)="cambiarPagina('moviles', $event)" />
 
                 </section>
 
@@ -482,57 +513,50 @@
 
                     <h3 class="detail-title">Información laboral e ingresos</h3>
 
-                    @for (sueldo of datos.sueldos; track $index) {
-                    <dl class="phone-grid">
-                        <div>
-                            <dt>Empresa</dt>
-                            <dd>{{ sueldo.empresa || 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>RUC</dt>
-                            <dd>{{ sueldo.ruc || 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Período del registro</dt>
-                            <dd>{{ sueldo.periodo || 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Género</dt>
-                            <dd>{{ sueldo.genero || 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Sueldo reportado</dt>
-                            <dd>{{ (sueldo.montoSueldo | number:'1.2-2') ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Gratificación / bono</dt>
-                            <dd>{{ (sueldo.gratifBono | number:'1.2-2') ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Ingreso estimado anual</dt>
-                            <dd>{{ (sueldo.ingresoEstimadoAnual | number:'1.2-2') ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Rango de sueldo</dt>
-                            <dd>{{ sueldo.rangoSueldo || 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Segmento de sueldo</dt>
-                            <dd>{{ sueldo.segmentoSueldo || 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Nivel de ingreso</dt>
-                            <dd>{{ sueldo.nivelIngreso || 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Fecha de carga</dt>
-                            <dd>{{ (sueldo.fechaCarga | date:'dd/MM/yyyy') || 'No disponible' }}</dd>
-                        </div>
-                    </dl>
-                    } @empty {
-                    <p class="no-phones">No hay información laboral disponible.</p>
-                    }
+                    <div class="table-card h-[calc(50vh-400px)] min-h-[300px] overflow-auto">
+                        <table class="custom-table text-center">
+                            <thead>
+                                <tr>
+                                    <th><span class="th-content"><app-ui-icon name="calendar" />Período</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="building" />Empresa</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="hash" />RUC</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="money" />Sueldo</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="money" />Gratif. / bono</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="trending" />Ingreso anual</span>
+                                    </th>
+                                    <th><span class="th-content"><app-ui-icon name="briefcase" />Rango</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="trending" />Nivel</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (sueldo of sueldosPagina(); track $index) {
+                                <tr>
+                                    <td><span class="badge-periodo">{{ sueldo.periodo || 'No disponible' }}</span></td>
+                                    <td class="font-medium">{{ sueldo.empresa || 'No disponible' }}</td>
+                                    <td>{{ sueldo.ruc || 'No disponible' }}</td>
+                                    <td class="num">{{ (sueldo.montoSueldo | number:'1.2-2') ?? '—' }}</td>
+                                    <td class="num">{{ (sueldo.gratifBono | number:'1.2-2') ?? '—' }}</td>
+                                    <td class="num">{{ (sueldo.ingresoEstimadoAnual | number:'1.2-2') ?? '—' }}</td>
+                                    <td>{{ sueldo.rangoSueldo || 'No disponible' }}</td>
+                                    <td><span class="badge-soft">{{ sueldo.nivelIngreso || 'No disponible' }}</span>
+                                    </td>
+                                </tr>
+                                } @empty {
+                                <tr>
+                                    <td colspan="8" class="empty-cell">
+                                        <div class="empty-inner">
+                                            <app-ui-icon name="briefcase" />
+                                            <span>No hay información laboral disponible.</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
 
+                    <app-paginacion [paginaActual]="pagina('sueldos')" [totalElementos]="datos.sueldos.length"
+                        [elementosPorPagina]="elementosPorPagina()" (cambioPagina)="cambiarPagina('sueldos', $event)" />
                 </section>
 
                 <!-- ======================================
@@ -543,41 +567,49 @@
 
                     <h3 class="detail-title">Deudas</h3>
 
-                    @for (registro of datos.deudas; track $index) {
-                    <dl class="phone-grid">
-                        <div>
-                            <dt>Entidad</dt>
-                            <dd>{{ registro.entidad ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Período</dt>
-                            <dd>{{ registro.periodo || 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Tipo de deuda</dt>
-                            <dd>{{ registro.tipoDeuda ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Saldo</dt>
-                            <dd>{{ (registro.saldo | number:'1.2-2') ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Días</dt>
-                            <dd>{{ registro.dias ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Calificación</dt>
-                            <dd>{{ registro.calificacion ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Fecha de carga</dt>
-                            <dd>{{ (registro.fechaCarga | date:'dd/MM/yyyy') || 'No disponible' }}</dd>
-                        </div>
-                    </dl>
-                    } @empty {
-                    <p class="no-phones">No hay registros disponibles en esta sección.</p>
-                    }
+                    <div class="table-card h-[calc(50vh-400px)] min-h-[300px] overflow-auto">
+                        <table class="custom-table text-center">
+                            <thead>
+                                <tr>
+                                    <th><span class="th-content"><app-ui-icon name="calendar" />Período</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="bank" />Entidad</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="building" />Razón social</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="tag" />Tipo de deuda</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="clock" />Días</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="shield" />Calificación</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="money" />Saldo</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (registro of deudasPagina(); track $index) {
+                                <tr>
+                                    <td><span class="badge-periodo">{{ registro.periodo || 'No disponible' }}</span>
+                                    </td>
+                                    <td class="font-medium">{{ registro.entidad ?? 'No disponible' }}</td>
+                                    <td>{{ registro.razonSocial ?? 'No disponible' }}</td>
+                                    <td>{{ registro.tipoDeuda ?? 'No disponible' }}</td>
+                                    <td><span class="badge-dias" [class.alto]="(registro.dias ?? 0) > 30">{{
+                                            registro.dias ?? '—' }}</span></td>
+                                    <td><span class="badge-soft">{{ registro.calificacion ?? 'No disponible' }}</span>
+                                    </td>
+                                    <td class="num">{{ (registro.saldo | number:'1.2-2') ?? '—' }}</td>
+                                </tr>
+                                } @empty {
+                                <tr>
+                                    <td colspan="7" class="empty-cell">
+                                        <div class="empty-inner">
+                                            <app-ui-icon name="bank" />
+                                            <span>No hay deudas registradas.</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
 
+                    <app-paginacion [paginaActual]="pagina('deudas')" [totalElementos]="datos.deudas.length"
+                        [elementosPorPagina]="elementosPorPagina()" (cambioPagina)="cambiarPagina('deudas', $event)" />
                 </section>
 
                 <!-- ======================================
@@ -588,41 +620,48 @@
 
                     <h3 class="detail-title">Líneas de crédito</h3>
 
-                    @for (registro of datos.lineasCredito; track $index) {
-                    <dl class="phone-grid">
-                        <div>
-                            <dt>Entidad</dt>
-                            <dd>{{ registro.entidad ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Período</dt>
-                            <dd>{{ registro.periodo || 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Tipo</dt>
-                            <dd>{{ registro.tipo ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Monto de línea</dt>
-                            <dd>{{ (registro.lineaCreditoMonto | number:'1.2-2') ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Línea utilizada</dt>
-                            <dd>{{ (registro.lineaUtilizada | number:'1.2-2') ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Línea no utilizada</dt>
-                            <dd>{{ (registro.lineaNoUtilizada | number:'1.2-2') ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Fecha de carga</dt>
-                            <dd>{{ (registro.fechaCarga | date:'dd/MM/yyyy') || 'No disponible' }}</dd>
-                        </div>
-                    </dl>
-                    } @empty {
-                    <p class="no-phones">No hay registros disponibles en esta sección.</p>
-                    }
+                    <div class="table-card h-[calc(50vh-400px)] min-h-[300px] overflow-auto">
+                        <table class="custom-table text-center">
+                            <thead>
+                                <tr>
+                                    <th><span class="th-content"><app-ui-icon name="calendar" />Período</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="bank" />Entidad</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="building" />Razón social</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="tag" />Tipo</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="card" />Línea</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="trending" />Utilizada</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="money" />No utilizada</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (registro of lineasCreditoPagina(); track $index) {
+                                <tr>
+                                    <td><span class="badge-periodo">{{ registro.periodo || 'No disponible' }}</span>
+                                    </td>
+                                    <td class="font-medium">{{ registro.entidad ?? 'No disponible' }}</td>
+                                    <td>{{ registro.razonSocial ?? 'No disponible' }}</td>
+                                    <td><span class="badge-soft">{{ registro.tipo ?? 'No disponible' }}</span></td>
+                                    <td class="num">{{ (registro.lineaCreditoMonto | number:'1.2-2') ?? '—' }}</td>
+                                    <td class="num">{{ (registro.lineaUtilizada | number:'1.2-2') ?? '—' }}</td>
+                                    <td class="num">{{ (registro.lineaNoUtilizada | number:'1.2-2') ?? '—' }}</td>
+                                </tr>
+                                } @empty {
+                                <tr>
+                                    <td colspan="7" class="empty-cell">
+                                        <div class="empty-inner">
+                                            <app-ui-icon name="card" />
+                                            <span>No hay líneas de crédito registradas.</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
 
+                    <app-paginacion [paginaActual]="pagina('lineasCredito')"
+                        [totalElementos]="datos.lineasCredito.length" [elementosPorPagina]="elementosPorPagina()"
+                        (cambioPagina)="cambiarPagina('lineasCredito', $event)" />
                 </section>
 
                 <!-- ======================================
@@ -633,49 +672,50 @@
 
                     <h3 class="detail-title">Calificaciones</h3>
 
-                    @for (registro of datos.calificaciones; track $index) {
-                    <dl class="phone-grid">
-                        <div>
-                            <dt>Período</dt>
-                            <dd>{{ registro.periodo || 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Código SBS</dt>
-                            <dd>{{ registro.codigoSbs ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Normal (NOR)</dt>
-                            <dd>{{ (registro.nor | number:'1.2-2') ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Problemas potenciales (CPP)</dt>
-                            <dd>{{ (registro.cpp | number:'1.2-2') ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Deficiente (DEF)</dt>
-                            <dd>{{ (registro.def | number:'1.2-2') ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Dudoso (DUD)</dt>
-                            <dd>{{ (registro.dud | number:'1.2-2') ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Pérdida (PER)</dt>
-                            <dd>{{ (registro.per | number:'1.2-2') ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Reportan</dt>
-                            <dd>{{ registro.reportan ?? 'No disponible' }}</dd>
-                        </div>
-                        <div>
-                            <dt>Fecha de carga</dt>
-                            <dd>{{ (registro.fechaCarga | date:'dd/MM/yyyy') || 'No disponible' }}</dd>
-                        </div>
-                    </dl>
-                    } @empty {
-                    <p class="no-phones">No hay registros disponibles en esta sección.</p>
-                    }
+                    <div class="table-card h-[calc(50vh-400px)] min-h-[300px] overflow-auto">
+                        <table class="custom-table text-center">
+                            <thead>
+                                <tr>
+                                    <th><span class="th-content"><app-ui-icon name="calendar" />Período</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="shield" />Código SBS</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="shield" />Normal</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="shield" />CPP</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="shield" />Deficiente</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="shield" />Dudoso</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="shield" />Pérdida</span></th>
+                                    <th><span class="th-content"><app-ui-icon name="bank" />Reportan</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (registro of calificacionesPagina(); track $index) {
+                                <tr>
+                                    <td><span class="badge-periodo">{{ registro.periodo || 'No disponible' }}</span>
+                                    </td>
+                                    <td>{{ registro.codigoSbs ?? 'No disponible' }}</td>
+                                    <td class="num cal-nor">{{ (registro.nor | number:'1.2-2') ?? '—' }}</td>
+                                    <td class="num cal-cpp">{{ (registro.cpp | number:'1.2-2') ?? '—' }}</td>
+                                    <td class="num cal-def">{{ (registro.def | number:'1.2-2') ?? '—' }}</td>
+                                    <td class="num cal-dud">{{ (registro.dud | number:'1.2-2') ?? '—' }}</td>
+                                    <td class="num cal-per">{{ (registro.per | number:'1.2-2') ?? '—' }}</td>
+                                    <td>{{ registro.reportan ?? 'No disponible' }}</td>
+                                </tr>
+                                } @empty {
+                                <tr>
+                                    <td colspan="8" class="empty-cell">
+                                        <div class="empty-inner">
+                                            <app-ui-icon name="shield" />
+                                            <span>No hay calificaciones registradas.</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
 
+                    <app-paginacion [paginaActual]="pagina('calificaciones')"
+                        [totalElementos]="datos.calificaciones.length" [elementosPorPagina]="elementosPorPagina()"
+                        (cambioPagina)="cambiarPagina('calificaciones', $event)" />
                 </section>
 
                 <!-- ======================================

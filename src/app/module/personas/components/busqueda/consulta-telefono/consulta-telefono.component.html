@@ -1,64 +1,155 @@
-<section class="dni-search" aria-label="Consulta por tel&#233;fono">
+<section class="dni-search" aria-label="Consulta por teléfono">
     <form class="search-form" [formGroup]="formulario" (ngSubmit)="buscar()" novalidate>
-        <label for="telefono">N&#250;mero de celular</label>
+        <label for="telefono">Número de celular</label>
         <div class="search-controls">
-            <div class="search-input"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 5h4m-3 14h2"/></svg>
-            <input
-            id="telefono"
-            type="text"
-            maxlength="9"
-            inputmode="numeric"
-            formControlName="telefono"
-            placeholder="Ingresa 9 dígitos"
-            (input)="limitarTelefono($event)"
-            [readOnly]="cargando()"
-            [attr.aria-invalid]="telefono.touched && telefono.invalid"
-            aria-describedby="telefono-ayuda"
-            />
-        </div>
-            <button type="submit" [disabled]="cargando()"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg>{{ cargando() ? 'Buscando...' : 'Buscar' }}</button>
+            <div class="search-input">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="6" y="2" width="12" height="20" rx="3" />
+                    <path d="M10 5h4m-3 14h2" />
+                </svg>
+                <input id="telefono" type="text" maxlength="9" inputmode="numeric" formControlName="telefono"
+                    placeholder="Ingresa 9 dígitos" (input)="limitarTelefono($event)" [readOnly]="cargando()"
+                    [attr.aria-invalid]="telefono.touched && telefono.invalid" aria-describedby="telefono-ayuda" />
+            </div>
+            <button type="submit" [disabled]="cargando()">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="10.5" cy="10.5" r="6.5" />
+                    <path d="m16 16 4 4" />
+                </svg>
+                {{ cargando() ? 'Buscando...' : 'Buscar' }}
+            </button>
             <button class="clear-button" type="button" (click)="limpiar()" [disabled]="cargando()">Limpiar</button>
         </div>
-        <p id="telefono-ayuda" class="field-hint" [class.field-error]="telefono.touched && telefono.invalid">{{ telefono.touched && telefono.invalid ? 'Ingresa 9 dígitos, comenzando con 9.' : 'Consulta los documentos asociados al celular.' }}</p>
+
+        <p id="telefono-ayuda" class="field-hint" [class.field-error]="telefono.touched && telefono.invalid">
+            {{ telefono.touched && telefono.invalid ? 'Ingresa 9 dígitos, comenzando con 9.' : 'Consulta los documentos asociados al celular.' }}
+        </p>
     </form>
+
     <section class="result-card" aria-label="Resultados" [attr.aria-busy]="cargando()">
         <div role="status">
             @if (cargando()) {
-                <div class="loading-state">
-                    <p>Consultando tel&#233;fonos y documentos asociados...</p>
-                    <span class="inline-spinner" aria-hidden="true"></span>
-                </div>
+            <div class="loading-state">
+                <p>Consultando teléfonos y documentos asociados...</p>
+                <span class="inline-spinner" aria-hidden="true"></span>
+            </div>
+            } @else if (error()) {
+            <div class="empty-state">
+                <h3>No pudimos completar la búsqueda</h3>
+                <p class="field-error">{{ error() }}</p>
+            </div>
+            } @else if (resultado(); as datos) {
+            @if (datos.registros.length === 0) {
+            <div class="empty-state">
+                <span class="empty-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round">
+                        <rect x="6" y="2" width="12" height="20" rx="3" />
+                        <path d="M10 5h4m-3 14h2" />
+                    </svg>
+                </span>
+                <h3>No se encontraron registros</h3>
+                <p>No hay información disponible para este celular. Verifica el número e intenta nuevamente.</p>
+            </div>
+            } @else {
+            <div class="summary">
+                <span class="document-badge">Teléfono {{ datos.telefono }}</span>
+                <span>{{ datos.documentosAsociados }} documentos asociados &middot; {{ datos.registros.length }}
+                    registros</span>
+            </div>
+            <!-- 
+          @for (titular of titulares(); track titular.documento) {
+            <dl class="identity-grid">
+              <div>
+                <dt>Apellidos y nombres</dt>
+                <dd class="person-name">{{ titular.nombre || 'No disponible' }}</dd>
+              </div>
+              <div>
+                <dt>Documento</dt>
+                <dd>{{ titular.documento }}</dd>
+              </div>
+            </dl>
+          } -->
             }
-            @else if (error()) { <div class="empty-state"><h3>No pudimos completar la b&#250;squeda</h3><p>{{ error() }}</p></div> }
-            @else if (resultado(); as datos) {
-                <div class="summary">
-                    <span class="document-badge">Teléfono {{ datos.telefono }}</span>
-                    <span>{{ datos.documentosAsociados }} documentos asociados &middot; {{ datos.registros.length }} registros</span>
-                </div>
-            } @else { <div class="empty-state"><span class="empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 5h4m-3 14h2"/></svg></span><h3>Realiza tu primera consulta</h3><p>Ingresa un celular en el buscador. Aqu&#237; aparecer&#225;n los registros asociados.</p></div> }
+            } @else {
+            <div class="empty-state">
+                <span class="empty-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round">
+                        <rect x="6" y="2" width="12" height="20" rx="3" />
+                        <path d="M10 5h4m-3 14h2" />
+                    </svg>
+                </span>
+                <h3>Realiza tu primera consulta</h3>
+                <p>Ingresa un celular en el buscador. Aquí aparecerán los registros asociados.</p>
+            </div>
+            }
         </div>
+
         @if (resultado(); as datos) {
-            <article class="person-details">
-                <h3 class="detail-title">Registros telef&#243;nicos <span class="document-badge">{{ datos.registros.length }}</span></h3>
-                <app-record-carousel [records]="datos.registros">
-                    @for (registro of datos.registros; track $index) {
-                        <dl class="phone-grid" appRecordSlide>
-                            <div><dt>Periodo</dt><dd>{{ texto(registro.periodo) }}</dd></div>
-                            <div><dt>Documento</dt><dd>{{ texto(registro.documento) }}</dd></div>
-                            <div><dt>Apellido Paterno</dt><dd>{{ texto(registro.apePat) }}</dd></div>
-                            <div><dt>Apellido Materno</dt><dd>{{ texto(registro.apeMat) }}</dd></div>
-                            <div><dt>Prenombres</dt><dd class="person-name">{{ texto(registro.prenombres) }}</dd></div>
-                            <div><dt>Tel&#233;fono</dt><dd>{{ texto(registro.telefono) }}</dd></div>
-                            <div><dt>Fecha Alta</dt><dd>{{ (registro.fechaAlta | date:'dd/MM/yyyy') || 'No disponible' }}</dd></div>
-                            <div><dt>Plan M&#243;vil</dt><dd>{{ texto(registro.planMovil) }}</dd></div>
-                            <div><dt>Modalidad</dt><dd>{{ texto(registro.modalidad) }}</dd></div>
-                            <div><dt>Empresa Operadora</dt><dd>{{ texto(registro.empresaOperadora) }}</dd></div>
-                        </dl>
-                    } @empty {
-                        <div class="empty-state"><h3>No se encontraron registros</h3><p>Verifica el celular e intenta nuevamente.</p></div>
-                    }
-                </app-record-carousel>
-            </article>
+        @if (datos.registros.length > 0) {
+        <article class="person-details">
+            <h3 class="detail-title">
+                Registros telefónicos
+                <span class="document-badge">{{ datos.registros.length }}</span>
+            </h3>
+
+                    <div class="table-card h-[calc(50vh-400px)] min-h-[300px] overflow-auto">
+                <table class="custom-table text-center">
+                    <thead>
+                        <tr>
+                            <th><span class="th-content"><app-ui-icon name="calendar" />Período</span></th>
+                            <th><span class="th-content"><app-ui-icon name="file" />Documento</span></th>
+                            <th><span class="th-content"><app-ui-icon name="tag" />Apellido paterno</span></th>
+                            <th><span class="th-content"><app-ui-icon name="tag" />Apellido materno</span></th>
+                            <th><span class="th-content"><app-ui-icon name="tag" />Prenombres</span></th>
+                            <th><span class="th-content"><app-ui-icon name="hash" />Teléfono</span></th>
+                            <th><span class="th-content"><app-ui-icon name="calendar" />Fecha de alta</span></th>
+                            <th><span class="th-content"><app-ui-icon name="tag" />Plan móvil</span></th>
+                            <th><span class="th-content"><app-ui-icon name="tag" />Modalidad</span></th>
+                            <th><span class="th-content"><app-ui-icon name="building" />Operadora</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (registro of registrosPagina(); track $index) {
+                        <tr>
+                            <td><span class="badge-periodo">{{ texto(registro.periodo) }}</span></td>
+                            <td class="font-medium">{{ texto(registro.documento) }}</td>
+                            <td>{{ texto(registro.apePat) }}</td>
+                            <td>{{ texto(registro.apeMat) }}</td>
+                            <td class="person-name">{{ texto(registro.prenombres) }}</td>
+                            <td class="phone-number">{{ texto(registro.telefono) }}</td>
+                            <td>{{ (registro.fechaAlta | date:'dd/MM/yyyy') || 'No disponible' }}</td>
+                            <td>{{ texto(registro.planMovil) }}</td>
+                            <td>
+                                <span [class]="registro.modalidad ? 'badge-modalidad' : ''">{{ texto(registro.modalidad)
+                                    }}</span>
+                            </td>
+                            <td>
+                                <span class="badge-operadora"
+                                    [attr.data-operadora]="registro.empresaOperadora | lowercase">
+                                    {{ texto(registro.empresaOperadora) }}
+                                </span>
+                            </td>
+                        </tr>
+                        } @empty {
+                        <tr>
+                            <td colspan="10" class="empty-cell">
+                                <div class="empty-inner">
+                                    <app-ui-icon name="hash" />
+                                    <span>No hay registros en esta página.</span>
+                                </div>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <app-paginacion [paginaActual]="paginaActual()" [totalElementos]="datos.registros.length"
+                [elementosPorPagina]="elementosPorPagina()" (cambioPagina)="cambiarPagina($event)" />
+        </article>
+        }
         }
     </section>
 </section>

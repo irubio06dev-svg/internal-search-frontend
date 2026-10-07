@@ -5,10 +5,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
 import { EmpresaIndividualService } from '../../../services/empresa-individual.service';
 import { EmpresaResponse } from '../../../interfaces/empresa-response.interface';
+import { PaginacionComponent } from '../../../../../shared/paginacion/paginacion.component';
+import { IconoTablaComponent } from '../../../../../shared/iconos-tabla/iconos-tabla.component';
 
 @Component({
     selector: 'app-ruc',
-    imports: [RecordCarouselComponent, RecordSlideDirective, ReactiveFormsModule],
+    imports: [ReactiveFormsModule, PaginacionComponent, IconoTablaComponent],
     templateUrl: './ruc.component.html',
     styleUrls: ['../../../../personas/components/busqueda/consulta-dni/consulta-dni.component.css', './ruc.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,7 +39,7 @@ export class RucComponent {
             { id: 'lineasCredito', titulo: 'Líneas de crédito', registros: datos?.lineasCredito ?? [] },
             { id: 'calificaciones', titulo: 'Calificaciones', registros: datos?.calificaciones ?? [] },
             { id: 'moviles', titulo: 'Teléfonos', registros: datos?.moviles ?? [] },
-            { id: 'sueldos', titulo: 'Información laboral', registros: datos?.sueldos ?? [] },
+            // { id: 'sueldos', titulo: 'Información laboral', registros: datos?.sueldos ?? [] },
         ];
     });
     readonly tieneDatos = computed(() => this.secciones().some(s => s.registros.length > 0));
@@ -99,5 +101,69 @@ export class RucComponent {
         event.preventDefault();
         this.activa.set(this.secciones()[destinos[event.key]].id);
         (event.currentTarget as HTMLElement).parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[destinos[event.key]]?.focus();
+    }
+
+
+    readonly elementosPorPagina = signal(4);
+    private readonly paginas = signal<Record<string, number>>({});
+
+    pagina(id: string): number {
+        return this.paginas()[id] ?? 1;
+    }
+
+    cambiarPagina(id: string, nueva: number) {
+        this.paginas.update(p => ({ ...p, [id]: nueva }));
+    }
+
+    resetPaginas() {
+        this.paginas.set({});
+    }
+
+    /** Por sección: columnas, filas de la página actual y total de registros */
+    readonly tablas = computed(() => {
+        const salida: Record<string, { columnas: string[]; filas: Record<string, any>[]; total: number }> = {};
+        const porPagina = this.elementosPorPagina();
+
+        for (const seccion of this.secciones()) {
+            const todas = seccion.registros.map((registro: any) => {
+                const fila: Record<string, any> = {};
+                for (const c of this.campos(registro)) fila[c.clave] = c.valor;
+                return fila;
+            });
+
+            const columnas: string[] = [];
+            for (const fila of todas) {
+                for (const clave of Object.keys(fila)) {
+                    if (!columnas.includes(clave)) columnas.push(clave);
+                }
+            }
+
+            const inicio = (this.pagina(seccion.id) - 1) * porPagina;
+            salida[seccion.id] = {
+                columnas,
+                filas: todas.slice(inicio, inicio + porPagina),
+                total: todas.length,
+            };
+        }
+        return salida;
+    });
+
+    /** Icono del encabezado según el nombre del campo */
+    iconoColumna(clave: string): string {
+        const k = clave.toLowerCase();
+        if (/periodo|fecha/.test(k)) return 'calendar';
+        if (/documento|ruc/.test(k)) return 'file';
+        if (/saldo|monto|sueldo|ingreso|gratif/.test(k)) return 'money';
+        if (/linea|credito/.test(k)) return 'card';
+        if (/entidad/.test(k)) return 'bank';
+        if (/razon|empresa|operadora/.test(k)) return 'building';
+        if (/dias/.test(k)) return 'clock';
+        if (/calific|nor|cpp|def|dud|per|sbs/.test(k)) return 'shield';
+        if (/telefono/.test(k)) return 'hash';
+        return 'tag';
+    }
+
+    esNumerica(clave: string): boolean {
+        return /saldo|monto|linea|sueldo|ingreso|gratif|nor|cpp|def|dud|per/i.test(clave);
     }
 }

@@ -17,6 +17,7 @@ import { ArchivoSeleccionadoComponent } from '../../../personas/components/masiv
 import { crearArchivoDocumentos, formatearNumero, LIMITE_DOCUMENTOS } from '../../../../shared/utils/analizar-documentos';
 
 import { analizarRucs, validarArchivoRucs } from '../../utils/analizar-rucs';
+import { CommonModule } from '@angular/common';
 
 interface ArchivoGenerado { nombre: string; blob: Blob; }
 

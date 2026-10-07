@@ -598,10 +598,35 @@ input[type="number"] {
     margin-top: 12px;
 }
 
-.loading-state { min-height: 220px; align-items: center; justify-content: center; text-align: center; }
-.inline-spinner { display: inline-block; width: 38px; height: 38px; flex: none; border: 3px solid var(--blue-10); border-top-color: var(--brand-blue); border-radius: 50%; animation: inline-spin .8s linear infinite; }
-@keyframes inline-spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .inline-spinner { animation: none; } }
+.loading-state {
+    min-height: 220px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.inline-spinner {
+    display: inline-block;
+    width: 38px;
+    height: 38px;
+    flex: none;
+    border: 3px solid var(--blue-10);
+    border-top-color: var(--brand-blue);
+    border-radius: 50%;
+    animation: inline-spin .8s linear infinite;
+}
+
+@keyframes inline-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .inline-spinner {
+        animation: none;
+    }
+}
 
 /* ==========================================================
    VISTA GENERAL
@@ -654,11 +679,8 @@ input[type="number"] {
     display: grid;
 
     grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(145px, 1fr)
-        );
-
+        repeat(auto-fit,
+            minmax(145px, 1fr));
     gap: 12px;
 }
 
@@ -695,6 +717,7 @@ input[type="number"] {
     text-align: left;
 
     cursor: pointer;
+    border: 1px solid var(--border-strong);
 }
 
 
@@ -704,8 +727,7 @@ input[type="number"] {
     background: var(--surface-muted);
 
     box-shadow:
-        0 2px 10px
-        rgba(27, 69, 137, 0.08);
+        0 2px 10px rgba(27, 69, 137, 0.08);
 }
 
 
@@ -777,8 +799,7 @@ input[type="number"] {
     padding: 14px 18px;
 
     border-bottom:
-        1px solid
-        var(--border);
+        1px solid var(--border);
 
     background: var(--surface);
 }
@@ -837,10 +858,8 @@ input[type="number"] {
     display: grid;
 
     grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(180px, 1fr)
-        );
+        repeat(auto-fit,
+            minmax(180px, 1fr));
 
     gap: 16px 24px;
 
@@ -850,10 +869,9 @@ input[type="number"] {
 }
 
 
-.general-grid + .general-grid {
+.general-grid+.general-grid {
     border-top:
-        1px solid
-        var(--border);
+        1px solid var(--border);
 }
 
 
@@ -884,6 +902,115 @@ input[type="number"] {
     font-variant-numeric: tabular-nums;
 
     overflow-wrap: anywhere;
+}
+
+/* Tarjetas contador con icono */
+.summary-button {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    text-align: left;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+}
+
+.summary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, .08);
+}
+
+.summary-icon {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: .75rem;
+    background: #eef2ff;
+    color: #4338ca;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.summary-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.summary-text span {
+    font-size: .8rem;
+    color: #64748b;
+}
+
+.summary-text strong {
+    font-size: 1.35rem;
+    color: #0f172a;
+}
+
+/* Encabezado de cada sección */
+.general-section-header h3 {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.general-section-header h3 app-ui-icon {
+    color: #4338ca;
+}
+
+/* Tabla compacta del resumen */
+.general-table-wrap {
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: .75rem;
+}
+
+.general-table {
+    width: 100%;
+    font-size: .85rem;
+}
+
+.general-table thead th {
+    background: #f8fafc;
+    padding: .6rem .75rem;
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: #64748b;
+    white-space: nowrap;
+}
+
+.general-table tbody td {
+    padding: .55rem .75rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.general-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.general-empty-row {
+    padding: 1.5rem 1rem !important;
+    text-align: center;
+    color: #94a3b8;
+}
+
+/* Botón "Ver todos" */
+.ver-todos {
+    display: block;
+    margin: .75rem 0 0 auto;
+    padding: .35rem .9rem;
+    border: 1px solid #c7d2fe;
+    border-radius: 999px;
+    background: #eef2ff;
+    color: #4338ca;
+    font-size: .8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ver-todos:hover {
+    background: #e0e7ff;
 }
 
 
@@ -922,8 +1049,7 @@ input[type="number"] {
     overflow: hidden;
 
     border:
-        1px solid
-        var(--border);
+        1px solid var(--border);
 
     border-radius: 10px;
 
@@ -944,8 +1070,7 @@ input[type="number"] {
     background: var(--surface-muted);
 
     border-bottom:
-        1px solid
-        var(--border);
+        1px solid var(--border);
 }
 
 
@@ -1000,6 +1125,27 @@ input[type="number"] {
 }
 
 
+.empty-cell {
+    height: 150px;
+    /* un poco menos que .tabla-fija (380px) por el encabezado */
+    padding: 0;
+}
+
+.empty-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    height: 100%;
+    color: #64748b;
+}
+
+.empty-inner app-ui-icon {
+    font-size: 2rem;
+    opacity: .6;
+}
+
 /* ==========================================================
    CARGANDO
    ========================================================== */
@@ -1026,11 +1172,15 @@ input[type="number"] {
 
 .document-select {
     min-height: 2.75rem;
-    padding: 0 2.25rem 0 0.75rem; /* Espacio a la derecha para que la flecha nativa no se encime al texto */
-    border: 1.5px solid #1a365d;   /* Azul oscuro corporativo similar al de tus botones/inputs */
+    padding: 0 2.25rem 0 0.75rem;
+    /* Espacio a la derecha para que la flecha nativa no se encime al texto */
+    border: 1.5px solid #1a365d;
+    /* Azul oscuro corporativo similar al de tus botones/inputs */
     border-radius: 0.5rem;
-    background-color: #ffffff;    /* Fondo blanco limpio */
-    color: #1a365d;               /* Texto del mismo tono azul corporativo */
+    background-color: #ffffff;
+    /* Fondo blanco limpio */
+    color: #1a365d;
+    /* Texto del mismo tono azul corporativo */
     font: inherit;
     font-weight: 500;
     outline: none;
@@ -1067,10 +1217,8 @@ input[type="number"] {
 
     .general-summary {
         grid-template-columns:
-            repeat(
-                3,
-                minmax(0, 1fr)
-            );
+            repeat(3,
+                minmax(0, 1fr));
     }
 
 }
@@ -1085,19 +1233,15 @@ input[type="number"] {
 
     .general-summary {
         grid-template-columns:
-            repeat(
-                2,
-                minmax(0, 1fr)
-            );
+            repeat(2,
+                minmax(0, 1fr));
     }
 
 
     .general-grid {
         grid-template-columns:
-            repeat(
-                2,
-                minmax(0, 1fr)
-            );
+            repeat(2,
+                minmax(0, 1fr));
 
         gap: 14px 16px;
 
@@ -1112,8 +1256,7 @@ input[type="number"] {
 
     .general-section-header {
         padding:
-            13px
-            16px;
+            13px 16px;
     }
 
 }
@@ -1143,13 +1286,269 @@ input[type="number"] {
 }
 
 
-@media (
-    prefers-reduced-motion:
-    reduce
-) {
+@media (prefers-reduced-motion: reduce) {
 
     .summary-card {
         transition: none;
     }
 
+}
+
+/* TABLA TABULAR  */
+
+.detail-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 1rem;
+}
+
+/* Contenedor principal */
+.table-card {
+    width: 100%;
+    overflow-x: auto;
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+/* Tabla base centrada */
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    /* Centra todo el contenido */
+    font-size: 0.875rem;
+    color: #374151;
+}
+
+/* Encabezados */
+.custom-table thead {
+    background-color: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.custom-table th {
+    padding: 14px 18px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* Filas y Celdas */
+.custom-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid #f1f5f9;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.custom-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* Detalles tipográficos */
+.font-medium {
+    font-weight: 500;
+    color: #111827;
+}
+
+.phone-number {
+    font-family: monospace;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0f172a;
+    letter-spacing: 0.025em;
+}
+
+.badge-periodo {
+    background-color: #f1f5f9;
+    color: #475569;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.badge-modalidad {
+    background-color: #f3f4f6;
+    color: #374151;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* --- ESTILOS DE COLORES POR OPERADORA --- */
+.badge-operadora {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background-color: #e2e8f0;
+    color: #475569;
+}
+
+/* ENTEL (Azul/Naranja) */
+.badge-operadora[data-operadora*="entel"] {
+    background-color: #e0f2fe;
+    color: #0284c7;
+    border: 1px solid #bae6fd;
+}
+
+/* CLARO / AMERICA MOVIL (Rojo) */
+.badge-operadora[data-operadora*="america movil"],
+.badge-operadora[data-operadora*="claro"] {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+/* MOVISTAR / TELEFONICA (Verde/Azul) */
+.badge-operadora[data-operadora*="movistar"],
+.badge-operadora[data-operadora*="telefonica"] {
+    background-color: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+/* BITEL (Amarillo/Azul) */
+.badge-operadora[data-operadora*="bitel"] {
+    background-color: #fefce8;
+    color: #ca8a04;
+    border: 1px solid #fef08a;
+}
+
+/* Estado vacío */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px !important;
+    color: #94a3b8;
+    width: 100%;
+}
+
+.empty-state span {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.9rem;
+}
+
+.empty-icon {
+    margin: 0 auto;
+    color: #cbd5e1;
+}
+
+.custom-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #fff;
+    /* el mismo fondo de tu tabla */
+}
+
+
+/* Altura fija: ajusta el valor a tu gusto */
+.tabla-fija {
+    height: 380px;
+    overflow: auto;
+}
+
+/* Encabezado pegado al hacer scroll */
+.custom-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #f8fafc;
+    /* usa el fondo de tu tabla */
+}
+
+.th-content {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    white-space: nowrap;
+}
+
+.th-content app-ui-icon {
+    opacity: .6;
+}
+
+/* Números alineados a la derecha */
+.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+/* Badges */
+.badge-soft {
+    display: inline-block;
+    padding: .15rem .6rem;
+    border-radius: 999px;
+    background: #eef2ff;
+    color: #4338ca;
+    font-size: .8rem;
+    font-weight: 500;
+}
+
+.badge-dias {
+    display: inline-block;
+    min-width: 2.2rem;
+    padding: .15rem .55rem;
+    border-radius: 999px;
+    background: #ecfdf5;
+    color: #047857;
+    font-size: .8rem;
+    font-weight: 600;
+}
+
+.badge-dias.alto {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+/* Calificaciones SBS: colorea solo si el valor es > 0 en las categorías de riesgo */
+.cal-nor {
+    color: #047857;
+}
+
+.cal-cpp {
+    color: #b45309;
+}
+
+.cal-def {
+    color: #c2410c;
+}
+
+.cal-dud {
+    color: #b91c1c;
+}
+
+.cal-per {
+    color: #7f1d1d;
+    font-weight: 600;
+}
+
+/* Estado vacío dentro de la tabla */
+td.empty-state {
+    padding: 2rem 1rem;
+    color: #64748b;
+}
+
+td.empty-state app-ui-icon {
+    font-size: 1.4rem;
+    margin-right: .5rem;
+    vertical-align: middle;
 }

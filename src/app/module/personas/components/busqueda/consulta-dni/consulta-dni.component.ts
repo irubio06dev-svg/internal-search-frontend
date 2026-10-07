@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signa
 import { FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe, LowerCasePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 
 import { ConsultasService } from '../../../services/consultas.service';
@@ -16,6 +16,8 @@ import {
     imagenReniec,
     seccionesReniec
 } from '../../../utils/reniec.utils';
+import { PaginacionComponent } from '../../../../../shared/paginacion/paginacion.component';
+import { IconoTablaComponent } from '../../../../../shared/iconos-tabla/iconos-tabla.component';
 
 
 type Seccion =
@@ -34,6 +36,7 @@ interface Tab {
     id: Pestana;
     titulo: string;
 }
+type SeccionPaginada = 'moviles' | 'sueldos' | 'deudas' | 'lineasCredito' | 'calificaciones';
 
 // Mismos tipos que valida el backend
 type TipoDocumento = 'DNI' | 'CE' | 'RUC' | 'PASAPORTE';
@@ -80,7 +83,7 @@ const DOCUMENTOS: Record<TipoDocumento, ConfigDocumento> = {
 
 @Component({
     selector: 'app-consulta-dni',
-    imports: [ReactiveFormsModule, DatePipe, DecimalPipe],
+    imports: [ReactiveFormsModule, IconoTablaComponent, DatePipe, DecimalPipe, LowerCasePipe, PaginacionComponent],
     templateUrl: './consulta-dni.component.html',
 
     styleUrls: [
@@ -91,6 +94,11 @@ const DOCUMENTOS: Record<TipoDocumento, ConfigDocumento> = {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConsultaDniComponent {
+
+    // paginaActual = signal(1);
+    // elementosPorPagina = signal(4);
+
+
 
     private readonly servicio = inject(ConsultasService);
     private readonly destroyRef = inject(DestroyRef);
@@ -282,4 +290,35 @@ export class ConsultaDniComponent {
         input.value = valor;
         this.dni.setValue(valor);
     }
+
+    //PAGINACION
+    readonly filasResumen = 4;
+
+    private readonly PAGINAS_INICIALES: Record<SeccionPaginada, number> = {
+        moviles: 1, sueldos: 1, deudas: 1, lineasCredito: 1, calificaciones: 1,
+    };
+
+    readonly elementosPorPagina = signal(4);
+    private readonly paginas = signal<Record<SeccionPaginada, number>>({ ...this.PAGINAS_INICIALES });
+
+    pagina(id: SeccionPaginada) { return this.paginas()[id]; }
+
+    cambiarPagina(id: SeccionPaginada, nueva: number) {
+        this.paginas.update(p => ({ ...p, [id]: nueva }));
+    }
+
+    resetPaginas() { this.paginas.set({ ...this.PAGINAS_INICIALES }); }
+
+    private cortar<T>(lista: T[] | undefined, id: SeccionPaginada): T[] {
+        const inicio = (this.pagina(id) - 1) * this.elementosPorPagina();
+        return (lista ?? []).slice(inicio, inicio + this.elementosPorPagina());
+    }
+
+    readonly movilesPagina = computed(() => this.cortar(this.resultado()?.moviles, 'moviles'));
+    readonly sueldosPagina = computed(() => this.cortar(this.resultado()?.sueldos, 'sueldos'));
+    readonly deudasPagina = computed(() => this.cortar(this.resultado()?.deudas, 'deudas'));
+    readonly lineasCreditoPagina = computed(() => this.cortar(this.resultado()?.lineasCredito, 'lineasCredito'));
+    readonly calificacionesPagina = computed(() => this.cortar(this.resultado()?.calificaciones, 'calificaciones'));
+
+
 }

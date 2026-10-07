@@ -18,7 +18,8 @@ import { SubtitleSidebarComponent } from '../components/header-subtitle/subtitle
         // SubtitleSidebarComponent,
         NavBarComponent,
         RouterOutlet,
-        LogoutComponent
+        LogoutComponent,
+        
     ],
     templateUrl: './home.component.html',
     styleUrl: './home.component.css',

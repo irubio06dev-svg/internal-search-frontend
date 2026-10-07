@@ -1,15 +1,19 @@
 import { RecordCarouselComponent, RecordSlideDirective } from '../../../../../shared/record-carousel.component';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { DatePipe, LowerCasePipe } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
 import { ConsultasService } from '../../../services/consultas.service';
 import { BuscadorTelefonoResponse } from '../../../interfaces/consultas.interface';
+import { PaginacionComponent } from '../../../../../shared/paginacion/paginacion.component';
+import { IconoTablaComponent } from '../../../../../shared/iconos-tabla/iconos-tabla.component';
 
 @Component({
     selector: 'app-consulta-telefono',
-    imports: [RecordCarouselComponent, RecordSlideDirective, ReactiveFormsModule, DatePipe
+    imports: [ ReactiveFormsModule, DatePipe,
+        LowerCasePipe,
+        PaginacionComponent,IconoTablaComponent
     ],
     templateUrl: './consulta-telefono.component.html',
     styleUrls: ['../consulta-dni/consulta-dni.component.css', './consulta-telefono.component.css'],
@@ -32,6 +36,19 @@ export class ConsultaTelefonoComponent {
     texto(valor: string | null | undefined, alternativo = 'No disponible'): string {
         const limpio = valor?.trim();
         return !limpio || limpio.toUpperCase() === 'NULL' ? alternativo : limpio;
+    }
+
+    readonly elementosPorPagina = signal(4);
+    readonly paginaActual = signal(1);
+
+    readonly registrosPagina = computed(() => {
+        const lista = this.resultado()?.registros ?? [];
+        const inicio = (this.paginaActual() - 1) * this.elementosPorPagina();
+        return lista.slice(inicio, inicio + this.elementosPorPagina());
+    });
+
+    cambiarPagina(nueva: number) {
+        this.paginaActual.set(nueva);
     }
 
     buscar(): void {
@@ -73,4 +90,25 @@ export class ConsultaTelefonoComponent {
         input.value = digitos;
         this.telefono.setValue(digitos);
     }
+
+    readonly titulares = computed(() => {
+        const mapa = new Map<string, { documento: string; nombre: string }>();
+
+        for (const r of this.resultado()?.registros ?? []) {
+            const documento = (r.documento ?? '').trim();
+            if (!documento) continue;
+
+            const nombre = [r.apePat, r.apeMat, r.prenombres]
+                .filter(Boolean)
+                .join(' ')
+                .trim();
+
+            // Si ya existe pero sin nombre, completa con este registro
+            if (!mapa.has(documento) || (!mapa.get(documento)!.nombre && nombre)) {
+                mapa.set(documento, { documento, nombre });
+            }
+        }
+
+        return [...mapa.values()];
+    });
 }
